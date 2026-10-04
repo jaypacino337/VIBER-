@@ -65,7 +65,7 @@ export function age(ts, now = Date.now()) {
 export const hours = (h) => (h < 1 ? Math.round(h * 60) + 'm' : h < 48 ? Math.round(h) + 'h' : Math.round(h / 24) + 'd');
 
 export const short = (a, n = 4) => (a ? a.slice(0, n) + '…' + a.slice(-n) : '');
-export const agentNo = (no) => 'BUILDER ' + String(no).padStart(3, '0');
+export const agentNo = (no) => 'VIBER ' + String(no).padStart(3, '0');
 export const clock = (ts) => new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 export const clockSec = (ts) => new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 export const dur = (ms) => { const m = Math.round(ms / 60000); return m < 60 ? m + 'm' : Math.floor(m / 60) + 'h ' + (m % 60) + 'm'; };

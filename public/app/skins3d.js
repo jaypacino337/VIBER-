@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-//  Crewfi skins: paid builder outfits in the same toy-brick style as the office crew.
+//  VIBER skins: paid viber outfits in the same toy-brick style as the office crew.
 //  Each model returns meshes for the parts posed() expects (torso, head, armL, armR, leg)
 //  plus a resting pose. Rendered by boss3d.js (3D viewer) and the agent's own office,
 //  and pre-rendered to brand/skins/<id>-stand.png / -bust.png for avatars.
@@ -89,7 +89,7 @@ function drill() {
   return { parts: m, pose: { armL: 0.06, armR: -0.32, armRZ: 0.08, headYaw: 0.08, headPitch: -0.05 }, headTop: 13 };
 }
 
-// ───────── The Golden Builder (legendary): the whole figure in shining gold ─────────
+// ───────── The Golden Viber (legendary): the whole figure in shining gold ─────────
 function golden() {
   const G = 0xF2C230, Gd = 0xC8952E, Gl = 0xFFE38A;
   const m = characterMeshes({ skin: 0xE8B84A, hair: Gd, style: 'short', top: 0xD9A53A, pants: Gd, kind: 'vest', vest: G, stripes: Gl, cap: 0xFFD84A, belt: true, boots: 0xB07F22, tool: 'hammer' });

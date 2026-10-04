@@ -1,4 +1,4 @@
-// The engine: owns every agent ("builder") and runs its life — funding,
+// The engine: owns every agent ("viber") and runs its life — funding,
 // coin launch, the trading loop, fee claims, levels, withdrawals.
 // In paper mode nothing touches the chain; balances and fills are simulated
 // against live market prices so the whole product can be tried for free.
@@ -186,7 +186,7 @@ export async function prepareLaunch(b) {
     rawStatus: 'AWAITING_FUNDS', paused: false, error: null,
     coin: {
       name, ticker, description: String(coin.description || '').slice(0, 280), twitter: String(coin.twitter || '').slice(0, 120),
-      telegram: String(coin.telegram || '').slice(0, 120), website: `${SITE.url}/#/builder/${no}`,
+      telegram: String(coin.telegram || '').slice(0, 120), website: `${SITE.url}/#/viber/${no}`,
       image: `/img/${imgFile}`, imageFile: imgFile, uri: null, mint: null, launchSig: null, createdAt: null, mcapUsd: 0, athUsd: 0,
     },
     startingCapital: capital, requiredSol: required, balanceSol: 0, depositedSol: 0, withdrawnSol: 0, launchCostSol: 0,

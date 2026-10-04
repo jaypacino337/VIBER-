@@ -1,6 +1,6 @@
-// Crewfi crew: every agent is a little toy-brick builder (hard hat, face, hair, outfit, gear),
+// VIBER crew: every agent is a little toy-brick viber (hard hat, face, hair, outfit, gear),
 // drawn as pixel blocks with a darker side face so it reads like a 3D brick figure.
-// Everything is generated from a seed (the agent's avatar seed): same agent, same builder.
+// Everything is generated from a seed (the agent's avatar seed): same agent, same viber.
 // API: robotSVG(seed, { stand }), robotPNG(seed, size), robotTraits(seed), robotParts(seed, full).
 // robotParts(...).spec is a ready buildCharacter() spec (office3d.js) for the 3D figure.
 import { seededRng } from '../shared/util.js';
@@ -47,7 +47,7 @@ function mix(hex, to, amt) {
 }
 const hx = (c) => (c ? parseInt(String(c).replace('#', ''), 16) : null);
 
-// the office crew always looks like the 3D characters (office3d.js CREW)
+// the office crew always looks like the 3D characters (office3d.js VIBE)
 const PRESETS = {
   'crew-launch': { skin: '#F2C38F', hair: '#3A2A1E', hairName: 'Dark brown', style: 'short', kind: 'vest', outfitName: 'Hi-vis vest', top: '#151515', pants: '#2A2A2A', vest: '#FFD21F', hat: '#FFD21F', hatName: 'Yellow hard hat' },
   'crew-shill': { skin: '#C98E62', hair: '#1E1814', hairName: 'Black', style: 'short', kind: 'hoodie', outfitName: 'White hoodie', top: '#F4F4F2', pants: '#151515', hat: '#151515', hatName: 'Black hard hat', headset: true },
@@ -228,7 +228,7 @@ function gridToSVG(g, col, id) {
 const cache = new Map();
 let uid = 0;
 
-// Inline SVG string. stand: true draws the whole builder standing on the floor.
+// Inline SVG string. stand: true draws the whole viber standing on the floor.
 export function robotSVG(seed, { stand = false } = {}) {
   // paid skins: the server sends avatarSeed "skin:<id>" for agents wearing one
   if (typeof seed === 'string' && seed.startsWith('skin:')) {
@@ -246,7 +246,7 @@ export function robotSVG(seed, { stand = false } = {}) {
   return svg.replace(/__ID__/g, 'vx' + (++uid));
 }
 
-// PNG of an agent's builder (default coin image): full body, centred on a yellow studded
+// PNG of an agent's viber (default coin image): full body, centred on a yellow studded
 // baseplate so it survives pump.fun's round crop.
 export function robotPNG(seed, size = 512) {
   const p = robotParts(seed, true);

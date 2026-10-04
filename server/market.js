@@ -15,7 +15,7 @@ let solUsd = 0;
 let lastRefresh = 0;
 
 async function getJson(url) {
-  const r = await fetch(url, { headers: { accept: 'application/json', 'user-agent': 'crewfi/0.1' } });
+  const r = await fetch(url, { headers: { accept: 'application/json', 'user-agent': 'viber/0.1' } });
   if (!r.ok) throw new Error(`${url} -> ${r.status}`);
   return r.json();
 }

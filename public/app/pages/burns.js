@@ -1,4 +1,4 @@
-// Two public burn pages: Builder Burns (builders' creator fees) and Dev Burns (the dev wallet's fees).
+// Two public burn pages: Viber Burns (vibers' creator fees) and Dev Burns (the dev wallet's fees).
 // Every burn is public: when, how much SOL, how many tokens, buy tx + burn tx.
 import { avatar, esc, sol, ago, agentNo, txLink, copyBtn } from '../ui.js';
 
@@ -22,7 +22,7 @@ const burnRows = (list, { loading, err, empty, dev }) => {
   if (loading) return `<tr><td colspan="${cols}" class="muted" style="text-align:center;padding:36px">Loading burns…</td></tr>`;
   if (err) return `<tr><td colspan="${cols}" class="muted" style="text-align:center;padding:36px">Could not load the burns. Refresh the page.</td></tr>`;
   if (!list.length) return `<tr><td colspan="${cols}" class="muted" style="text-align:center;padding:36px">${empty}</td></tr>`;
-  return list.map((b) => `<tr${dev ? '' : ` class="click" data-go="#/builder/${b.agentNo}"`}>
+  return list.map((b) => `<tr${dev ? '' : ` class="click" data-go="#/viber/${b.agentNo}"`}>
     <td class="muted" data-ago="${b.ts}" title="${esc(new Date(b.ts).toLocaleString())}">${ago(b.ts)}</td>
     ${dev ? '' : `<td><span class="cell-agent">${avatar(b.avatarSeed, 32)}<span><span class="name">${esc(b.agentName)}${b.source === 'skin' ? ' <em class="burn-skin-tag">SKIN</em>' : ''}</span><br><span class="agent-tag">${agentNo(b.agentNo)}${b.source === 'skin' ? ' · paid for a skin' : b.coinTicker ? ' · $' + esc(b.coinTicker) : ''}</span></span></span></td>`}
     <td class="r b">${b.source === 'skin' ? `<span class="muted">${esc(b.skinName || 'skin')} skin</span>` : sol(b.sol, 4) + ' SOL'}</td>
@@ -32,15 +32,15 @@ const burnRows = (list, { loading, err, empty, dev }) => {
   </tr>`).join('');
 };
 
-// ── BUILDER BURNS: pct of every builder's creator fees buys + burns the CREW coin ──
+// ── VIBER BURNS: pct of every viber's creator fees buys + burns the VIBE coin ──
 export function AgentBurnsPage(app) {
   const cfg = app.api.config;
   let el, data = null, loading = true, err = null;
   const totals = () => (data?.agents || app.api.snapshot.flywheel?.agents || {});
   const paint = () => {
     if (!el) return;
-    el.querySelector('#bn-stats').innerHTML = burnStats(totals(), { spent: 'SOL spent by builders', queued: 'Queued for the next burns' });
-    el.querySelector('#bn-rows').innerHTML = burnRows(data?.burns || [], { loading: loading && !data, err: err && !data, empty: `No builder burns yet. The first one happens when a builder has collected ${cfg.flywheel?.minBuySol || 0.01} SOL from its creator fees.` });
+    el.querySelector('#bn-stats').innerHTML = burnStats(totals(), { spent: 'SOL spent by vibers', queued: 'Queued for the next burns' });
+    el.querySelector('#bn-rows').innerHTML = burnRows(data?.burns || [], { loading: loading && !data, err: err && !data, empty: `No viber burns yet. The first one happens when a viber has collected ${cfg.flywheel?.minBuySol || 0.01} SOL from its creator fees.` });
   };
   const load = () => app.api.getBurns('agent').then((r) => { data = r; err = null; }).catch((e) => { err = e; }).finally(() => { loading = false; paint(); });
   return {
@@ -48,26 +48,26 @@ export function AgentBurnsPage(app) {
       el = root;
       const F = cfg.flywheel || {};
       root.innerHTML = `<div class="wrap">
-        <div class="page-head"><div><h1>Builder Burns</h1>
-          <p>${F.enabled ? `<b>${Math.round((F.pct || 0) * 100)}% of every creator-fee claim</b> from every builder buys the CREW coin and <b>burns it forever</b>. Every buy and every burn is on-chain: click a transaction to check it on Solscan.` : 'The flywheel is switched off right now.'}</p></div>
+        <div class="page-head"><div><h1>Viber Burns</h1>
+          <p>${F.enabled ? `<b>${Math.round((F.pct || 0) * 100)}% of every creator-fee claim</b> from every viber buys the VIBE coin and <b>burns it forever</b>. Every buy and every burn is on-chain: click a transaction to check it on Solscan.` : 'The flywheel is switched off right now.'}</p></div>
           <div class="right"><a class="btn" href="#/dev-burns">🔥 Dev Burns →</a></div></div>
         ${coinBox(F.mint)}
         <div id="bn-stats"></div>
         <section class="card">
-          <header class="card-head"><h2 class="pix">Every builder burn</h2><span class="sub">newest first · updates live</span></header>
+          <header class="card-head"><h2 class="pix">Every viber burn</h2><span class="sub">newest first · updates live</span></header>
           <div class="tbl-wrap"><table class="tbl">
-            <thead><tr><th>When</th><th>Builder</th><th class="r">Bought for</th><th class="r">Burned</th><th class="r">Buy tx</th><th class="r">Burn tx</th></tr></thead>
+            <thead><tr><th>When</th><th>Viber</th><th class="r">Bought for</th><th class="r">Burned</th><th class="r">Buy tx</th><th class="r">Burn tx</th></tr></thead>
             <tbody id="bn-rows"></tbody>
           </table></div>
         </section>
         <section class="card burn-how">
-          <header class="card-head"><h2 class="pix">How the builder flywheel works</h2></header>
+          <header class="card-head"><h2 class="pix">How the viber flywheel works</h2></header>
           <ol>
-            <li>Every builder claims the pump.fun creator fees of its own coin.</li>
-            <li>${Math.round((F.pct || 0) * 100)}% of each claim is set aside in the builder's wallet. The rest keeps trading.</li>
-            <li>When ${F.minBuySol || 0.01} SOL or more is collected, the builder buys the CREW coin with it.</li>
+            <li>Every viber claims the pump.fun creator fees of its own coin.</li>
+            <li>${Math.round((F.pct || 0) * 100)}% of each claim is set aside in the viber's wallet. The rest keeps trading.</li>
+            <li>When ${F.minBuySol || 0.01} SOL or more is collected, the viber buys the VIBE coin with it.</li>
             <li>Right after, it burns every token it bought (they are gone for good) and closes the empty account.</li>
-            ${cfg.skins?.payWith?.burn ? `<li>Skins are paid in CREW too: ${(cfg.skins.payWith.burnPct ?? 1) >= 1 ? 'every token paid for a skin' : Math.round(cfg.skins.payWith.burnPct * 100) + '% of every skin payment'} is burned here as well (marked SKIN).</li>` : ''}
+            ${cfg.skins?.payWith?.burn ? `<li>Skins are paid in VIBE too: ${(cfg.skins.payWith.burnPct ?? 1) >= 1 ? 'every token paid for a skin' : Math.round(cfg.skins.payWith.burnPct * 100) + '% of every skin payment'} is burned here as well (marked SKIN).</li>` : ''}
           </ol>
         </section>
       </div>`;
@@ -78,7 +78,7 @@ export function AgentBurnsPage(app) {
   };
 }
 
-// ── DEV BURNS: pct of the Crewfi dev wallet's own creator fees → buyback + burn ──
+// ── DEV BURNS: pct of the VIBER dev wallet's own creator fees → buyback + burn ──
 export function DevBurnsPage(app) {
   const cfg = app.api.config;
   let el, data = null, loading = true, err = null;
@@ -111,8 +111,8 @@ export function DevBurnsPage(app) {
       const F = cfg.flywheel || {};
       root.innerHTML = `<div class="wrap">
         <div class="page-head"><div><h1>Dev Burns</h1>
-          <p>The server claims the <b>Crewfi dev wallet's</b> pump.fun creator fees by itself. <b>10% of every claim</b> buys the CREW coin and burns exactly the tokens it bought. Every claim, buy and burn links to Solscan.</p></div>
-          <div class="right"><a class="btn" href="#/burns">🔥 Builder Burns →</a></div></div>
+          <p>The server claims the <b>VIBER dev wallet's</b> pump.fun creator fees by itself. <b>10% of every claim</b> buys the VIBE coin and burns exactly the tokens it bought. Every claim, buy and burn links to Solscan.</p></div>
+          <div class="right"><a class="btn" href="#/burns">🔥 Viber Burns →</a></div></div>
         <p class="muted" id="dv-off" hidden>The dev buyback is not switched on yet.</p>
         <p class="burn-warn" id="dv-err" hidden></p>
         ${coinBox(F.mint)}

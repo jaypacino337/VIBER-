@@ -1,5 +1,5 @@
 // The creator's wallet (Phantom, Solflare, MetaMask or any Solana wallet that follows
-// the Wallet Standard). It is always separate from the builder wallets on the server.
+// the Wallet Standard). It is always separate from the viber wallets on the server.
 // Sending SOL builds the transaction with @solana/web3.js (window.solanaWeb3, loaded in index.html).
 import { base58Encode } from '../shared/util.js';
 
@@ -154,7 +154,7 @@ function loadMetaMask() {
     for (const url of ['https://cdn.jsdelivr.net/npm/@metamask/connect-solana/+esm', 'https://esm.sh/@metamask/connect-solana']) {
       try {
         const m = await import(url);
-        const client = await m.createSolanaClient({ dapp: { name: 'Crewfi', url: location.origin }, skipAutoRegister: true });
+        const client = await m.createSolanaClient({ dapp: { name: 'VIBER', url: location.origin }, skipAutoRegister: true });
         const w = await client.getWallet();
         addStandard(w);
         if (standard.has(w.name)) return w;
@@ -272,7 +272,7 @@ export async function sendSol(to, sol, getBlockhash) {
   return a.sendTransaction(tx);
 }
 
-// Send SPL tokens (e.g. CREW for a skin): creates the receiver's token account if it is missing
+// Send SPL tokens (e.g. VIBE for a skin): creates the receiver's token account if it is missing
 // (idempotent), then TransferChecked. `raw` is the integer token amount (string or bigint).
 const ATA_PROGRAM = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
 export async function sendToken({ to, mint, program, raw, decimals, fromAccount }, getBlockhash) {
@@ -306,7 +306,7 @@ export async function sendToken({ to, mint, program, raw, decimals, fromAccount 
   return a.sendTransaction(tx);
 }
 
-// Send a Metaplex Core NFT (a builder NFT) to another wallet: TransferV1 (data [14, 0]).
+// Send a Metaplex Core NFT (a viber NFT) to another wallet: TransferV1 (data [14, 0]).
 // Accounts: asset (w), collection, payer (s, w), authority (s) = the owner, newOwner, system, logWrapper (none).
 const CORE_PROGRAM = 'CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d';
 export async function sendCoreAsset({ asset, collection, to }, getBlockhash) {
@@ -336,9 +336,9 @@ export async function sendCoreAsset({ asset, collection, to }, getBlockhash) {
 // Message format the server checks for creator-only actions
 export function actionMessage(action, agentWallet, extra = []) {
   return [
-    'Crewfi action',
+    'VIBER action',
     `Action: ${action}`,
-    `Builder: ${agentWallet}`,
+    `Viber: ${agentWallet}`,
     ...extra,
     `Creator: ${wallet.address}`,
     `Nonce: ${Math.random().toString(36).slice(2, 12)}`,

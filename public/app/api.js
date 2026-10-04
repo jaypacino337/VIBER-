@@ -1,4 +1,4 @@
-// Talks to the Crewfi server. The server runs the builders 24/7 on mainnet;
+// Talks to the VIBER server. The server runs the vibers 24/7 on mainnet;
 // the browser only watches and asks the creator's wallet to sign.
 async function json(url, opts = {}) {
   const r = await fetch(url, { headers: { 'content-type': 'application/json' }, ...opts });

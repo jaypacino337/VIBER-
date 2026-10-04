@@ -3,7 +3,7 @@ import { robotSVG } from './robot.js';
 import { esc, sol, signedSol, pct, tone, ago, agentNo, usd, short, age } from './format.js';
 import { sparkline } from './charts.js';
 
-// Builder avatar: the builder's voxel worker. stand: true draws the whole body.
+// Viber avatar: the viber's voxel worker. stand: true draws the whole body.
 export const avatar = (seed, size = 42, { stand = false } = {}) => `<span class="av av-${size}${stand ? ' stand' : ''}">${robotSVG(seed, { stand })}</span>`;
 
 // Tiny pixel icons (currentColor): rows of '#' and '.'
@@ -22,7 +22,7 @@ export function pixIcon(rows) {
   return `<svg viewBox="0 0 ${rows[0].length} ${rows.length}" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true">${rects}</svg>`;
 }
 
-// Pixel icons for the Crewfi crew: LAUNCH → SHILL → TRADE → FEES
+// Pixel icons for the VIBER crew: LAUNCH → SHILL → TRADE → FEES
 export const ICONS = {
   launch: pixIcon(['.....#.....', '....###....', '...#####...', '...##.##...', '...##.##...', '...#####...', '...#####...', '..#######..', '.##.###.##.', '.#..###..#.', '....#.#....']),
   shill: pixIcon(['#.......#', '##.....##', '.##...##.', '..##.##..', '...###...', '..##.##..', '.##...##.', '##.....##', '#.......#']),
@@ -35,10 +35,10 @@ export const ICONS = {
 
 export function agentLoop(extraClass = '') {
   const items = [
-    ['launch', 'Launch', 'Your coin goes live on pump.fun, created by the builder\'s own wallet'],
+    ['launch', 'Launch', 'Your coin goes live on pump.fun, created by the viber\'s own wallet'],
     ['shill', 'Shill', 'One click writes a post for X with the coin, CA and live P&L'],
     ['trade', 'Trade', 'Buys and sells real SOL with fixed rules, every few seconds'],
-    ['fees', 'Fees', 'Creator fees are claimed and go back into the builder\'s wallet'],
+    ['fees', 'Fees', 'Creator fees are claimed and go back into the viber\'s wallet'],
   ];
   return `<ol class="loop ${extraClass}">${items.map(([k, t, d]) => `<li><span class="loop-ic">${ICONS[k]}</span><b>${t.toUpperCase()}</b><span>${d}</span></li>`).join('')}</ol>`;
 }
@@ -87,9 +87,9 @@ export const change = (x) => `<span class="chg ${tone(x)}">${pct(x)}</span>`;
 export const txLink = (sig, label) => (sig ? `<a class="ext mono" href="https://solscan.io/tx/${esc(sig)}" target="_blank" rel="noopener">${label || short(sig, 5)} ↗</a>` : '');
 export const addrLink = (a, label) => `<a class="ext mono" href="https://solscan.io/account/${esc(a)}" target="_blank" rel="noopener">${label || short(a, 5)} ↗</a>`;
 
-// One row in ACTIVE BUILDER TRADES
+// One row in ACTIVE VIBER TRADES
 export function feedItem(t, fresh = false) {
-  const href = `#/builder/${t.agentNo}`;
+  const href = `#/viber/${t.agentNo}`;
   const pnl = t.side === 'SELL' ? `<span class="fi-pnl ${tone(t.pnlPct)}">${pct(t.pnlPct)}</span>` : '';
   return `<article class="fi${fresh ? ' fresh' : ''}" data-id="${esc(t.id)}">
     <a href="${href}" aria-label="${esc(t.agentName)}">${avatar(t.avatarSeed, 42)}</a>
@@ -111,7 +111,7 @@ export function feedItem(t, fresh = false) {
   </article>`;
 }
 
-// ── career levels (Apprentice → Master Builder) ──
+// ── career levels (Apprentice → Master Viber) ──
 export function levelBadge(l, { short = false } = {}) {
   if (!l) return '';
   return `<span class="lvl lvl-${l.no}" style="--lc:${esc(l.color)}" title="Level ${l.no} of ${l.max}: ${esc(l.name)}"><b>${l.no}</b>${short ? '' : esc(l.name)}</span>`;
@@ -120,14 +120,14 @@ export function levelBar(l) {
   if (!l) return '';
   const left = l.next ? Math.max(0, l.next.minProfitSol - l.bestProfitSol) : 0;
   return `<div class="lvl-bar" style="--lc:${esc(l.color)};--nc:${esc(l.next?.color || l.color)}">
-    <div class="lvl-bar-top"><span>${l.next ? `<b>${sol(left, 3)} SOL</b> more profit → ${esc(l.next.name)}${l.next.rewardSol > 0 ? ` · promotion pays <b class="up">${sol(l.next.rewardSol, 3)} SOL</b>` : ''}` : '<b>Top of the site.</b> Master Builder reached'}</span></div>
+    <div class="lvl-bar-top"><span>${l.next ? `<b>${sol(left, 3)} SOL</b> more profit → ${esc(l.next.name)}${l.next.rewardSol > 0 ? ` · promotion pays <b class="up">${sol(l.next.rewardSol, 3)} SOL</b>` : ''}` : '<b>Top of the site.</b> Master Viber reached'}</span></div>
     <div class="lvl-track"><i style="width:${(l.progress * 100).toFixed(1)}%"></i></div>
     <div class="lvl-steps">${Array.from({ length: l.max }, (_, i) => `<span class="${i < l.no ? 'on' : ''}"></span>`).join('')}</div>
   </div>`;
 }
 
 export function agentCard(a) {
-  return `<a class="acard" href="#/builder/${a.no}">
+  return `<a class="acard" href="#/viber/${a.no}">
     <div class="acard-top">
       ${avatar(a.avatarSeed, 56)}
       <div style="min-width:0">
@@ -194,15 +194,15 @@ export function riskWarning(st, { checkbox = false, checked = false } = {}) {
   if (!st || st.risk !== 'extreme') return '';
   return `<div class="risk-warn" role="alert">
     <b>⚠ Extreme risk</b>
-    <p>${esc(st.name)} buys pump.fun coins that are only minutes old. Most of them go to zero, rugs and bundled launches are common, and prices can drop 50% in seconds, faster than any stop loss can sell. <b>This builder can lose all of its SOL.</b></p>
+    <p>${esc(st.name)} buys pump.fun coins that are only minutes old. Most of them go to zero, rugs and bundled launches are common, and prices can drop 50% in seconds, faster than any stop loss can sell. <b>This viber can lose all of its SOL.</b></p>
     <p class="risk-prot">Protections: max ${Math.round(st.sizePct * 100)}% of SOL per trade${st.maxTradeSol ? ` (never more than ${st.maxTradeSol} SOL)` : ''}, ${st.maxOpen} coin${st.maxOpen > 1 ? 's' : ''} at once, take profit ${p0(st.takeProfitPct)}, stop loss ${p0(st.stopLossPct)}, sold after ${st.maxHoldMin} min at most, and it only buys coins that pass every safety filter (volume, buyers, dev holding, dev not selling, no bundles, no whales).</p>
-    ${checkbox ? `<label class="risk-ok"><input type="checkbox" data-risk-ok ${checked ? 'checked' : ''}> <span>I understand the risk and that my builder can lose all of its SOL.</span></label>` : ''}
+    ${checkbox ? `<label class="risk-ok"><input type="checkbox" data-risk-ok ${checked ? 'checked' : ''}> <span>I understand the risk and that my viber can lose all of its SOL.</span></label>` : ''}
   </div>`;
 }
 
-// a skin's price in CREW (skins are paid only in the CREW coin, same value as their SOL price)
+// a skin's price in VIBE (skins are paid only in the VIBE coin, same value as their SOL price)
 const fmtBig = (n) => (n >= 1e9 ? (n / 1e9).toFixed(2) + 'B' : n >= 1e6 ? (n / 1e6).toFixed(2) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : Math.round(n).toLocaleString('en'));
 export function skinPriceLabel(item, S) {
   const px = S?.payWith?.tokenPriceSol;
-  return px > 0 ? `≈ ${fmtBig(item.priceSol / px)} CREW` : `${item.priceSol} SOL in CREW`;
+  return px > 0 ? `≈ ${fmtBig(item.priceSol / px)} VIBE` : `${item.priceSol} SOL in VIBE`;
 }

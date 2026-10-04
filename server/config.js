@@ -19,17 +19,17 @@ export const RPC_URL = str('RPC_URL', 'https://api.mainnet-beta.solana.com');
 // 32-byte hex key that encrypts every agent's wallet secret at rest. Required in live mode.
 export const MASTER_KEY = str('MASTER_KEY');
 if (MODE === 'live' && (!MASTER_KEY || MASTER_KEY.length < 32)) {
-  throw new Error('MODE=live needs MASTER_KEY (32+ characters, e.g. `openssl rand -hex 32`). It encrypts every builder wallet key.');
+  throw new Error('MODE=live needs MASTER_KEY (32+ characters, e.g. `openssl rand -hex 32`). It encrypts every viber wallet key.');
 }
 export const PUMPPORTAL_URL = str('PUMPPORTAL_URL', 'https://pumpportal.fun/api/trade-local');
 
 export const SITE = {
-  name: 'Crewfi',
+  name: 'VIBER',
   url: str('SITE_URL', 'http://localhost:' + num('PORT', 3000)),
   xUrl: str('X_URL'),
   // Your platform token (paid for skins / market). Null until you launch it.
   tokenMint: str('TOKEN_MINT'),
-  tokenSymbol: str('TOKEN_SYMBOL', 'CREW'),
+  tokenSymbol: str('TOKEN_SYMBOL', 'VIBE'),
   // Treasury that receives skin and market payments.
   treasury: str('TREASURY_WALLET'),
 };

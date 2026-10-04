@@ -25,11 +25,11 @@ export function SkinsPage(app) {
 
   function pickAgent(skinId) {
     const mine = myAgents();
-    if (!mine.length) { app.toast(`<b>No builders on this wallet</b>Build your builder first, then give it a skin.`); return; }
+    if (!mine.length) { app.toast(`<b>No vibers on this wallet</b>Launch your viber first, then give it a skin.`); return; }
     if (mine.length === 1) { app.skinModal(mine[0], skinId); return; }
     const back = document.createElement('div');
     back.className = 'modal-back';
-    back.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-label="Pick a builder"><div class="modal-head"><h3>Which builder?</h3><button class="x" type="button" aria-label="Close">×</button></div>
+    back.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-label="Pick a viber"><div class="modal-head"><h3>Which viber?</h3><button class="x" type="button" aria-label="Close">×</button></div>
       <div class="modal-body"><div class="skin-agents">${mine.map((a) => `<button type="button" data-id="${esc(a.id)}">${avatar(a.avatarSeed, 42)}<span><b>${esc(a.name)}</b><small>${a.no ? agentNo(a.no) : ''} · $${esc(a.coin?.ticker || '')}</small></span></button>`).join('')}</div></div></div>`;
     document.body.appendChild(back);
     const close = () => back.remove();
@@ -60,7 +60,7 @@ export function SkinsPage(app) {
       <div class="sk-img"><img src="brand/skins/${esc(x.id)}-stand.png" alt="${esc(x.name)}" loading="lazy"></div>
       <b class="sk-name">${esc(x.name)}${x.nft ? ' <span class="nft-tag">NFT</span>' : ''}</b>
       <small class="sk-tl">${esc(x.tagline || '')}</small>
-      <div class="sk-price">${IC.brick}<b>${x.priceSol} SOL</b><span>paid in CREW</span></div>
+      <div class="sk-price">${IC.brick}<b>${x.priceSol} SOL</b><span>paid in VIBE</span></div>
       ${x.stock ? `<div class="sk-bar"><i style="width:${pctLeft}%"></i></div><small class="sk-sup">Supply: <b>${left(x)} / ${x.stock.max} left</b>${x.maxPerWallet ? ' · 1 per wallet' : ''}</small>` : '<small class="sk-sup">Unlimited</small>'}
       <button class="btn btn-primary btn-block" type="button" data-get="${esc(x.id)}" ${out ? 'disabled' : ''}>${out ? 'Sold out' : 'Get skin'}</button>
     </article>`;
@@ -71,16 +71,16 @@ export function SkinsPage(app) {
   const html = () => `<div class="wrap sk">
     <section class="pg-hero sk-hero">
       <div class="pg-hero-copy">
-        <span class="pg-eyebrow">CUSTOMIZE YOUR BUILDER</span>
+        <span class="pg-eyebrow">CUSTOMIZE YOUR VIBER</span>
         <h1 class="pg-big">Skins</h1>
-        <p class="pg-lede">Give your builder a new look. Skins are limited unlocks bought with the CREW coin and tied to your builder. Same value as the SOL price shown.</p>
+        <p class="pg-lede">Give your viber a new look. Skins are limited unlocks bought with the VIBE coin and tied to your viber. Same value as the SOL price shown.</p>
         <div class="pg-cta"><button class="btn btn-primary btn-lg" type="button" id="sk-browse"><span>Browse all skins</span>${IC.arrow}</button></div>
       </div>
-      <div class="pg-hero-art"><img src="brand/pages/skins-hero.jpg" alt="The Crewfi skin shop"></div>
+      <div class="pg-hero-art"><img src="brand/pages/skins-hero.jpg" alt="The VIBER skin shop"></div>
       <ul class="sk-perks">
         <li>${IC.check}<span><b>Unique looks</b><small>Stand out on the leaderboard</small></span></li>
-        <li>${IC.check}<span><b>Same value</b><small>Paid in CREW coin</small></span></li>
-        <li>${IC.check}<span><b>Linked to your builder</b><small>Works everywhere on Crewfi</small></span></li>
+        <li>${IC.check}<span><b>Same value</b><small>Paid in VIBE coin</small></span></li>
+        <li>${IC.check}<span><b>Linked to your viber</b><small>Works everywhere on VIBER</small></span></li>
       </ul>
     </section>
 
@@ -98,8 +98,8 @@ export function SkinsPage(app) {
     <div class="sk-bottom">
       <section class="sk-benefits">
         <img src="brand/pages/benefits.png" alt="" loading="lazy">
-        <div class="sk-bt"><b>Skin benefits</b><p>Skins are cosmetic, but they show your style on the leaderboard, in trades and across your builder's profile.</p></div>
-        <ul><li><span>${IC.trophy}</span>Show off<br>on leaderboard</li><li><span>${IC.user}</span>Linked to<br>your builder</li><li><span>${IC.cam}</span>Visible in trades<br>and on profile</li></ul>
+        <div class="sk-bt"><b>Skin benefits</b><p>Skins are cosmetic, but they show your style on the leaderboard, in trades and across your viber's profile.</p></div>
+        <ul><li><span>${IC.trophy}</span>Show off<br>on leaderboard</li><li><span>${IC.user}</span>Linked to<br>your viber</li><li><span>${IC.cam}</span>Visible in trades<br>and on profile</li></ul>
       </section>
       <section class="sk-limited">
         <div><b>Limited skins</b><p>Some skins are limited and will never be available again.</p>
@@ -107,7 +107,7 @@ export function SkinsPage(app) {
         <img src="brand/pages/gift.png" alt="" loading="lazy">
       </section>
     </div>
-    <p class="hint skins-pay">Paid in CREW to <code class="mono">${esc(S.payTo || 'the shop wallet')}</code>. The exact token amount is fixed for 10 minutes when you buy.${(S.items || []).some((x) => x.nft) ? ' NFT skins go to your wallet: whoever holds the NFT can dress one builder.' : ''}</p>
+    <p class="hint skins-pay">Paid in VIBE to <code class="mono">${esc(S.payTo || 'the shop wallet')}</code>. The exact token amount is fixed for 10 minutes when you buy.${(S.items || []).some((x) => x.nft) ? ' NFT skins go to your wallet: whoever holds the NFT can dress one viber.' : ''}</p>
   </div>`;
 
   const paintGrid = () => { el.querySelector('#sk-grid').innerHTML = gridHTML(); };

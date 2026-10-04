@@ -1,4 +1,4 @@
-// Checks the wallet-signed "Crewfi action" messages the page sends for
+// Checks the wallet-signed "VIBER action" messages the page sends for
 // creator-only actions (see docs/API_CONTRACT.md §2). The exact text is
 // rebuilt here and compared line by line, so a signature for one action can
 // never be replayed as another.
@@ -7,7 +7,7 @@ import nacl from 'tweetnacl';
 import { PublicKey } from '@solana/web3.js';
 import { db, save } from './store.js';
 
-export const HEADER = 'Crewfi action';
+export const HEADER = 'VIBER action';
 const MAX_AGE_MS = 10 * 60_000;
 const MAX_SKEW_MS = 2 * 60_000;
 
@@ -41,14 +41,14 @@ function useNonce(nonce, issuedMs) {
 
 /**
  * Verify a signed action.
- *   expect: { action, builder, extras: [lines], signerLabel: 'Creator'|'Buyer', signer }
+ *   expect: { action, viber, extras: [lines], signerLabel: 'Creator'|'Buyer', signer }
  * The signer's line sits after the extras for Creator messages; for the
  * market-buy intent the layout is fixed by the caller via `lines`.
  */
-export function checkAction(body, { action, builder, extras = [], signer, signerLabel = 'Creator', layout }) {
+export function checkAction(body, { action, viber, extras = [], signer, signerLabel = 'Creator', layout }) {
   if (!body || typeof body.message !== 'string' || typeof body.signature !== 'string') deny('This action needs a wallet signature.');
   const lines = body.message.split('\n');
-  const expected = layout || [HEADER, `Action: ${action}`, `Builder: ${builder}`, ...extras, `${signerLabel}: ${signer}`];
+  const expected = layout || [HEADER, `Action: ${action}`, `Viber: ${viber}`, ...extras, `${signerLabel}: ${signer}`];
   const tail = lines.slice(expected.length);
   for (let i = 0; i < expected.length; i++) {
     if (lines[i] !== expected[i]) deny(`Signed message does not match this action (expected "${expected[i]}").`);

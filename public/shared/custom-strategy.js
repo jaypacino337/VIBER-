@@ -15,7 +15,7 @@ export const NAME_MAX = 24;
 // Anything inside them is allowed: risky settings get a warning (riskReasons) that the creator
 // must confirm in the signed message, instead of being blocked.
 export const FIELDS = {
-  sizePct:        { label: 'Per trade',           group: 'size',  kind: 'pct', min: 0.01, max: 1.00, step: 0.01, hint: 'Share of the builder\'s SOL used for each buy' },
+  sizePct:        { label: 'Per trade',           group: 'size',  kind: 'pct', min: 0.01, max: 1.00, step: 0.01, hint: 'Share of the viber\'s SOL used for each buy' },
   maxOpen:        { label: 'Open positions',      group: 'size',  kind: 'int', min: 1,    max: 20,   step: 1,    hint: 'How many tokens it may hold at once' },
   takeProfitPct:  { label: 'Take profit',         group: 'exit',  kind: 'pct', min: 0.01, max: 50.0, step: 0.01, hint: 'Sell everything once up this much' },
   stopLossPct:    { label: 'Stop loss',           group: 'exit',  kind: 'neg', min: -0.99, max: -0.005, step: 0.005, hint: 'Sell everything once down this much' },
@@ -36,16 +36,16 @@ export const FIELDS = {
 };
 
 // The line the creator signs when the settings are risky (the page shows the reasons first).
-export const CUSTOM_RISK_ACK = 'Risk: I understand these custom settings are very risky and my builder can lose its SOL';
+export const CUSTOM_RISK_ACK = 'Risk: I understand these custom settings are very risky and my viber can lose its SOL';
 
 // Plain-language reasons why these settings are risky ([] = nothing unusual).
 export function riskReasons(base, p) {
   const r = [];
   const pc = (x) => Math.round(Math.abs(x) * 1000) / 10 + '%';
   const size = p.sizePct, sl = Math.abs(p.stopLossPct || 0);
-  if (size > 0.25) r.push(`Each trade uses ${pc(size)} of the builder's SOL (more than 25%).`);
+  if (size > 0.25) r.push(`Each trade uses ${pc(size)} of the viber's SOL (more than 25%).`);
   if (sl > 0.35) r.push(`Stop loss at −${pc(sl)}: one bad trade can lose most of what was put in.`);
-  if (size * sl > 0.10) r.push(`A single stop loss would cost about ${pc(size * sl)} of all the builder's SOL.`);
+  if (size * sl > 0.10) r.push(`A single stop loss would cost about ${pc(size * sl)} of all the viber's SOL.`);
   if (Math.min(1, size * p.maxOpen) > 0.8) r.push(`Up to ${pc(Math.min(1, size * p.maxOpen))} of the SOL can be in trades at the same time.`);
   if (p.maxOpen > 5) r.push(`${p.maxOpen} open positions at once: more coins to watch, more to lose in a crash.`);
   if (p.minLiquidityUsd < 20000) r.push(`Min liquidity $${Math.round(p.minLiquidityUsd).toLocaleString('en')}: tiny pools are easy to rug and hard to sell.`);

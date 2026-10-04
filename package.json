@@ -1,8 +1,8 @@
 {
-  "name": "crewfi",
+  "name": "viber",
   "private": true,
   "version": "0.1.0",
-  "description": "Crewfi: launch a coin on pump.fun and your crew agent gets its own Solana wallet and trades for you, every move explained.",
+  "description": "VIBER: launch a coin on pump.fun and your crew agent gets its own Solana wallet and trades for you, every move explained.",
   "type": "module",
   "main": "server/index.js",
   "scripts": {

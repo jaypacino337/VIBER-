@@ -1,4 +1,4 @@
-// Crewfi server: serves the site from public/ and the /api the page talks to.
+// VIBER server: serves the site from public/ and the /api the page talks to.
 // Start: `npm start` (paper mode) or `MODE=live npm start` (real SOL; see README).
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
@@ -119,7 +119,7 @@ function agentOr404(id) {
   if (!a) throw new HttpError(404, 'Agent not found');
   return a;
 }
-const creatorAction = (a, b, action, extras = []) => checkAction(b, { action, builder: a.wallet, extras, signer: a.creator });
+const creatorAction = (a, b, action, extras = []) => checkAction(b, { action, viber: a.wallet, extras, signer: a.creator });
 const off = (what) => { throw new HttpError(400, what); };
 
 // ------------------------------------------------------------------ routes
@@ -181,7 +181,7 @@ route('POST', '/api/agents/:id/office', ({ id }, b) => {
 
 // skins (need the platform token configured: TOKEN_MINT + TREASURY_WALLET)
 const skinItem = (id) => CONFIG.skinItems.find((s) => s.id === id) || off('Unknown skin.');
-const skinsOn = () => publicConfig().skins.enabled || off('Skins open once the Crewfi token is live.');
+const skinsOn = () => publicConfig().skins.enabled || off('Skins open once the VIBER token is live.');
 db.skinHolds ||= {};
 db.skinQuotes ||= {};
 route('GET', '/api/agents/:id/skin/quote', async ({ id }, _b, q) => {
@@ -234,7 +234,7 @@ route('POST', '/api/agents/:id/skin/buy', async ({ id }, b) => {
 route('POST', '/api/agents/:id/skin', ({ id }, b) => {
   const a = agentOr404(id);
   const sk = String(b.skin || '');
-  if (sk !== 'default' && !a.skins.includes(sk)) off('This builder does not own that skin.');
+  if (sk !== 'default' && !a.skins.includes(sk)) off('This viber does not own that skin.');
   creatorAction(a, b, 'skin', [`Skin: ${sk}`]);
   a.skin = sk === 'default' ? null : sk;
   save();
@@ -251,9 +251,9 @@ route('POST', '/api/custom-strategy', (_, b) => {
   const name = cleanName(b.name);
   const { base, params } = sanitize(b.base, b.params);
   const a = b.applyTo ? agentOr404(b.applyTo) : null;
-  if (a && a.creator !== owner) off('Only the creator can change this builder.');
+  if (a && a.creator !== owner) off('Only the creator can change this viber.');
   const risky = riskReasons(base, params).length > 0;
-  checkAction(b, { action: 'custom-strategy', builder: a ? a.wallet : 'none', extras: [settingsLine(name, base, params), ...(risky ? [CUSTOM_RISK_ACK] : [])], signer: owner });
+  checkAction(b, { action: 'custom-strategy', viber: a ? a.wallet : 'none', extras: [settingsLine(name, base, params), ...(risky ? [CUSTOM_RISK_ACK] : [])], signer: owner });
   const prev = db.customStrategies[owner];
   const c = { id: prev?.id || CUSTOM_PREFIX + owner.slice(0, 8).toLowerCase(), owner, name, base, params, prompt: String(b.prompt || '').slice(0, 600), updatedAt: Date.now() };
   db.customStrategies[owner] = c;
@@ -265,9 +265,9 @@ route('POST', '/api/custom-strategy/prompt', (_, b) => readPrompt(String(b.promp
 
 // features that are not switched on yet: clear answers instead of silent failures
 route('GET', '/api/market', () => ({ ...publicConfig().market, listings: [], sales: [], refunds: [] }));
-for (const p of ['market/list', 'market/delist', 'market/buy']) route('POST', `/api/agents/:id/${p}`, () => off('The builder market is not open yet.'));
-route('GET', '/api/agents/:id/market/quote', () => off('The builder market is not open yet.'));
-route('POST', '/api/agents/:id/nft/mint', () => off('Builder NFTs are not switched on yet.'));
+for (const p of ['market/list', 'market/delist', 'market/buy']) route('POST', `/api/agents/:id/${p}`, () => off('The viber market is not open yet.'));
+route('GET', '/api/agents/:id/market/quote', () => off('The viber market is not open yet.'));
+route('POST', '/api/agents/:id/nft/mint', () => off('Viber NFTs are not switched on yet.'));
 for (const p of ['x/connect', 'x/settings', 'x/disconnect', 'x/post']) route('POST', `/api/agents/:id/${p}`, () => off('X posting is not set up on this server yet.'));
 
 // ------------------------------------------------------------------ server
@@ -313,5 +313,5 @@ const server = createServer(async (req, res) => {
 });
 
 E.start();
-server.listen(PORT, () => console.log(`Crewfi ${MODE.toUpperCase()} mode on http://localhost:${PORT}`));
+server.listen(PORT, () => console.log(`VIBER ${MODE.toUpperCase()} mode on http://localhost:${PORT}`));
 for (const sig of ['SIGINT', 'SIGTERM']) process.on(sig, () => { flush(); process.exit(0); });

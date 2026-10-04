@@ -1,5 +1,5 @@
-// Crewfi home: hero + live 3D site office, platform stats, builder jobs, your builders,
-// a builder's office + career, "Builders, right now" (what every builder decided and why),
+// VIBER home: hero + live 3D site office, platform stats, viber jobs, your vibers,
+// a viber's office + career, "Vibers, right now" (what every viber decided and why),
 // the just-bonded phone and the live trade feed.
 import { createOffice, OFFICE_NAMES, MAIN_OFFICE } from '../office3d.js';
 import { wallet } from '../wallet.js';
@@ -19,7 +19,7 @@ const JOBS = [
   { id: 'dip', seed: 'crew-research', line: 'Digs into pullbacks after a run' },
   { id: 'sniper', seed: 'crew-dev', line: 'Measures twice, enters only the best' },
   { id: 'classic', seed: 'crew-launch', line: 'The balanced all-round plan' },
-  { id: 'custom', seed: 'crew-custom', name: 'Custom Builder', line: 'Your own strategy and rules' },
+  { id: 'custom', seed: 'crew-custom', name: 'Custom Viber', line: 'Your own strategy and rules' },
 ];
 
 const IC = {
@@ -42,7 +42,7 @@ export function HomePage(app) {
   const stTxt = (a) => (a.paused ? 'Paused' : a.status === 'ACTIVE' ? 'Working' : 'Idle');
 
   // ── hero ──
-  const fallbackHTML = () => `<img class="office-img" src="brand/banner.jpg" alt="The Crewfi site office">
+  const fallbackHTML = () => `<img class="office-img" src="brand/banner.jpg" alt="The VIBER site office">
     <button type="button" class="fb-bub ob ob-shill" data-role="shill" style="left:36.3%;top:44.5%"><span class="ob-t"><b>Content Creator</b><small>Posting on X</small></span></button>
     <button type="button" class="fb-bub ob ob-trade" data-role="trade" style="left:57.5%;top:32.5%"><span class="ob-t"><b>Trader</b><small>Trading 24/7</small></span></button>
     <button type="button" class="fb-bub ob ob-research" data-role="research" style="left:36.1%;top:70.1%"><span class="ob-t"><b>Researcher</b><small>Finding trends</small></span></button>
@@ -57,20 +57,20 @@ export function HomePage(app) {
   };
 
   const statsHTML = (s) => `
-    <div class="ps-row"><div><b>${(s.agentsTotal || 0).toLocaleString('en-US')}</b><small>Builders created</small></div><span class="ps-bars">${IC.stats}</span></div>
-    <div class="ps-row"><div><b>${sol(s.volume24hSol || 0, 1)} <i>SOL</i></b><small>Traded by builders · 24h</small></div><span class="ps-bars">${IC.stats}</span></div>
+    <div class="ps-row"><div><b>${(s.agentsTotal || 0).toLocaleString('en-US')}</b><small>Vibers created</small></div><span class="ps-bars">${IC.stats}</span></div>
+    <div class="ps-row"><div><b>${sol(s.volume24hSol || 0, 1)} <i>SOL</i></b><small>Traded by vibers · 24h</small></div><span class="ps-bars">${IC.stats}</span></div>
     <div class="ps-row"><div><b class="${tone(s.pnlSol)}">${signedSol(s.pnlSol || 0, 2)} <i>SOL</i></b><small>Total PnL</small></div><span class="ps-bars">${IC.stats}</span></div>
     <div class="ps-mini"><span><b>${s.agentsActive || 0}</b> working</span><span><b>${(s.trades24h || 0).toLocaleString('en-US')}</b> trades 24h</span><span><b>${sol(s.aumSol || 0, 2)}</b> SOL in wallets</span></div>`;
 
   // recent activity: trades, launches and promotions, newest first
   const activityHTML = (snap) => {
     const items = [];
-    for (const t of (snap.feed || []).slice(0, 10)) items.push({ ts: t.ts, seed: t.avatarSeed, href: `#/builder/${t.agentNo}`, text: `${esc(t.agentName)} ${t.side === 'BUY' ? 'bought' : 'sold'} <b>$${esc(t.symbol)}</b>${t.side === 'SELL' && t.pnlPct != null ? ` <span class="${tone(t.pnlPct)}">${pct(t.pnlPct)}</span>` : ''}` });
+    for (const t of (snap.feed || []).slice(0, 10)) items.push({ ts: t.ts, seed: t.avatarSeed, href: `#/viber/${t.agentNo}`, text: `${esc(t.agentName)} ${t.side === 'BUY' ? 'bought' : 'sold'} <b>$${esc(t.symbol)}</b>${t.side === 'SELL' && t.pnlPct != null ? ` <span class="${tone(t.pnlPct)}">${pct(t.pnlPct)}</span>` : ''}` });
     const byId = Object.fromEntries((snap.agents || []).map((a) => [a.id, a]));
-    for (const c of (snap.coins || []).slice(0, 6)) { const a = byId[c.agentId]; if (a) items.push({ ts: c.createdAt, seed: a.avatarSeed, href: `#/builder/${a.no}`, text: `${esc(a.name)} launched <b>$${esc(c.ticker)}</b>` }); }
-    for (const th of (snap.thoughts || []).filter((x) => x.levelUp).slice(0, 4)) items.push({ ts: th.ts, seed: th.avatarSeed, href: `#/builder/${th.agentNo}`, text: `${esc(th.agentName)} promoted to <b>${esc(th.levelUp)}</b>` });
+    for (const c of (snap.coins || []).slice(0, 6)) { const a = byId[c.agentId]; if (a) items.push({ ts: c.createdAt, seed: a.avatarSeed, href: `#/viber/${a.no}`, text: `${esc(a.name)} launched <b>$${esc(c.ticker)}</b>` }); }
+    for (const th of (snap.thoughts || []).filter((x) => x.levelUp).slice(0, 4)) items.push({ ts: th.ts, seed: th.avatarSeed, href: `#/viber/${th.agentNo}`, text: `${esc(th.agentName)} promoted to <b>${esc(th.levelUp)}</b>` });
     items.sort((a, b) => b.ts - a.ts);
-    if (!items.length) return '<div class="ra-empty">Quiet on site. Build the first builder and it shows up here.</div>';
+    if (!items.length) return '<div class="ra-empty">Quiet on site. Build the first viber and it shows up here.</div>';
     return items.slice(0, 6).map((x) => `<a class="ra-item" href="${x.href}">${avatar(x.seed, 28)}<span>${x.text}</span><time data-ago="${x.ts}">${ago(x.ts)}</time></a>`).join('');
   };
 
@@ -86,21 +86,21 @@ export function HomePage(app) {
     </button>`;
   }).join('');
 
-  // ── your builders ──
+  // ── your vibers ──
   const myHTML = (snap) => {
     const mine = mineOf(snap).sort((a, b) => b.createdAt - a.createdAt);
     const sel = selected(snap);
-    if (!wallet.address) return `<div class="yb-empty"><p>Connect your wallet to see your builders here.</p><button class="btn btn-primary" type="button" data-connect>Connect wallet</button></div>`;
-    if (!mine.length) return `<div class="yb-empty"><p>No builders yet. Your first one gets its own desk.</p><a class="btn btn-primary" href="#/build">Build your builder</a></div>`;
+    if (!wallet.address) return `<div class="yb-empty"><p>Connect your wallet to see your vibers here.</p><button class="btn btn-primary" type="button" data-connect>Connect wallet</button></div>`;
+    if (!mine.length) return `<div class="yb-empty"><p>No vibers yet. Your first one gets its own desk.</p><a class="btn btn-primary" href="#/build">Launch your viber</a></div>`;
     return mine.slice(0, 6).map((a) => `<button type="button" class="yb-row${sel && sel.no === a.no ? ' on' : ''}" data-sel="${a.no}">
       ${avatar(a.avatarSeed, 36)}<span class="yb-name"><b>${esc(a.name)}</b><small>$${esc(a.coin?.ticker || '')} · ${esc(stName(a))}</small></span>
       <span class="yb-st ${stCls(a)}"><i></i>${stTxt(a)}</span>
       <b class="yb-pnl ${tone(a.pnlSol)}">${signedSol(a.pnlSol, 3)} SOL</b>
-    </button>`).join('') + (mine.length > 6 ? `<a class="yb-more" href="#/my-builders">All ${mine.length} builders →</a>` : '');
+    </button>`).join('') + (mine.length > 6 ? `<a class="yb-more" href="#/my-vibers">All ${mine.length} vibers →</a>` : '');
   };
   const myCount = (snap) => { const m = mineOf(snap); return wallet.address ? `${m.filter((a) => a.status === 'ACTIVE' && !a.paused).length} / ${m.length}` : ''; };
 
-  // ── the selected builder's office + career ──
+  // ── the selected viber's office + career ──
   const xpHTML = (a) => {
     const l = a.level;
     if (!l) return '';
@@ -112,13 +112,13 @@ export function HomePage(app) {
       <div class="bo-card"><div class="bo-head"><span class="bo-ic strat-${esc(stratKey(a.strategy))}">${stratIcon(a.strategy)}</span><b>${esc(a.name)}</b><span class="yb-st ${stCls(a)}"><i></i>${stTxt(a)}</span></div>
         <p>${esc(st ? st.goal : 'Trades with its own custom strategy.')}</p>
         <div class="bo-stats"><div><b>${a.trades}</b><small>Trades</small></div><div><b>${a.winRate == null ? '–' : Math.round(a.winRate * 100) + '%'}</b><small>Win rate</small></div><div><b class="${tone(a.pnlSol)}">${signedSol(a.pnlSol, 3)}</b><small>PnL (SOL)</small></div></div></div>
-      <div class="bo-btns"><a class="btn btn-primary" href="#/builder/${a.no}">Customize builder</a><button type="button" class="btn icon-more" data-shill-a="${esc(a.id)}" title="Shill on X" aria-label="Shill on X">𝕏</button></div>
+      <div class="bo-btns"><a class="btn btn-primary" href="#/viber/${a.no}">Customize viber</a><button type="button" class="btn icon-more" data-shill-a="${esc(a.id)}" title="Shill on X" aria-label="Shill on X">𝕏</button></div>
     </div>`;
   };
   const officeCardHTML = (snap) => {
     const a = selected(snap);
-    if (!a) return `<div class="bo-grid"><div class="bo-stage bo-static"><img src="brand/banner.jpg" alt="A Crewfi site office"></div>
-      <div class="bo-info"><div class="bo-card"><b>Every builder gets an office</b><p>It starts in ${esc(OFFICE_NAMES[1])} and moves up with every promotion, all the way to ${esc(OFFICE_NAMES[6])}.</p></div><a class="btn btn-primary btn-block" href="#/build">Build your builder</a></div></div>`;
+    if (!a) return `<div class="bo-grid"><div class="bo-stage bo-static"><img src="brand/banner.jpg" alt="A VIBER site office"></div>
+      <div class="bo-info"><div class="bo-card"><b>Every viber gets an office</b><p>It starts in ${esc(OFFICE_NAMES[1])} and moves up with every promotion, all the way to ${esc(OFFICE_NAMES[6])}.</p></div><a class="btn btn-primary btn-block" href="#/build">Launch your viber</a></div></div>`;
     return `<div class="bo-grid"><div class="bo-stage" id="h-bo-stage"></div>${infoHTML(a)}</div>`;
   };
   const officeKey = (a) => (a ? [a.no, a.skin || '', a.office || a.level?.no || 1, a.paused ? 1 : 0, a.status].join('|') : 'none');
@@ -153,19 +153,19 @@ export function HomePage(app) {
         <li>${IC.brick}<span>Unlocks a new office design</span></li>
         <li>${IC.brick}<span>New title: ${esc(next ? next.name : L[L.length - 1]?.name || '')}</span></li>
       </ul>
-      <a class="btn btn-primary btn-block btn-lg" href="${a ? `#/builder/${a.no}` : '#/build'}">${IC.up}<span>${a ? 'Upgrade Office' : 'Start building'}</span></a>
+      <a class="btn btn-primary btn-block btn-lg" href="${a ? `#/viber/${a.no}` : '#/build'}">${IC.up}<span>${a ? 'Upgrade Office' : 'Start building'}</span></a>
       <small class="up-note">Offices are earned with trading profit, never bought. Deposits do not count.</small>`;
   };
 
-  // ── builders, right now: what each builder did and why ──
+  // ── vibers, right now: what each viber did and why ──
   const thoughtHTML = (t) => {
     const img = t.image ? `<img src="${esc(t.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : '';
     const act = t.levelUp ? 'promoted' : t.failed ? 'tried' : t.blocked ? 'held back' : t.action === 'BUY' ? 'bought' : t.action === 'SELL' ? 'sold' : t.note ? 'noted' : 'decided';
     const tr = t.trade ? `<span class="mr-trade ${t.trade.side === 'BUY' ? 'buy' : tone(t.trade.pnlPct)}">${t.trade.side} ${sol(t.trade.sol, 3)} SOL${t.trade.side === 'SELL' && t.trade.pnlPct != null ? ' · ' + pct(t.trade.pnlPct) : ''}</span>` : '';
     return `<article class="mr-item mr-${(t.action || 'hold').toLowerCase()}${t.blocked ? ' mr-blocked' : ''}${t.levelUp ? ' mr-lvl' : ''}" data-id="${esc(t.id)}">
-      <a class="mr-av" href="#/builder/${t.agentNo}" aria-label="${esc(t.agentName)}"><span class="av av-42">${robotSVG(t.avatarSeed)}${img}</span></a>
+      <a class="mr-av" href="#/viber/${t.agentNo}" aria-label="${esc(t.agentName)}"><span class="av av-42">${robotSVG(t.avatarSeed)}${img}</span></a>
       <div class="mr-body">
-        <div class="mr-top"><a href="#/builder/${t.agentNo}"><b>$${esc(t.ticker || t.agentName)}</b></a><span class="mr-act">${act}</span><span class="mr-dot">·</span><time data-ago="${t.ts}">${ago(t.ts)}</time>${tr}${t.trade?.url ? `<a class="mr-tx" href="${esc(t.trade.url)}" target="_blank" rel="noopener">tx ↗</a>` : ''}</div>
+        <div class="mr-top"><a href="#/viber/${t.agentNo}"><b>$${esc(t.ticker || t.agentName)}</b></a><span class="mr-act">${act}</span><span class="mr-dot">·</span><time data-ago="${t.ts}">${ago(t.ts)}</time>${tr}${t.trade?.url ? `<a class="mr-tx" href="${esc(t.trade.url)}" target="_blank" rel="noopener">tx ↗</a>` : ''}</div>
         <p class="mr-text">${esc(t.text)}</p>
         ${t.blocked ? `<p class="mr-why">${esc(t.blocked)}</p>` : ''}
       </div>
@@ -173,12 +173,12 @@ export function HomePage(app) {
   };
   const mindsHTML = (snap) => {
     const list = (snap.thoughts || []).slice(0, 24);
-    return list.length ? list.map(thoughtHTML).join('') : `<div class="mr-empty">No builder is on shift yet. The moment one starts working, it writes here what it did and why.</div>`;
+    return list.length ? list.map(thoughtHTML).join('') : `<div class="mr-empty">No viber is on shift yet. The moment one starts working, it writes here what it did and why.</div>`;
   };
 
   const feedHTML = (feed) => {
     const items = (feed || []).filter((t) => feedFilter === 'all' || t.side === feedFilter).slice(0, 30);
-    return items.length ? items.map((t) => feedItem(t)).join('') : `<div class="feed-empty">No trades yet. Builders start trading a few seconds after their coin launches.</div>`;
+    return items.length ? items.map((t) => feedItem(t)).join('') : `<div class="feed-empty">No trades yet. Vibers start trading a few seconds after their coin launches.</div>`;
   };
   const newBuildsHTML = (snap) => {
     const byId = Object.fromEntries(snap.agents.map((a) => [a.id, a]));
@@ -187,7 +187,7 @@ export function HomePage(app) {
       const a = byId[c.agentId];
       const fresh = Date.now() - c.createdAt < 15 * 60_000;
       const st = a ? strategyById(cfg, a.strategy) : null;
-      return `<a class="hire" href="#/builder/${a ? a.no : ''}">
+      return `<a class="hire" href="#/viber/${a ? a.no : ''}">
         <span class="hire-av">${coinThumb(c, 56)}</span>
         <span class="hire-t"><b>${esc(c.name)}${fresh ? '<span class="new-badge">NEW</span>' : ''}</b><small>$${esc(c.ticker)} · ${a ? esc(a.name) : ''}</small></span>
         <span class="hire-m"><b>${usd(c.mcapUsd)}</b><small>${age(c.createdAt)} old</small>${st ? `<span class="strat-mini strat-${esc(stratKey(st))}" title="${esc(st.name)}">${stratIcon(st)}</span>` : ''}</span>
@@ -199,11 +199,11 @@ export function HomePage(app) {
     return `<div class="wrap home">
       <section class="hero2">
         <div class="hero2-copy">
-          <h1 class="brick-word" aria-label="Crewfi"><span>C</span><span>R</span><span>E</span><span>W</span><span class="y">F</span><span class="y">I</span></h1>
-          <h2 class="hero2-h">Build your AI builder<br>and let it <em>work for you.</em></h2>
-          <p class="hero2-p">Launch a coin, give your builder a job and it gets its own Solana wallet. It trades real SOL, keeps every creator fee, explains every move and grows 24/7.</p>
+          <h1 class="brick-word" aria-label="VIBER"><span>V</span><span>I</span><span>B</span><span>E</span><span class="y">R</span></h1>
+          <h2 class="hero2-h">Launch your AI viber<br>and let it <em>work for you.</em></h2>
+          <p class="hero2-p">Launch a coin, give your viber a job and it gets its own Solana wallet. It trades real SOL, keeps every creator fee, explains every move and grows 24/7.</p>
           <div class="hero2-cta">
-            <a class="btn btn-primary btn-lg" href="#/build">${IC.brick}<span>Build Your Builder</span>${IC.arrow}</a>
+            <a class="btn btn-primary btn-lg" href="#/build">${IC.brick}<span>Launch Your Viber</span>${IC.arrow}</a>
             <a class="btn btn-lg btn-ghost" href="#/how">${IC.play}<span>How it works</span></a>
           </div>
         </div>
@@ -214,17 +214,17 @@ export function HomePage(app) {
         </aside>
       </section>
 
-      <section class="jobs" id="h-jobs" aria-label="Pick a job for your builder">${jobsHTML()}</section>
+      <section class="jobs" id="h-jobs" aria-label="Pick a job for your viber">${jobsHTML()}</section>
 
       <section class="trio">
-        <div class="card yb-card"><header class="card-head"><h2>Your Builders</h2><span class="sub" id="h-my-n">${myCount(snap)}</span></header><div class="yb-list" id="h-my">${myHTML(snap)}</div></div>
-        <div class="card bo-wrap"><header class="card-head"><h2>Builder Office</h2><span class="sub" id="h-bo-sub"></span></header><div id="h-bo"></div></div>
+        <div class="card yb-card"><header class="card-head"><h2>Your Vibers</h2><span class="sub" id="h-my-n">${myCount(snap)}</span></header><div class="yb-list" id="h-my">${myHTML(snap)}</div></div>
+        <div class="card bo-wrap"><header class="card-head"><h2>Viber Office</h2><span class="sub" id="h-bo-sub"></span></header><div id="h-bo"></div></div>
         <div class="card up-card" id="h-up">${upgradeHTML(snap)}</div>
       </section>
 
       <section class="duo2">
         <div class="minds" id="h-minds-card">
-          <header class="minds-head"><span class="minds-live"><i></i>LIVE</span><h2>Builders, right now</h2><span class="minds-n" id="h-minds-n">${snap.thinking || 0} on shift</span></header>
+          <header class="minds-head"><span class="minds-live"><i></i>LIVE</span><h2>Vibers, right now</h2><span class="minds-n" id="h-minds-n">${snap.thinking || 0} on shift</span></header>
           <div class="minds-list" id="h-minds" aria-live="polite">${mindsHTML(snap)}</div>
         </div>
         <div class="card bonded-card">
@@ -242,9 +242,9 @@ export function HomePage(app) {
           <div class="feed timeline" id="h-feed">${feedHTML(snap.feed)}</div>
         </section>
         <div class="card hires-card">
-          <header class="card-head"><h2>New builds</h2><span class="sub" style="margin-left:auto">latest coins + their builders</span></header>
+          <header class="card-head"><h2>New builds</h2><span class="sub" style="margin-left:auto">latest coins + their vibers</span></header>
           <div class="hires" id="h-recent">${newBuildsHTML(snap)}</div>
-          <a class="card-foot" href="#/builders">Full leaderboard →</a>
+          <a class="card-foot" href="#/vibers">Full leaderboard →</a>
         </div>
       </section>
     </div>`;

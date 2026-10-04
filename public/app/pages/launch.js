@@ -1,6 +1,6 @@
-// Build your builder: appearance (base / skin / hat / outfit / accessories), coin details,
-// starting capital and strategy on the left; a live 3D preview, the builder summary and
-// what happens next on the right. One SOL transfer launches the coin + builder.
+// Launch your viber: appearance (base / skin / hat / outfit / accessories), coin details,
+// starting capital and strategy on the left; a live 3D preview, the viber summary and
+// what happens next on the right. One SOL transfer launches the coin + viber.
 import { robotSVG, robotPNG, robotTraits, robotParts } from '../robot.js';
 import { esc, sol, pct, short, STRAT_ICONS, strategyById, strategyRules, stratIcon, stratKey, riskTag, riskWarning } from '../ui.js';
 import { wallet, sendSol } from '../wallet.js';
@@ -85,14 +85,14 @@ export function LaunchPage(app) {
   const card = (on, data, img, title, sub) => `<button type="button" class="bb-pick${on ? ' on' : ''}" ${data}><span class="bb-pick-img">${img}</span><b>${esc(title)}</b><small>${esc(sub)}</small></button>`;
   const cardsHTML = () => {
     if (tab === 'base') return pages[pageNo].map((s, i) => { const t = robotTraits(s); return card(s === f.botSeed && !f.skin, `data-seed="${s}"`, robotSVG(s, { stand: true }), i === 2 && pageNo === 0 ? 'Default' : t.outfit, t.hat); }).join('');
-    if (tab === 'skin') return [card(!f.skin, 'data-skin=""', robotSVG(f.botSeed, { stand: true }), 'Your builder', 'Common'), ...skins.map((x) => card(f.skin === x.id, `data-skin="${esc(x.id)}"`, `<img src="brand/skins/${esc(x.id)}-stand.png" alt="">`, x.name, RAR[x.rarity || 'common']))].join('');
+    if (tab === 'skin') return [card(!f.skin, 'data-skin=""', robotSVG(f.botSeed, { stand: true }), 'Your viber', 'Common'), ...skins.map((x) => card(f.skin === x.id, `data-skin="${esc(x.id)}"`, `<img src="brand/skins/${esc(x.id)}-stand.png" alt="">`, x.name, RAR[x.rarity || 'common']))].join('');
     if (tab === 'hat') return [card(!want.hat, 'data-hat=""', robotSVG(f.botSeed, { stand: true }), 'Any hat', 'Random'), ...CAT.hats.map(([h, s]) => card(want.hat === h, `data-hat="${esc(h)}"`, robotSVG(s, { stand: true }), h, 'Hat'))].join('');
     if (tab === 'outfit') return [card(!want.outfit, 'data-outfit=""', robotSVG(f.botSeed, { stand: true }), 'Any outfit', 'Random'), ...CAT.outfits.map(([o, s]) => card(want.outfit === o, `data-outfit="${esc(o)}"`, robotSVG(s, { stand: true }), o, 'Outfit'))].join('');
     return [card(!want.gear, 'data-gear=""', robotSVG(f.botSeed, { stand: true }), 'Any', 'Random'), ...CAT.gear.map(([k, label, s]) => card(want.gear === k, `data-gear="${k}"`, robotSVG(s, { stand: true }), label, 'Accessory'))].join('');
   };
   const appearanceNote = () => tab === 'skin'
-    ? (f.skin ? `<b>${esc(skinOf(f.skin)?.name || '')}</b> is a paid skin (${skinOf(f.skin)?.priceSol} SOL in CREW). You buy it for your builder right after launch, from its page or the Skins page. Your coin logo stays your builder.` : 'Paid skins are bought after launch, from the builder page or the Skins page.')
-    : (() => { const t = robotTraits(f.botSeed); return `<b>${esc(t.outfit)}</b> · ${esc(t.hair)} · ${esc(t.gear || 'no gear')}. It becomes your builder and, unless you upload a logo, your coin logo.`; })();
+    ? (f.skin ? `<b>${esc(skinOf(f.skin)?.name || '')}</b> is a paid skin (${skinOf(f.skin)?.priceSol} SOL in VIBE). You buy it for your viber right after launch, from its page or the Skins page. Your coin logo stays your viber.` : 'Paid skins are bought after launch, from the viber page or the Skins page.')
+    : (() => { const t = robotTraits(f.botSeed); return `<b>${esc(t.outfit)}</b> · ${esc(t.hair)} · ${esc(t.gear || 'no gear')}. It becomes your viber and, unless you upload a logo, your coin logo.`; })();
 
   // ── 4. strategy ──
   const stratList = () => (cfg.strategies || []).map((st) => `<button type="button" class="bb-sitem strat-${esc(stratKey(st))}${st.id === f.strategy ? ' on' : ''}" data-s="${esc(st.id)}"><span class="so-ic">${stratIcon(st)}</span><span><b>${esc(st.name.replace(' (New Pairs)', ''))}${st.risk === 'extreme' ? ' (New Pairs)' : ''}</b><small>${esc(st.risk === 'extreme' ? 'High risk · early trades' : st.tagline)}</small></span></button>`).join('')
@@ -115,7 +115,7 @@ export function LaunchPage(app) {
     const st = curStrat();
     const r = rarity();
     const row = (ic, k, v) => `<div class="bb-row"><span class="bb-ri">${ic}</span><span class="bb-rk">${k}</span><span class="bb-rv">${v}</span></div>`;
-    return `<div class="bb-who"><span class="av av-56">${f.skin ? `<img src="brand/skins/${esc(f.skin)}-bust.png" alt="">` : robotSVG(f.botSeed)}</span><b>${esc(f.agentName || 'Your builder')}</b><span class="bb-chip bb-${r}">${RAR[r]}</span><span class="bb-chip bb-lv">Level 1</span></div>
+    return `<div class="bb-who"><span class="av av-56">${f.skin ? `<img src="brand/skins/${esc(f.skin)}-bust.png" alt="">` : robotSVG(f.botSeed)}</span><b>${esc(f.agentName || 'Your viber')}</b><span class="bb-chip bb-${r}">${RAR[r]}</span><span class="bb-chip bb-lv">Level 1</span></div>
       ${row(IC.brick, 'Coin name', esc(f.name || '–'))}
       ${row(IC.brick, 'Ticker', f.ticker ? '$' + esc(f.ticker) : '–')}
       ${row(IC.brick, 'Description', esc(f.description ? (f.description.length > 40 ? f.description.slice(0, 40) + '…' : f.description) : '–'))}
@@ -130,8 +130,8 @@ export function LaunchPage(app) {
     return `<div class="wrap bb">
       <section class="pg-hero bb-hero">
         <div class="pg-hero-copy">
-          <h1 class="pg-big">Build your<br><em>builder</em></h1>
-          <p class="pg-lede">Give it a coin, a look and a job. Your coin launches on pump.fun and your builder gets its own Solana wallet. It trades with the strategy you pick, 24/7 and in public.</p>
+          <h1 class="pg-big">Build your<br><em>viber</em></h1>
+          <p class="pg-lede">Give it a coin, a look and a job. Your coin launches on pump.fun and your viber gets its own Solana wallet. It trades with the strategy you pick, 24/7 and in public.</p>
         </div>
         <div class="pg-hero-art"><img src="brand/pages/launch-hero.jpg" alt="Create, customize, launch"></div>
       </section>
@@ -144,8 +144,8 @@ export function LaunchPage(app) {
             <div class="bb-carousel"><button type="button" class="bb-arrow" id="bb-prev" aria-label="Previous">${IC.prev}</button><div class="bb-cards" id="bb-cards">${cardsHTML()}</div><button type="button" class="bb-arrow" id="bb-next" aria-label="More">${IC.next}</button></div>
             <p class="bb-note" id="bb-note">${appearanceNote()}</p>
             <div class="row2">
-              ${field('l-agent', 'Builder name', `<input class="input" id="l-agent" maxlength="24" placeholder="e.g. Builder OG" autocomplete="off">`)}
-              <div class="field"><label>Coin logo</label><div class="bb-logo-row"><span class="av av-42" id="l-logo">${logoHTML()}</span><span class="hint">Logo: <span id="l-logo-src">your builder</span> <button type="button" class="copy" id="l-logo-reset" hidden>Use my builder</button></span></div></div>
+              ${field('l-agent', 'Viber name', `<input class="input" id="l-agent" maxlength="24" placeholder="e.g. Viber OG" autocomplete="off">`)}
+              <div class="field"><label>Coin logo</label><div class="bb-logo-row"><span class="av av-42" id="l-logo">${logoHTML()}</span><span class="hint">Logo: <span id="l-logo-src">your viber</span> <button type="button" class="copy" id="l-logo-reset" hidden>Use my viber</button></span></div></div>
             </div>
           </section>
 
@@ -161,7 +161,7 @@ export function LaunchPage(app) {
               <div class="field"><label>Socials (optional)</label>
                 <div class="input-affix"><span class="pre">${IC.x}</span><input class="input" id="l-tw" maxlength="120" placeholder="https://x.com/..." autocomplete="off"></div>
                 <div class="bb-row2 tight">
-                  ${cfg.siteUrl ? `<div class="input-affix"><span class="pre">${IC.web}</span><div class="input locked" id="l-web" title="Set automatically: links your coin to its builder here">${esc(cfg.siteUrl.replace(/^https?:\/\//, ''))}/builder/…</div></div>` : `<div class="input-affix"><span class="pre">${IC.web}</span><input class="input" id="l-web" maxlength="160" placeholder="https://..." autocomplete="off"></div>`}
+                  ${cfg.siteUrl ? `<div class="input-affix"><span class="pre">${IC.web}</span><div class="input locked" id="l-web" title="Set automatically: links your coin to its viber here">${esc(cfg.siteUrl.replace(/^https?:\/\//, ''))}/viber/…</div></div>` : `<div class="input-affix"><span class="pre">${IC.web}</span><input class="input" id="l-web" maxlength="160" placeholder="https://..." autocomplete="off"></div>`}
                   <div class="input-affix"><span class="pre">${IC.tg}</span><input class="input" id="l-tg" maxlength="120" placeholder="https://t.me/..." autocomplete="off"></div>
                 </div>
               </div>
@@ -173,7 +173,7 @@ export function LaunchPage(app) {
             <div class="bb-caps" id="l-presets">${cfg.launch.capitalPresets.map((v) => `<button type="button" data-v="${v}" class="${v === Number(f.capital) ? 'on' : ''}"><span class="bb-solic">${IC.sol}</span>${v} SOL</button>`).join('')}
               <div class="bb-capin input-affix suf"><input class="input" id="l-cap" type="number" step="0.01" min="${cfg.launch.minStartingCapital}" ${cfg.launch.maxStartingCapital ? `max="${cfg.launch.maxStartingCapital}"` : ''} value="${f.capital}" inputmode="decimal" aria-label="Custom amount"><span class="suf-t">SOL</span></div></div>
             <div class="err" id="l-cap-err" hidden></div>
-            <p class="hint">This will be sent from your wallet to the builder's wallet to launch the coin and start trading (+ ${cfg.launch.launchReserveSol} SOL launch reserve). Minimum ${cfg.launch.minStartingCapital} SOL. <b>Real SOL.</b></p>
+            <p class="hint">This will be sent from your wallet to the viber's wallet to launch the coin and start trading (+ ${cfg.launch.launchReserveSol} SOL launch reserve). Minimum ${cfg.launch.minStartingCapital} SOL. <b>Real SOL.</b></p>
           </section>
 
           <section class="card bb-sec">
@@ -184,7 +184,7 @@ export function LaunchPage(app) {
             </div>
           </section>
 
-          <button class="btn btn-primary btn-lg btn-block bb-go" type="submit" id="l-submit" ${off ? 'disabled' : ''}>${IC.rocket}<span>Build it – Launch coin + builder</span>${IC.arrow}</button>
+          <button class="btn btn-primary btn-lg btn-block bb-go" type="submit" id="l-submit" ${off ? 'disabled' : ''}>${IC.rocket}<span>Build it – Launch coin + viber</span>${IC.arrow}</button>
           <p class="note" style="text-align:center" id="l-from">${fromHTML()}</p>
         </form>
 
@@ -195,19 +195,19 @@ export function LaunchPage(app) {
             <div class="bb-states" id="bb-states">${[['idle', 'Idle'], ['work', 'Trading'], ['party', 'Celebration']].map(([k, t]) => `<button type="button" data-st="${k}" class="${pvState === k ? 'on' : ''}">${t}</button>`).join('')}</div>
           </section>
           <section class="card bb-sum">
-            <header class="card-head"><h2>Builder summary</h2><button type="button" class="btn btn-sm" id="bb-edit">${IC.edit}<span>Edit</span></button></header>
+            <header class="card-head"><h2>Viber summary</h2><button type="button" class="btn btn-sm" id="bb-edit">${IC.edit}<span>Edit</span></button></header>
             <div id="l-preview">${summaryHTML()}</div>
           </section>
           <section class="card bb-next">
             <header class="card-head"><h2>What happens next?</h2></header>
             <ol>
-              <li><span class="bb-num">1</span><span class="bb-nic">${IC.wallet}</span><span><b>You send the starting capital</b><small>We create the builder's wallet, you send ${sol(total(), 4)} SOL to it.</small></span></li>
-              <li><span class="bb-num">2</span><span class="bb-nic">${IC.rocket}</span><span><b>Builder launches the coin</b><small>Your coin goes live on pump.fun, the builder is its creator.</small></span></li>
-              <li><span class="bb-num">3</span><span class="bb-nic">${IC.chart}</span><span><b>Builder starts trading</b><small>Follows your chosen strategy 24/7 and explains every move.</small></span></li>
+              <li><span class="bb-num">1</span><span class="bb-nic">${IC.wallet}</span><span><b>You send the starting capital</b><small>We create the viber's wallet, you send ${sol(total(), 4)} SOL to it.</small></span></li>
+              <li><span class="bb-num">2</span><span class="bb-nic">${IC.rocket}</span><span><b>Viber launches the coin</b><small>Your coin goes live on pump.fun, the viber is its creator.</small></span></li>
+              <li><span class="bb-num">3</span><span class="bb-nic">${IC.chart}</span><span><b>Viber starts trading</b><small>Follows your chosen strategy 24/7 and explains every move.</small></span></li>
               <li><span class="bb-num">4</span><span class="bb-nic">${IC.eye}</span><span><b>You can watch everything</b><small>All trades, PnL and activity are public on-chain. Pause or withdraw any time.</small></span></li>
             </ol>
           </section>
-          <section class="bb-risk"><span>${IC.shield}</span><div><b>Risk: high volatility</b><p>Meme coins are extremely volatile. The builder can lose some or all of its SOL. Only send what you can afford to lose.</p></div></section>
+          <section class="bb-risk"><span>${IC.shield}</span><div><b>Risk: high volatility</b><p>Meme coins are extremely volatile. The viber can lose some or all of its SOL. Only send what you can afford to lose.</p></div></section>
         </aside>
       </div>
     </div>`;
@@ -220,7 +220,7 @@ export function LaunchPage(app) {
   const q = (s) => el.querySelector(s);
   const refresh = () => { q('#l-preview').innerHTML = summaryHTML(); };
 
-  // live 3D preview: the chosen builder (or skin) alone at its desk
+  // live 3D preview: the chosen viber (or skin) alone at its desk
   function mountPreview() {
     const key = f.skin ? 'skin:' + f.skin : f.botSeed;
     const stage = q('#bb-stage');
@@ -233,14 +233,14 @@ export function LaunchPage(app) {
       applyState();
     } catch { stage.innerHTML = `<div class="bb-flat">${f.skin ? `<img src="brand/skins/${esc(f.skin)}-stand.png" alt="">` : robotSVG(f.botSeed, { stand: true })}</div>`; }
   }
-  const stateObj = () => ({ state: pvState === 'idle' ? 'idle' : 'work', title: f.agentName || 'Your builder', sub: pvState === 'idle' ? 'On-chain, 24/7' : pvState === 'party' ? 'First profit!' : (curStrat()?.name || '') + ' · trading' });
+  const stateObj = () => ({ state: pvState === 'idle' ? 'idle' : 'work', title: f.agentName || 'Your viber', sub: pvState === 'idle' ? 'On-chain, 24/7' : pvState === 'party' ? 'First profit!' : (curStrat()?.name || '') + ' · trading' });
   function applyState() { preview?.setAgent?.(stateObj()); if (pvState === 'party') preview?.celebrate?.('launch'); }
 
   const paintCards = () => { q('#bb-cards').innerHTML = cardsHTML(); q('#bb-note').innerHTML = appearanceNote(); };
   const paintBot = () => {
     paintCards();
     q('#l-logo').innerHTML = logoHTML();
-    q('#l-logo-src').textContent = f.image ? 'your upload' : 'your builder';
+    q('#l-logo-src').textContent = f.image ? 'your upload' : 'your viber';
     q('#l-logo-reset').hidden = !f.image;
     refresh(); mountPreview();
   };
@@ -252,7 +252,7 @@ export function LaunchPage(app) {
     const need = (id, cond, msg) => { setErr(id, cond ? '' : msg); if (!cond) ok = false; };
     need('l-name', f.name.trim().length >= 1, 'Give your coin a name.');
     need('l-ticker', /^[A-Z0-9]{2,10}$/.test(f.ticker), 'Ticker must be 2–10 letters or numbers.');
-    need('l-agent', f.agentName.trim().length >= 1, 'Give your builder a name.');
+    need('l-agent', f.agentName.trim().length >= 1, 'Give your viber a name.');
     const c = Number(f.capital);
     const max = cfg.launch.maxStartingCapital;
     need('l-cap', c >= cfg.launch.minStartingCapital && (!max || c <= max), `Enter at least ${cfg.launch.minStartingCapital} SOL${max ? ` and at most ${max} SOL` : ''}.`);
@@ -287,7 +287,7 @@ export function LaunchPage(app) {
     e.preventDefault();
     if (!validate()) { el.querySelector('.err:not([hidden]), .risk-ok.need')?.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
     const capital = Number(f.capital);
-    const steps = ['Connect wallet', 'Create builder + builder wallet', `Send ${sol(total(), 4)} SOL to the builder`, 'Confirm the transfer on-chain', 'Upload coin image + metadata', 'Create the coin on pump.fun', 'Builder is live'];
+    const steps = ['Connect wallet', 'Create viber + viber wallet', `Send ${sol(total(), 4)} SOL to the viber`, 'Confirm the transfer on-chain', 'Upload coin image + metadata', 'Create the coin on pump.fun', 'Viber is live'];
     const prog = app.progressModal('Launching $' + f.ticker, steps);
     let prep = null;
     try {
@@ -310,8 +310,8 @@ export function LaunchPage(app) {
 
       prog.step(2);
       const paper = cfg.mode === 'paper';
-      if (paper) prog.note('<p><b>Paper mode:</b> no SOL leaves your wallet. The builder starts with simulated SOL.</p>');
-      else prog.note(`<p>Your builder's wallet: <code class="mono">${esc(prep.wallet)}</code></p>
+      if (paper) prog.note('<p><b>Paper mode:</b> no SOL leaves your wallet. The viber starts with simulated SOL.</p>');
+      else prog.note(`<p>Your viber's wallet: <code class="mono">${esc(prep.wallet)}</code></p>
         <p>Send <b>${sol(prep.requiredSol, 4)} SOL</b>: ${sol(capital, 3)} SOL starting capital + ${sol(cfg.launch.launchReserveSol, 3)} SOL launch reserve.</p>`);
       if (!paper) await prog.ask(`Send ${sol(prep.requiredSol, 4)} SOL with ${wallet.name || 'your wallet'}`);
       let signature = 'paper';
@@ -334,22 +334,22 @@ export function LaunchPage(app) {
         if (st === 'AWAITING_FUNDS') { prog.step(3); if (Date.now() - start > 30000) r = await app.api.confirmFunding(prep.agentId, signature).catch(() => r); }
         else if (st === 'LAUNCHING') prog.step(d.coin?.uri ? 5 : 4);
         else if (st === 'ACTIVE') break;
-        else if (st === 'LAUNCH_FAILED') throw new Error('Coin creation failed: ' + (d.error || 'unknown error') + '. Your SOL is safe in the builder wallet: open the builder page to retry or withdraw.');
+        else if (st === 'LAUNCH_FAILED') throw new Error('Coin creation failed: ' + (d.error || 'unknown error') + '. Your SOL is safe in the viber wallet: open the viber page to retry or withdraw.');
         await sleep(2500);
       }
       if (d?.rawStatus !== 'ACTIVE') {
-        prog.failCurrent('This is taking longer than usual. The server keeps trying; check the builder page in a minute.');
-        prog.link('Open builder page', () => app.navigate('#/builder/' + (d?.no || prep.agentId)));
+        prog.failCurrent('This is taking longer than usual. The server keeps trying; check the viber page in a minute.');
+        prog.link('Open viber page', () => app.navigate('#/viber/' + (d?.no || prep.agentId)));
         return;
       }
       prog.step(steps.length);
       if (paper) prog.note('<p>Paper coin: simulated, not on pump.fun.</p>');
       else prog.note(`<p>Coin: <a class="ext" href="https://pump.fun/coin/${esc(d.coin.mint)}" target="_blank" rel="noopener">view on pump.fun ↗</a> · <a class="ext" href="https://solscan.io/tx/${esc(d.coin.launchSig)}" target="_blank" rel="noopener">launch tx ↗</a></p>`);
-      if (f.skin) prog.note(`<p>Want the <b>${esc(skinOf(f.skin)?.name || '')}</b> look? Open the builder page and tap <b>Skins</b>.</p>`);
-      prog.done(`Builder ${String(d.no).padStart(3, '0')} is live`, () => app.navigate('#/builder/' + d.no));
+      if (f.skin) prog.note(`<p>Want the <b>${esc(skinOf(f.skin)?.name || '')}</b> look? Open the viber page and tap <b>Skins</b>.</p>`);
+      prog.done(`Viber ${String(d.no).padStart(3, '0')} is live`, () => app.navigate('#/viber/' + d.no));
     } catch (err) {
       prog.failCurrent(err.message || 'Launch failed.');
-      if (prep) prog.link('Open builder page', () => app.navigate('#/builder/' + prep.agentId));
+      if (prep) prog.link('Open viber page', () => app.navigate('#/viber/' + prep.agentId));
     }
   }
 

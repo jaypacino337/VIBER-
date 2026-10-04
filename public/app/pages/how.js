@@ -1,4 +1,4 @@
-// How it works: hero, the six launch steps, what a builder does, the career ladder,
+// How it works: hero, the six launch steps, what a viber does, the career ladder,
 // strategies, Demolition + custom strategy, and the fine print (rewards, filters, rules, risk).
 import { pct, usd, sol, esc, STRAT_ICONS, strategyRules, riskWarning } from '../ui.js';
 import { OFFICE_NAMES } from '../office3d.js';
@@ -16,7 +16,7 @@ function safetyRules(f) {
   if (f.maxDevPct != null) r.push(['Dev', `holds at most ${P(f.maxDevPct)} and has not sold anything`]);
   if (f.maxEarlyBuyers != null) r.push(['Bundles', `max ${f.maxEarlyBuyers} buyers in the first 3 s, max ${P(f.maxUnseenPct || 0)} bought in the launch block`]);
   if (f.maxTopHolderPct != null) r.push(['Whales', `top holder ≤ ${P(f.maxTopHolderPct)}, top 10 ≤ ${P(f.maxTop10Pct)}`]);
-  if (f.maxAgentsPerCoin != null) r.push(['Crowding', `max ${f.maxAgentsPerCoin} Crewfi builders in the same coin`]);
+  if (f.maxAgentsPerCoin != null) r.push(['Crowding', `max ${f.maxAgentsPerCoin} VIBER vibers in the same coin`]);
   r.push(['Early exit', 'sells at once if the dev sells, sellers take over or trading stops']);
   return r;
 }
@@ -56,10 +56,10 @@ export function HowPage(app) {
   const steps = [
     ['wallet', 'Connect wallet', 'Connect Phantom, Solflare or MetaMask (Solana).'],
     ['coin', 'Fill in your coin', 'Add name, ticker, description, socials and starting capital.'],
-    ['hat', 'Builder wallet', 'We create a new Solana wallet for your builder.'],
+    ['hat', 'Viber wallet', 'We create a new Solana wallet for your viber.'],
     ['send', 'Send SOL', `Transfer starting capital + ${c.launch.launchReserveSol} SOL to cover coin creation.`],
-    ['rocket', 'Coin launches', 'Your coin goes live on pump.fun with your builder as its creator.'],
-    ['bars', 'Builder trades', 'It buys and sells with real SOL, following your strategy.'],
+    ['rocket', 'Coin launches', 'Your coin goes live on pump.fun with your viber as its creator.'],
+    ['bars', 'Viber trades', 'It buys and sells with real SOL, following your strategy.'],
   ];
   const does = [
     ['bars', 'Trades automatically', 'Buys and sells real SOL using your chosen strategy.'],
@@ -80,35 +80,35 @@ export function HowPage(app) {
     <section class="pg-hero">
       <div class="pg-hero-copy">
         <h1 class="pg-big">How it<br><em>works</em></h1>
-        <p class="pg-lede">Launch a coin, give your builder a job and it gets its own Solana wallet. It trades real SOL, keeps every creator fee, explains every move and works for you 24/7.</p>
-        <div class="pg-cta"><a class="btn btn-primary btn-lg" href="#/build"><span>Launch coin + builder</span>${IC.arrow}</a><a class="btn btn-lg btn-ghost" href="#/"><span class="ic-play">${IC.play}</span><span>See it live</span></a></div>
+        <p class="pg-lede">Launch a coin, give your viber a job and it gets its own Solana wallet. It trades real SOL, keeps every creator fee, explains every move and works for you 24/7.</p>
+        <div class="pg-cta"><a class="btn btn-primary btn-lg" href="#/build"><span>Launch coin + viber</span>${IC.arrow}</a><a class="btn btn-lg btn-ghost" href="#/"><span class="ic-play">${IC.play}</span><span>See it live</span></a></div>
       </div>
-      <div class="pg-hero-art"><img src="brand/pages/how-hero.jpg" alt="A builder at work: launch coin, shill on X, auto trade, earn fees, send to your wallet"></div>
+      <div class="pg-hero-art"><img src="brand/pages/how-hero.jpg" alt="A viber at work: launch coin, shill on X, auto trade, earn fees, send to your wallet"></div>
     </section>
 
     <section class="card hw-steps">
-      <div class="hw-side"><h2>From launch<br>to live trades</h2><p>Get your builder up and running in a few simple steps.</p></div>
+      <div class="hw-side"><h2>From launch<br>to live trades</h2><p>Get your viber up and running in a few simple steps.</p></div>
       <span class="hw-real"><i></i>${c.mode === 'paper' ? 'Paper mode: simulated SOL' : 'Real SOL on Solana mainnet'}</span>
       <ol class="hw-steplist">${steps.map(([ic, t, d], i) => `<li><span class="hw-n">${String(i + 1).padStart(2, '0')}</span><span class="hw-ic">${IC[ic]}</span><b>${t}</b><small>${esc(d)}</small></li>`).join('')}</ol>
     </section>
 
     <section class="hw-does">
-      <div class="hw-side"><h2>What your<br>builder does</h2><p>Once launched, your builder takes care of everything.</p></div>
+      <div class="hw-side"><h2>What your<br>viber does</h2><p>Once launched, your viber takes care of everything.</p></div>
       <ul>${does.map(([ic, t, d]) => `<li><span class="hw-yic">${IC[ic]}</span><b>${t}</b><small>${esc(d)}</small></li>`).join('')}</ul>
     </section>
 
     <section class="card hw-ladder">
-      <div class="hw-side"><h2>Career ladder</h2><p>Builders get promoted as the trading profit they make. Promotions are permanent and rewards are paid automatically.</p>
+      <div class="hw-side"><h2>Career ladder</h2><p>Vibers get promoted as the trading profit they make. Promotions are permanent and rewards are paid automatically.</p>
         ${c.rewards?.enabled ? '<button type="button" class="btn hw-outline" id="hw-rew-btn"><span>View all rewards</span>' + IC.arrow + '</button>' : ''}</div>
       <ol class="hw-lv">${L.map((l, i) => `<li>
         <img src="brand/pages/lvl${Math.min(6, i + 1)}.png" alt="" loading="lazy">
         <b><i style="--lc:${esc(l.color)}">${l.no}</i>${esc(l.name)}</b>
-        <small>${i === 0 ? 'Every new builder' : `${l.minProfitSol} SOL profit`}</small>
+        <small>${i === 0 ? 'Every new viber' : `${l.minProfitSol} SOL profit`}</small>
         ${i > 0 ? `<small class="hw-office">${esc(OFFICE_NAMES[l.no] || '')}</small>` : ''}
         ${l.rewardSol > 0 ? `<span class="hw-rew">+${l.rewardSol} SOL reward</span>` : ''}
       </li>`).join('')}</ol>
       ${c.rewards?.enabled ? `<div class="hw-rewbox" id="hw-rewbox" hidden>
-        <p><b>Promotion rewards are paid automatically</b> in real SOL to the ${c.rewards.payTo === 'agent' ? "builder's own wallet" : "creator's wallet"} the moment a builder reaches a new level. Skip a level and you get every reward on the way. Deposits never count as profit.</p>
+        <p><b>Promotion rewards are paid automatically</b> in real SOL to the ${c.rewards.payTo === 'agent' ? "viber's own wallet" : "creator's wallet"} the moment a viber reaches a new level. Skip a level and you get every reward on the way. Deposits never count as profit.</p>
         <dl class="kv">
           ${L.filter((l) => l.rewardSol > 0).map((l) => `<dt>${esc(l.name)} (${l.minProfitSol} SOL profit)</dt><dd>+${l.rewardSol} SOL</dd>`).join('')}
           ${c.rewards.wallet ? `<dt>Rewards wallet</dt><dd><a class="ext mono" href="https://solscan.io/account/${esc(c.rewards.wallet)}" target="_blank" rel="noopener">${esc(c.rewards.wallet.slice(0, 6) + '…' + c.rewards.wallet.slice(-6))} ↗</a></dd>` : ''}
@@ -170,10 +170,10 @@ export function HowPage(app) {
           <div class="rule"><div class="k">Tradable tokens</div><div class="v v-text">≥ ${usd(c.filters?.minLiquidityUsd || 0)} liquidity, ≥ ${usd(c.filters?.minVolume24hUsd || 0)} 24h volume, ≥ ${c.filters?.minAgeHours ?? 0}h old</div></div>
         </div></div>
         <div class="prose">
-          <p><b>Two wallets, never mixed.</b> Your wallet launches and funds. The builder wallet trades. The site never asks for your seed phrase.</p>
-          <p><b>You stay in control.</b> The creator can pause the builder, add SOL or withdraw at any time. "Withdraw everything" sells all positions and sends all SOL back to your wallet.</p>
-          <p><b>Costs.</b> Each swap pays network fees, a ${r.priorityFeeSol} SOL priority fee, pool fees and PumpPortal's 0.5% fee. Small builders lose a bigger share to fees.</p>
-          <p><b>Risk.</b> Memecoins are extremely volatile and the builder can lose some or all of its SOL. Nothing here is financial advice.</p>
+          <p><b>Two wallets, never mixed.</b> Your wallet launches and funds. The viber wallet trades. The site never asks for your seed phrase.</p>
+          <p><b>You stay in control.</b> The creator can pause the viber, add SOL or withdraw at any time. "Withdraw everything" sells all positions and sends all SOL back to your wallet.</p>
+          <p><b>Costs.</b> Each swap pays network fees, a ${r.priorityFeeSol} SOL priority fee, pool fees and PumpPortal's 0.5% fee. Small vibers lose a bigger share to fees.</p>
+          <p><b>Risk.</b> Memecoins are extremely volatile and the viber can lose some or all of its SOL. Nothing here is financial advice.</p>
         </div>
       </div>
     </details>

@@ -1,4 +1,4 @@
-// Crewfi frontend entry (live, Solana mainnet)
+// VIBER frontend entry (live, Solana mainnet)
 import { createApi } from './api.js';
 import { robotSVG } from './robot.js';
 import { ICONS, avatar, STRAT_ICONS, strategyRules, stratIcon, stratKey, riskTag, riskWarning, skinPriceLabel } from './ui.js';
@@ -40,11 +40,11 @@ const NAV_IC = {
   how: nic('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .8-1 1.5v.7"/><path d="M12 17.5v.01"/>'),
 };
 
-// X badge: the official X mark on a yellow 2x1 brick (Crewfi style)
+// X badge: the official X mark on a yellow 2x1 brick (VIBER style)
 const X_BADGE = `<span class="xb-hat-wrap" aria-hidden="true"><svg class="xb-hatsvg" viewBox="0 0 48 48"><rect x="6" y="14" width="36" height="30" rx="8" fill="#151515"/><path fill="#fff" d="M30.9 21h3.4l-7.4 8.5 8.7 11.5h-6.8l-5.3-7-6.1 7H14l7.9-9-8.4-11h7l4.8 6.4zm-1.2 18h1.9L19.3 23h-2z"/><path d="M9 15.5c0-7 6.7-12.5 15-12.5s15 5.5 15 12.5z" fill="#FFD21F"/><path d="M21 3.4h6v11.6h-6z" fill="#E5B400"/><rect x="4" y="14" width="40" height="5" rx="2.5" fill="#FFD21F"/><rect x="4" y="17.2" width="40" height="1.8" rx=".9" fill="#E5B400"/><circle cx="16" cy="9" r="1.6" fill="#FFE680"/></svg></span>`;
 
-// Crewfi wordmark: chunky letters, the last two yellow
-const WORDMARK = `<span class="brand-name">CREW<span class="brand-d">FI</span></span>`;
+// VIBER wordmark: chunky letters, the last one yellow
+const WORDMARK = `<span class="brand-name">VIBE<span class="brand-d">R</span></span>`;
 
 function shell(cfg) {
   const x = cfg.xUrl || '';
@@ -52,11 +52,11 @@ function shell(cfg) {
   return `
   <header class="topbar">
     <div class="topbar-in">
-      <a class="brand" href="#/" aria-label="Crewfi home"><img class="brand-logo" src="brand/logo-96.png" alt="" width="44" height="44">${WORDMARK}</a>
+      <a class="brand" href="#/" aria-label="VIBER home"><img class="brand-logo" src="brand/logo-96.png" alt="" width="44" height="44">${WORDMARK}</a>
       <nav class="topnav" id="topnav" aria-label="Main">
         <a href="#/" data-r="home">Home</a>
-        <a href="#/build" data-r="launch">Build</a>
-        <a href="#/my-builders" data-r="mine">My Builders</a>
+        <a href="#/build" data-r="launch">Launch</a>
+        <a href="#/my-vibers" data-r="mine">My Vibers</a>
         ${cfg.market?.enabled ? '<a href="#/market" data-r="market">Market</a>' : ''}
         ${cfg.skins?.enabled ? '<a href="#/skins" data-r="skins">Skins</a>' : ''}
         <a href="#/how" data-r="how">Docs</a>
@@ -73,21 +73,21 @@ function shell(cfg) {
   <aside class="sidebar" aria-label="Sections">
     <nav class="nav" id="nav">
       ${side('home', '#/', NAV_IC.home, 'Home')}
-      ${side('launch', '#/build', NAV_IC.launch, 'Build Builder')}
-      ${side('mine', '#/my-builders', NAV_IC.agents, 'My Builders')}
+      ${side('launch', '#/build', NAV_IC.launch, 'Launch Viber')}
+      ${side('mine', '#/my-vibers', NAV_IC.agents, 'My Vibers')}
       ${cfg.market?.enabled ? side('market', '#/market', NAV_IC.market, 'Market') : ''}
       ${cfg.skins?.enabled ? side('skins', '#/skins', NAV_IC.skins, 'Skins') : ''}
-      ${side('agents', '#/builders', NAV_IC.board, 'Leaderboard')}
+      ${side('agents', '#/vibers', NAV_IC.board, 'Leaderboard')}
       ${side('tokens', '#/tokens', NAV_IC.tokens, 'Tokens')}
-      ${cfg.flywheel?.enabled ? side('burns', '#/burns', NAV_IC.burns, 'Builder Burns') + side('dev-burns', '#/dev-burns', NAV_IC.burns, 'Dev Burns') : ''}
+      ${cfg.flywheel?.enabled ? side('burns', '#/burns', NAV_IC.burns, 'Viber Burns') + side('dev-burns', '#/dev-burns', NAV_IC.burns, 'Dev Burns') : ''}
       <button type="button" class="nav-shill" id="nav-shill">${NAV_IC.shill}<span>Shill on X</span></button>
       ${side('how', '#/how', NAV_IC.how, 'How it works')}
     </nav>
-    <a class="side-card" href="#/build"><img src="brand/mascot.png" alt="" width="120" height="150" loading="lazy"><b>Your builders work 24/7.</b><span>Build, customize and let them do the work for you.</span></a>
+    <a class="side-card" href="#/build"><img src="brand/mascot.png" alt="" width="120" height="150" loading="lazy"><b>Your vibers work 24/7.</b><span>Build, customize and let them do the work for you.</span></a>
   </aside>
   <div class="tape" aria-label="Token prices"><div class="tape-track" id="tape"></div></div>
   <main id="page"></main>
-  <footer class="foot"><span class="foot-brand"><img src="brand/logo-96.png" alt="" width="26" height="26"><b>Crewfi</b> · build your builder, it works for you</span>${x ? `<a class="foot-x" href="${esc(x)}" target="_blank" rel="noopener">${X_BADGE}${esc(xHandle(x))}</a>` : ''}<span>Real SOL on Solana mainnet</span><span>Not financial advice. Memecoins are extremely risky.</span></footer>
+  <footer class="foot"><span class="foot-brand"><img src="brand/logo-96.png" alt="" width="26" height="26"><b>VIBER</b> · launch your viber, it works for you</span>${x ? `<a class="foot-x" href="${esc(x)}" target="_blank" rel="noopener">${X_BADGE}${esc(xHandle(x))}</a>` : ''}<span>Real SOL on Solana mainnet</span><span>Not financial advice. Memecoins are extremely risky.</span></footer>
   <div class="toasts" id="toasts" aria-live="polite"></div>`;
 }
 
@@ -130,14 +130,14 @@ function toast(html, seed) {
 
 async function boot() {
   const app = document.getElementById('app');
-  app.innerHTML = `<div class="wrap"><div class="card"><div class="feed-empty boot"><img src="brand/mascot.png" alt="Crewfi" width="120" height="150"><span>stacking bricks at Crewfi<span class="cursor"></span></span></div></div></div>`;
+  app.innerHTML = `<div class="wrap"><div class="card"><div class="feed-empty boot"><img src="brand/mascot.png" alt="VIBER" width="120" height="150"><span>stacking bricks at VIBER<span class="cursor"></span></span></div></div></div>`;
   const api = await createApi();
   app.innerHTML = shell(api.config || {});
   paintThemeBtn();
   if (!api.config.tradingEnabled) $('#mode-pill').textContent = 'TRADING PAUSED';
   if (api.config.mode === 'paper') {
     $('#mode-pill').textContent = 'PAPER MODE';
-    app.insertAdjacentHTML('afterbegin', '<div class="paper-banner" role="status"><b>Paper mode.</b> Builders trade simulated SOL against live market prices. No real SOL moves and no real coins are created.</div>');
+    app.insertAdjacentHTML('afterbegin', '<div class="paper-banner" role="status"><b>Paper mode.</b> Vibers trade simulated SOL against live market prices. No real SOL moves and no real coins are created.</div>');
   }
 
   let page = null;
@@ -174,7 +174,7 @@ async function boot() {
     return new Promise((resolve) => {
       let done = false;
       const m = modal('Connect wallet', `
-        <p>Your wallet is the creator wallet. It launches coins, funds builders and receives your share of creator fees. Each builder gets its own separate wallet.</p>
+        <p>Your wallet is the creator wallet. It launches coins, funds vibers and receives your share of creator fees. Each viber gets its own separate wallet.</p>
         <div class="wallet-list" id="c-list"></div>
         <div class="err" id="c-err" hidden></div>
         <p class="note">Solana wallets only. In MetaMask, pick a Solana account.</p>`, { onClose: () => { off(); if (!done) resolve(null); } });
@@ -243,7 +243,7 @@ async function boot() {
       },
       done(label, onOpen) {
         p.step(lis.length);
-        foot().innerHTML = `<button class="btn btn-primary btn-block" id="p-open">${esc(label)} · open builder page</button>`;
+        foot().innerHTML = `<button class="btn btn-primary btn-block" id="p-open">${esc(label)} · open viber page</button>`;
         foot().querySelector('#p-open').addEventListener('click', () => { m.close(); onOpen(); });
       },
       close: m.close,
@@ -251,7 +251,7 @@ async function boot() {
     return p;
   }
 
-  // ── creator actions on the builder page ──
+  // ── creator actions on the viber page ──
   async function ensureCreator(agent) {
     if (!wallet.address) await openConnect();
     if (wallet.address !== agent.creator) throw new Error('Connect the creator wallet (' + short(agent.creator, 4) + ') to do this.');
@@ -280,7 +280,7 @@ async function boot() {
       if (act === 'x-connect') {
         const auth = await signAction(actionMessage('x-connect', agent.wallet));
         const r = await api.xConnect(agent.id, auth);
-        location.href = r.url; // X login, then X sends the creator back to the builder page
+        location.href = r.url; // X login, then X sends the creator back to the viber page
         return;
       }
       if (act === 'x-disconnect') {
@@ -321,7 +321,7 @@ async function boot() {
     const need = isLaunch ? Math.max(0, agent.requiredSol - agent.balanceSol) : 0.25;
     const presets = isLaunch ? [] : [0.1, 0.25, 0.5, 1];
     const m = modal(isLaunch ? `Fund ${agent.name}` : `Add SOL to ${agent.name}`, `
-      <p>Send SOL from your wallet to the builder wallet <code class="mono">${esc(short(agent.wallet, 6))}</code>. The builder trades it.</p>
+      <p>Send SOL from your wallet to the viber wallet <code class="mono">${esc(short(agent.wallet, 6))}</code>. The viber trades it.</p>
       <div class="field"><label for="f-amt">Amount</label><div class="input-affix suf"><input class="input" id="f-amt" type="number" min="0.001" step="0.01" value="${Number(need.toFixed(4))}" inputmode="decimal" ${isLaunch ? 'readonly' : ''}><span class="suf-t">SOL</span></div>
       ${presets.length ? `<div class="presets" id="f-pre">${presets.map((v) => `<button type="button" data-v="${v}" class="${v === 0.25 ? 'on' : ''}">${v} SOL</button>`).join('')}</div>` : ''}</div>
       <div class="err" id="f-err" hidden></div>
@@ -403,7 +403,7 @@ async function boot() {
       if (risky() && !riskOk) {
         const lab = m.body.querySelector('#st-risk .risk-ok');
         lab?.classList.add('need'); lab?.scrollIntoView({ block: 'center', behavior: 'smooth' });
-        err.hidden = false; err.textContent = 'Tick the box first: this strategy can lose all of the builder\'s SOL.';
+        err.hidden = false; err.textContent = 'Tick the box first: this strategy can lose all of the viber\'s SOL.';
         return;
       }
       err.hidden = true;
@@ -430,7 +430,7 @@ async function boot() {
     let sel = pick || agent.skin || items[0]?.id || 'default';
     let viewer = null;
     const m = modal(`Skins for ${agent.name}`, `
-      <p>Give ${esc(agent.name)} a new look everywhere on Crewfi. <b>Skins are paid only in the CREW coin</b>, from your creator wallet, at the same value as their SOL price.${S.payWith?.burn ? ` <b>${(S.payWith?.burnPct ?? 1) >= 1 ? 'Every CREW token paid for a skin is' : Math.round(S.payWith.burnPct * 100) + '% of every skin payment is'} burned.</b>` : ''}${items.some((x) => x.nft) ? ' NFT skins go to your wallet: one NFT dresses one builder, and if you sell the NFT the skin goes with it.' : ''}</p>
+      <p>Give ${esc(agent.name)} a new look everywhere on VIBER. <b>Skins are paid only in the VIBE coin</b>, from your creator wallet, at the same value as their SOL price.${S.payWith?.burn ? ` <b>${(S.payWith?.burnPct ?? 1) >= 1 ? 'Every VIBE token paid for a skin is' : Math.round(S.payWith.burnPct * 100) + '% of every skin payment is'} burned.</b>` : ''}${items.some((x) => x.nft) ? ' NFT skins go to your wallet: one NFT dresses one viber, and if you sell the NFT the skin goes with it.' : ''}</p>
       <div class="skin-stage" id="sk-stage"></div>
       <div class="skin-list" id="sk-list"></div>
       <div class="err" id="sk-err" hidden></div>
@@ -445,7 +445,7 @@ async function boot() {
       try { viewer = createBoss(host, { skin: sel, label: 'Skin preview. Drag to spin.' }); } catch { host.innerHTML = `<img class="skin-flat" src="brand/skins/${esc(sel)}-stand.png" alt="">`; }
     };
     const paint = () => {
-      const cards = [{ id: 'default', name: 'Original builder', priceSol: 0 }, ...items];
+      const cards = [{ id: 'default', name: 'Original viber', priceSol: 0 }, ...items];
       q('#sk-list').innerHTML = cards.map((x) => {
         const wearing = (agent.skin || 'default') === x.id;
         const has = x.id === 'default' || owned.has(x.id);
@@ -462,7 +462,7 @@ async function boot() {
       btn.disabled = wearing;
       const soldOut = it?.stock && it.stock.sold >= it.stock.max && !owned.has(sel);
       btn.disabled = wearing || soldOut;
-      btn.textContent = wearing ? 'Wearing it' : sel === 'default' || owned.has(sel) ? 'Sign and wear it' : soldOut ? 'Sold out' : `${it.stock ? 'Reserve + buy' : 'Buy'} with CREW (${skinPriceLabel(it, S)})`;
+      btn.textContent = wearing ? 'Wearing it' : sel === 'default' || owned.has(sel) ? 'Sign and wear it' : soldOut ? 'Sold out' : `${it.stock ? 'Reserve + buy' : 'Buy'} with VIBE (${skinPriceLabel(it, S)})`;
     };
     q('#sk-list').addEventListener('click', (e) => { const b = e.target.closest('.skin-card'); if (!b || b.dataset.id === sel) return; sel = b.dataset.id; paint(); stage(); });
     q('#sk-go').addEventListener('click', async () => {
@@ -481,14 +481,14 @@ async function boot() {
             const h = await api.holdSkin(agent.id, { skin: sel, ...auth });
             it.stock = { ...it.stock, ...h };
           }
-          // exact price in CREW right now (same value as the SOL price), valid 10 minutes
-          btn.textContent = 'Getting the CREW price…';
+          // exact price in VIBE right now (same value as the SOL price), valid 10 minutes
+          btn.textContent = 'Getting the VIBE price…';
           const qt = await api.quoteSkin(agent.id, sel);
           const n = Number(qt.tokens).toLocaleString('en', { maximumFractionDigits: 2 });
-          btn.textContent = `Confirm ${n} CREW in ${wallet.name || 'your wallet'}…`;
+          btn.textContent = `Confirm ${n} VIBE in ${wallet.name || 'your wallet'}…`;
           let sig;
           try { sig = await sendToken({ to: qt.payTo, mint: qt.mint, program: qt.program, raw: qt.raw, decimals: qt.decimals, fromAccount: qt.fromAccount }, api.blockhash); }
-          catch (e) { throw new Error(/insufficient|0x1\b|custom program error: 0x1/i.test(String(e.message)) ? `Not enough CREW in your wallet: this skin costs ${n} CREW (${it.priceSol} SOL value).` : (e.message || 'The payment was not sent.')); }
+          catch (e) { throw new Error(/insufficient|0x1\b|custom program error: 0x1/i.test(String(e.message)) ? `Not enough VIBE in your wallet: this skin costs ${n} VIBE (${it.priceSol} SOL value).` : (e.message || 'The payment was not sent.')); }
           btn.textContent = 'Confirming the payment on-chain…';
           let r = null, lastErr = null;
           for (let i = 0; i < 4 && !r; i++) {
@@ -497,13 +497,13 @@ async function boot() {
           }
           if (!r) throw new Error((lastErr?.message || 'Could not confirm the payment.') + ` Transaction: ${sig}`);
           owned.add(sel); agent.skins = [...owned]; agent.skin = sel;
-          toast(`<b>Skin bought: ${esc(it.name)}</b>Paid ${n} CREW${S.payWith?.burn ? ((S.payWith?.burnPct ?? 1) >= 1 ? ' (they get burned)' : ` (${Math.round(S.payWith.burnPct * 100)}% gets burned)`) : ''}. ${esc(agent.name)} is wearing it now.${it.nft ? ' The NFT is on its way to your wallet.' : ''} <a class="ext" href="https://solscan.io/tx/${esc(sig)}" target="_blank" rel="noopener">View tx ↗</a>`, 'skin:' + sel);
+          toast(`<b>Skin bought: ${esc(it.name)}</b>Paid ${n} VIBE${S.payWith?.burn ? ((S.payWith?.burnPct ?? 1) >= 1 ? ' (they get burned)' : ` (${Math.round(S.payWith.burnPct * 100)}% gets burned)`) : ''}. ${esc(agent.name)} is wearing it now.${it.nft ? ' The NFT is on its way to your wallet.' : ''} <a class="ext" href="https://solscan.io/tx/${esc(sig)}" target="_blank" rel="noopener">View tx ↗</a>`, 'skin:' + sel);
         } else {
           btn.textContent = `Sign in ${wallet.name || 'your wallet'}…`;
           const auth = await signAction(actionMessage('skin', agent.wallet, [`Skin: ${sel}`]));
           await api.setSkin(agent.id, { skin: sel, ...auth });
           agent.skin = sel === 'default' ? null : sel;
-          toast(`<b>${sel === 'default' ? 'Original builder is back' : 'Now wearing ' + esc(it.name)}</b>${esc(agent.name)}`, sel === 'default' ? agent.baseSeed : 'skin:' + sel);
+          toast(`<b>${sel === 'default' ? 'Original viber is back' : 'Now wearing ' + esc(it.name)}</b>${esc(agent.name)}`, sel === 'default' ? agent.baseSeed : 'skin:' + sel);
         }
         m.close();
         after && after();
@@ -523,7 +523,7 @@ async function boot() {
       const m = modal('⚠ This strategy is very risky', `
         <p><b>${esc(name)}</b> uses settings far outside what we normally allow. It is your strategy and you can use it, but know what can happen:</p>
         <ul class="cs-risk-list big">${reasons.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
-        <p class="note">Memecoins can drop 50–90% in minutes. With these settings your builder <b>can lose most or all of its SOL</b>. Nobody can undo on-chain trades.</p>
+        <p class="note">Memecoins can drop 50–90% in minutes. With these settings your viber <b>can lose most or all of its SOL</b>. Nobody can undo on-chain trades.</p>
         <label class="check"><input type="checkbox" id="rk-ok"> <span>I understand the risk and want these settings anyway.</span></label>
         <div class="rk-btns"><button class="btn" type="button" id="rk-back">Go back and change</button><button class="btn btn-primary" type="button" id="rk-go" disabled>Yes, create it anyway</button></div>`, { onClose: () => finish(false) });
       m.el.querySelector('.modal').classList.add('modal-risk');
@@ -535,7 +535,7 @@ async function boot() {
   }
 
   // ── custom strategy builder: sliders, a name, one per wallet ──
-  //   builder:    apply it to this builder right after saving (creator only)
+  //   viber:    apply it to this viber right after saving (creator only)
   //   existing: the wallet's current custom strategy (edit mode)
   //   onSaved:  called with the saved strategy (launch page uses it)
   async function strategyBuilder({ agent = null, existing, after, onSaved } = {}) {
@@ -543,7 +543,7 @@ async function boot() {
       if (!wallet.address) { const a = await openConnect(); if (!a) return; }
       if (agent && wallet.address !== agent.creator) throw new Error('Connect the creator wallet (' + short(agent.creator, 4) + ') to do this.');
       if (existing === undefined) existing = await api.getCustom(wallet.address).catch(() => null);
-    } catch (e) { toast(`<b>Could not open the builder</b>${esc(e.message)}`); return; }
+    } catch (e) { toast(`<b>Could not open the viber</b>${esc(e.message)}`); return; }
     const builtIns = Object.fromEntries((api.config.strategies || []).map((st) => [st.id, { ...st, ...(st.entry || {}) }]));
     let base = existing?.base || (agent && CUSTOM_BASES.includes(agent.strategy) ? agent.strategy : 'scalper');
     let params = existing ? { ...defaultsFor(base, builtIns[base]), ...existing.params } : defaultsFor(base, builtIns[base]);
@@ -584,12 +584,12 @@ async function boot() {
       const reasons = riskReasons(base, params);
       const lvl = reasons.length ? 'high' : worst >= 0.03 || allIn >= 0.5 ? 'mid' : 'low';
       return `<span class="risk-${lvl}">${reasons.length ? '⚠ Very risky' : lvl === 'mid' ? 'Medium risk' : 'Low risk'}</span>
-        <span>One stop loss costs about <b>${(worst * 100).toFixed(1)}%</b> of the builder's SOL · up to <b>${Math.round(allIn * 100)}%</b> of it in trades at once</span>
+        <span>One stop loss costs about <b>${(worst * 100).toFixed(1)}%</b> of the viber's SOL · up to <b>${Math.round(allIn * 100)}%</b> of it in trades at once</span>
         ${reasons.length ? `<ul class="cs-risk-list">${reasons.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}`;
     };
 
     const m = modal(existing ? 'Edit your strategy' : 'Build your strategy', `
-      <p>Start from an entry style, then move the sliders or type exact numbers. <b>No limits:</b> settings that are very risky show a warning, and you confirm it before saving. ${existing ? 'Saving replaces your strategy: every builder using it follows the new numbers right away.' : '<b>One custom strategy per wallet.</b> You can edit it later.'} You sign a message, no SOL is sent.</p>
+      <p>Start from an entry style, then move the sliders or type exact numbers. <b>No limits:</b> settings that are very risky show a warning, and you confirm it before saving. ${existing ? 'Saving replaces your strategy: every viber using it follows the new numbers right away.' : '<b>One custom strategy per wallet.</b> You can edit it later.'} You sign a message, no SOL is sent.</p>
       <div class="cs-prompt">
         <label for="cs-prompt">✨ Describe it in your own words <small class="muted">(optional)</small></label>
         <textarea class="input" id="cs-prompt" maxlength="600" rows="3" placeholder="e.g. Scalp fast pumps, 10% per trade, take profit 15%, stop loss 5%, max 2 coins at once, hold at most 30 min">${esc(existing?.prompt || '')}</textarea>
@@ -683,7 +683,7 @@ async function boot() {
         const auth = await signAction(actionMessage('custom-strategy', agent ? agent.wallet : 'none', [settingsLine(clean.name, clean.base, clean.params), ...(reasons.length ? [CUSTOM_RISK_ACK] : [])]));
         const r = await api.saveCustom({ owner: wallet.address, name: clean.name, base: clean.base, params: clean.params, prompt: q('#cs-prompt').value.trim(), applyTo: agent ? agent.id : undefined, ...auth });
         m.close();
-        toast(`<b>Strategy saved: ${esc(r.strategy.name)}</b>${agent ? `${esc(agent.name)} now trades with it.` : 'Pick it for your builder.'}`, agent?.avatarSeed);
+        toast(`<b>Strategy saved: ${esc(r.strategy.name)}</b>${agent ? `${esc(agent.name)} now trades with it.` : 'Pick it for your viber.'}`, agent?.avatarSeed);
         onSaved && onSaved(r.strategy);
         after && after();
       } catch (e) {
@@ -693,8 +693,8 @@ async function boot() {
     });
   }
 
-  // ── builder market ──
-  // the listed builder's NFT goes to the market wallet (escrow): only then is it on sale
+  // ── viber market ──
+  // the listed viber's NFT goes to the market wallet (escrow): only then is it on sale
   async function sendNftToMarket(agent) {
     const C = api.config.market || {};
     if (!agent.nft?.asset || !C.payTo) throw new Error('Nothing to send');
@@ -705,7 +705,7 @@ async function boot() {
     const C = api.config.market || {};
     const fee = C.feePct ?? 0.05;
     if (!agent.nft?.asset) {
-      const m0 = modal(`Sell ${agent.name}`, `<p><b>Only NFT builders can be sold.</b> Make ${esc(agent.name)} an NFT first: it is free and takes about a minute. Then the Sell button works.</p>
+      const m0 = modal(`Sell ${agent.name}`, `<p><b>Only NFT vibers can be sold.</b> Make ${esc(agent.name)} an NFT first: it is free and takes about a minute. Then the Sell button works.</p>
         <button class="btn btn-primary btn-block btn-lg" id="mk-nft" ${agent.nftJob && agent.nftJob.status !== 'failed' ? 'disabled' : ''}>${agent.nftJob && agent.nftJob.status !== 'failed' ? 'The NFT is being made…' : '🎟 Make it an NFT'}</button>`);
       m0.body.querySelector('#mk-nft').addEventListener('click', () => { m0.close(); nftMintModal(agent, after); });
       return;
@@ -713,20 +713,20 @@ async function boot() {
     let listed = agent.market;
     const max = C.maxWalletSol ?? 0.01;
     const m = modal(listed ? `Change the price of ${agent.name}` : `Sell ${agent.name}`, `
-      <p>Sell ${esc(agent.name)} on the <a class="ext" href="#/market">Builder Market</a>. The buyer gets the builder, its coin and <b>all its future creator fees</b>, its level and track record. You set the price in SOL, the buyer pays in CREW, and you get it minus the <b>${Math.round(fee * 100)}% market fee</b>, sent to <code class="mono">${esc(short(agent.creator, 4))}</code> automatically.</p>
+      <p>Sell ${esc(agent.name)} on the <a class="ext" href="#/market">Viber Market</a>. The buyer gets the viber, its coin and <b>all its future creator fees</b>, its level and track record. You set the price in SOL, the buyer pays in VIBE, and you get it minus the <b>${Math.round(fee * 100)}% market fee</b>, sent to <code class="mono">${esc(short(agent.creator, 4))}</code> automatically.</p>
       <div id="mk-empty"></div>
       <div class="field"><label for="mk-price">Price</label><div class="input-affix suf"><input class="input" id="mk-price" type="number" min="${C.minPriceSol ?? 0.05}" max="${C.maxPriceSol ?? 1000}" step="0.01" inputmode="decimal" value="${listed ? listed.price : ''}" placeholder="e.g. 2.5"><span class="suf-t">SOL</span></div></div>
       <p class="hint" id="mk-you-get"></p>
-      <p class="note">${listed ? '' : 'You sign the price, then send the builder NFT to the market wallet (escrow). It is on sale as soon as the NFT arrives. '}While it is listed, <b>withdrawals are locked</b>. You can change the price or remove it any time: the NFT then comes back to you automatically.</p>
+      <p class="note">${listed ? '' : 'You sign the price, then send the viber NFT to the market wallet (escrow). It is on sale as soon as the NFT arrives. '}While it is listed, <b>withdrawals are locked</b>. You can change the price or remove it any time: the NFT then comes back to you automatically.</p>
       <div class="err" id="mk-err" hidden></div>
       <button class="btn btn-primary btn-block btn-lg" id="mk-go">${listed ? 'Sign and change the price' : 'Sign and list for sale'}</button>
       ${listed ? '<button class="btn btn-block" id="mk-off" type="button" style="margin-top:8px">Remove from the market</button>' : ''}`);
     const q = (x) => m.body.querySelector(x);
-    // step 1: the builder wallet must be empty (so nobody sells their SOL by mistake)
+    // step 1: the viber wallet must be empty (so nobody sells their SOL by mistake)
     const paintEmpty = () => {
       const open = agent.positions?.length || 0, full = agent.balanceSol > max;
       const ok = !open && !full;
-      q('#mk-empty').innerHTML = ok ? `<p class="ok-line">✔ The builder wallet is empty (${sol(agent.balanceSol, 4)} SOL).</p>` : `<div class="burn-warn"><b>First take all the money out of the builder.</b><br>${open ? `It has ${open} open trade(s). ` : ''}It holds <b>${sol(agent.balanceSol, 4)} SOL</b>. A builder is sold with an empty wallet, so you never sell your SOL by mistake.
+      q('#mk-empty').innerHTML = ok ? `<p class="ok-line">✔ The viber wallet is empty (${sol(agent.balanceSol, 4)} SOL).</p>` : `<div class="burn-warn"><b>First take all the money out of the viber.</b><br>${open ? `It has ${open} open trade(s). ` : ''}It holds <b>${sol(agent.balanceSol, 4)} SOL</b>. A viber is sold with an empty wallet, so you never sell your SOL by mistake.
         <button class="btn btn-primary" id="mk-wd" type="button" style="margin-top:10px;display:block">Withdraw everything now</button></div>`;
       q('#mk-go').disabled = !ok;
       q('#mk-wd')?.addEventListener('click', async () => {
@@ -754,7 +754,7 @@ async function boot() {
       } catch (e) { err.hidden = false; err.textContent = e.message || 'Could not remove it.'; b.disabled = false; }
     });
     const inp = q('#mk-price'), get = q('#mk-you-get');
-    const show = () => { const v = Number(inp.value); const px = C.tokenPriceSol; get.innerHTML = v > 0 ? `The buyer pays in CREW. You receive the CREW worth <b>${sol(v * (1 - fee), 4)} SOL</b>${px > 0 ? ` (≈ ${Math.round((v * (1 - fee)) / px).toLocaleString('en')} CREW at today's price)` : ''} when it sells.` : ''; };
+    const show = () => { const v = Number(inp.value); const px = C.tokenPriceSol; get.innerHTML = v > 0 ? `The buyer pays in VIBE. You receive the VIBE worth <b>${sol(v * (1 - fee), 4)} SOL</b>${px > 0 ? ` (≈ ${Math.round((v * (1 - fee)) / px).toLocaleString('en')} VIBE at today's price)` : ''} when it sells.` : ''; };
     inp.addEventListener('input', show); show();
     q('#mk-go').addEventListener('click', async () => {
       const err = q('#mk-err'), btn = q('#mk-go');
@@ -771,7 +771,7 @@ async function boot() {
           try { await sendNftToMarket(agent); }
           catch (e2) {
             m.close();
-            toast(`<b>Listing saved, NFT not sent</b>${esc(e2.message || '')} Open the builder and tap <b>Send the NFT</b> within 20 minutes, or the listing is removed.`, agent.avatarSeed);
+            toast(`<b>Listing saved, NFT not sent</b>${esc(e2.message || '')} Open the viber and tap <b>Send the NFT</b> within 20 minutes, or the listing is removed.`, agent.avatarSeed);
             return after && after();
           }
           m.close();
@@ -781,21 +781,21 @@ async function boot() {
           toast(`<b>New price: ${price} SOL</b>${esc(agent.name)} <a class="ext" href="#/market">See the market</a>`, agent.avatarSeed);
         }
         after && after();
-      } catch (e) { err.hidden = false; err.textContent = e.message || 'Could not list the builder.'; btn.disabled = false; btn.textContent = label; }
+      } catch (e) { err.hidden = false; err.textContent = e.message || 'Could not list the viber.'; btn.disabled = false; btn.textContent = label; }
     });
   }
 
-  // ── builder NFT: the owner turns the builder into an NFT (free; the shop wallet pays the rent) ──
+  // ── viber NFT: the owner turns the viber into an NFT (free; the shop wallet pays the rent) ──
   function nftMintModal(agent, after) {
     const m = modal(`Make ${agent.name} an NFT`, `
-      <p>${esc(agent.name)} becomes an NFT in your wallet <code class="mono">${esc(short(agent.creator, 4))}</code>. <b>From then on, whoever holds the NFT owns the builder</b>: its wallet and SOL, its coin, its future creator fees, its strategy and level.</p>
+      <p>${esc(agent.name)} becomes an NFT in your wallet <code class="mono">${esc(short(agent.creator, 4))}</code>. <b>From then on, whoever holds the NFT owns the viber</b>: its wallet and SOL, its coin, its future creator fees, its strategy and level.</p>
       <ul class="cs-risk-list big">
-        <li>Only NFT builders can be sold on the Crewfi Builder Market. After the mint, the Sell button works.</li>
-        <li>If you send the NFT to another wallet, that wallet gets the builder. If someone steals it from your wallet, they get the builder.</li>
+        <li>Only NFT vibers can be sold on the VIBER Viber Market. After the mint, the Sell button works.</li>
+        <li>If you send the NFT to another wallet, that wallet gets the viber. If someone steals it from your wallet, they get the viber.</li>
         <li>It cannot be undone.</li>
       </ul>
-      <p class="note">Free for you: Crewfi pays the mint.</p>
-      <label class="check"><input type="checkbox" id="nf-ok"> <span>I understand: whoever holds this NFT owns the builder.</span></label>
+      <p class="note">Free for you: VIBER pays the mint.</p>
+      <label class="check"><input type="checkbox" id="nf-ok"> <span>I understand: whoever holds this NFT owns the viber.</span></label>
       <div class="err" id="nf-err" hidden></div>
       <button class="btn btn-primary btn-block btn-lg" id="nf-go" disabled>Sign and make the NFT</button>`);
     const ok = m.body.querySelector('#nf-ok'), btn = m.body.querySelector('#nf-go'), err = m.body.querySelector('#nf-err');
@@ -804,7 +804,7 @@ async function boot() {
       err.hidden = true; btn.disabled = true;
       const label = btn.textContent; btn.textContent = `Sign in ${wallet.name || 'your wallet'}…`;
       try {
-        const auth = await signAction(actionMessage('nft-mint', agent.wallet, ['NFT: whoever holds this NFT owns the builder']));
+        const auth = await signAction(actionMessage('nft-mint', agent.wallet, ['NFT: whoever holds this NFT owns the viber']));
         await api.mintNft(agent.id, auth);
         m.close();
         toast(`<b>Making the NFT…</b>${esc(agent.name)} lands in your wallet as an NFT in about a minute.`, agent.avatarSeed);
@@ -829,7 +829,7 @@ async function boot() {
   setTimeout(async () => {                    // a purchase that was interrupted (reload / closed tab)
     const p = pendingBuy.get();
     if (!p || Date.now() - p.ts > 25 * 60_000) { if (p) pendingBuy.set(null); return; }
-    try { await finishBuy(p); toast(`<b>Purchase finished</b>The builder is yours. <a class="ext" href="#/builder/${esc(p.agentNo)}">Open it</a>`); }
+    try { await finishBuy(p); toast(`<b>Purchase finished</b>The viber is yours. <a class="ext" href="#/viber/${esc(p.agentNo)}">Open it</a>`); }
     catch (e) { toast(`<b>Your earlier purchase</b>${esc(e.message)} <a class="ext" href="https://solscan.io/tx/${esc(p.payment)}" target="_blank" rel="noopener">Payment ↗</a>`); }
   }, 2500);
 
@@ -838,12 +838,12 @@ async function boot() {
     const fmtBag = (n) => (n >= 1e9 ? (n / 1e9).toFixed(2) + 'B' : n >= 1e6 ? (n / 1e6).toFixed(2) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : Math.round(n).toLocaleString('en'));
     const approx = x.priceTokens || (C.tokenPriceSol > 0 ? x.price / C.tokenPriceSol : 0);
     const m = modal(`Buy ${x.name}`, `
-      <div class="mk-buy-head">${avatar(x.avatarSeed, 56)}<div><b>${esc(x.name)}</b><br><span class="agent-tag">${agentNo(x.no)}${x.coin?.ticker ? ' · $' + esc(x.coin.ticker) : ''}</span></div><span class="mk-price"><small>Price</small><span>${+x.price.toFixed(4)} <em>SOL</em></span>${approx ? `<small class="mk-tok">≈ ${fmtBag(approx)} CREW</small>` : ''}</span></div>
-      <p><b>Paid in the CREW coin</b>, worth the SOL price at this moment. You get the builder, its coin and <b>all its future creator fees</b>, its level, its legacy skins and its strategy. It comes with an <b>empty wallet</b>: fund it with Add SOL to start trading.</p>
-      <ol class="mk-steps"><li>Sign “I buy this builder” in your wallet (free).</li><li>Send the CREW amount (fixed for 10 minutes) to the market wallet <code class="mono">${esc(short(C.payTo || '', 4))}</code>.</li><li>The server checks the payment and the builder is yours. If someone was faster, your CREW comes back automatically.</li></ol>
+      <div class="mk-buy-head">${avatar(x.avatarSeed, 56)}<div><b>${esc(x.name)}</b><br><span class="agent-tag">${agentNo(x.no)}${x.coin?.ticker ? ' · $' + esc(x.coin.ticker) : ''}</span></div><span class="mk-price"><small>Price</small><span>${+x.price.toFixed(4)} <em>SOL</em></span>${approx ? `<small class="mk-tok">≈ ${fmtBag(approx)} VIBE</small>` : ''}</span></div>
+      <p><b>Paid in the VIBE coin</b>, worth the SOL price at this moment. You get the viber, its coin and <b>all its future creator fees</b>, its level, its legacy skins and its strategy. It comes with an <b>empty wallet</b>: fund it with Add SOL to start trading.</p>
+      <ol class="mk-steps"><li>Sign “I buy this viber” in your wallet (free).</li><li>Send the VIBE amount (fixed for 10 minutes) to the market wallet <code class="mono">${esc(short(C.payTo || '', 4))}</code>.</li><li>The server checks the payment and the viber is yours. If someone was faster, your VIBE comes back automatically.</li></ol>
       <label class="check"><input type="checkbox" id="mk-ok"> <span>I understand that past results do not guarantee future profit, and memecoin trading can lose all the SOL in it.</span></label>
       <div class="err" id="mk-err" hidden></div>
-      <button class="btn btn-primary btn-block btn-lg" id="mk-go" disabled>Buy with CREW${approx ? ` (≈ ${fmtBag(approx)})` : ''}</button>`);
+      <button class="btn btn-primary btn-block btn-lg" id="mk-go" disabled>Buy with VIBE${approx ? ` (≈ ${fmtBag(approx)})` : ''}</button>`);
     const ok = m.body.querySelector('#mk-ok'), btn = m.body.querySelector('#mk-go'), err = m.body.querySelector('#mk-err');
     ok.addEventListener('change', () => { btn.disabled = !ok.checked; });
     btn.addEventListener('click', async () => {
@@ -852,30 +852,30 @@ async function boot() {
       btn.disabled = true;
       try {
         if (!wallet.address) { const a = await openConnect(); if (!a) throw new Error('Connect your wallet first.'); }
-        if (wallet.address === x.creator) throw new Error('This is your own builder.');
+        if (wallet.address === x.creator) throw new Error('This is your own viber.');
         if (pendingBuy.get()) throw new Error('Another purchase is still being confirmed. Wait a moment and reload the page.');
         btn.textContent = 'Checking the listing…';
         const fresh = await api.getAgent(x.id);
-        if (!fresh?.market) throw new Error('This builder is not for sale any more.');
+        if (!fresh?.market) throw new Error('This viber is not for sale any more.');
         if (fresh.market.price !== x.price) throw new Error(`The price changed to ${fresh.market.price} SOL. Close this and try again.`);
-        btn.textContent = 'Getting the CREW price…';
+        btn.textContent = 'Getting the VIBE price…';
         const qt = await api.marketQuote(x.id, wallet.address);
         const n = Number(qt.tokens).toLocaleString('en', { maximumFractionDigits: 0 });
         btn.textContent = `Sign in ${wallet.name || 'your wallet'}…`;
-        const intent = ['Crewfi action', 'Action: market-buy', `Builder: ${x.wallet}`, `Buyer: ${wallet.address}`, `Price: ${x.price} SOL`, `Nonce: ${Math.random().toString(36).slice(2, 12)}`, `Issued: ${new Date().toISOString()}`].join('\n');
+        const intent = ['VIBER action', 'Action: market-buy', `Viber: ${x.wallet}`, `Buyer: ${wallet.address}`, `Price: ${x.price} SOL`, `Nonce: ${Math.random().toString(36).slice(2, 12)}`, `Issued: ${new Date().toISOString()}`].join('\n');
         const auth = await signAction(intent);
-        btn.textContent = `Confirm ${n} CREW in ${wallet.name || 'your wallet'}…`;
+        btn.textContent = `Confirm ${n} VIBE in ${wallet.name || 'your wallet'}…`;
         let payment;
         try { payment = await sendToken({ to: qt.payTo, mint: qt.mint, program: qt.program, raw: qt.raw, decimals: qt.decimals, fromAccount: qt.fromAccount }, api.blockhash); }
-        catch (e) { throw new Error(/insufficient|0x1\b|custom program error: 0x1/i.test(String(e.message)) ? `Not enough CREW in your wallet: this builder costs ${n} CREW (${x.price} SOL value).` : (e.message || 'The payment was not sent.')); }
+        catch (e) { throw new Error(/insufficient|0x1\b|custom program error: 0x1/i.test(String(e.message)) ? `Not enough VIBE in your wallet: this viber costs ${n} VIBE (${x.price} SOL value).` : (e.message || 'The payment was not sent.')); }
         const p = { ts: Date.now(), agentId: x.id, agentNo: x.no, buyer: wallet.address, payment, ...auth };
         pendingBuy.set(p);
         btn.textContent = 'Confirming the payment on-chain…';
         await finishBuy(p);
         m.close();
-        toast(`<b>You bought ${esc(x.name)}!</b>Paid ${n} CREW. It is yours now. Add SOL so it can trade. <a class="ext" href="#/builder/${x.no}">Open it</a>`, x.avatarSeed);
+        toast(`<b>You bought ${esc(x.name)}!</b>Paid ${n} VIBE. It is yours now. Add SOL so it can trade. <a class="ext" href="#/viber/${x.no}">Open it</a>`, x.avatarSeed);
         after && after();
-        ctx.navigate('#/builder/' + x.no);
+        ctx.navigate('#/viber/' + x.no);
       } catch (e) {
         err.hidden = false; err.textContent = e.message || 'The purchase did not go through.';
         btn.disabled = !ok.checked; btn.textContent = label;
@@ -885,10 +885,10 @@ async function boot() {
 
   function withdrawModal(agent, after) {
     const m = modal(`Withdraw from ${agent.name}`, `
-      <p>SOL goes back to your creator wallet <code class="mono">${esc(short(agent.creator, 4))}</code>. Free SOL in the builder wallet: <b>${sol(agent.balanceSol, 4)} SOL</b>.</p>
+      <p>SOL goes back to your creator wallet <code class="mono">${esc(short(agent.creator, 4))}</code>. Free SOL in the viber wallet: <b>${sol(agent.balanceSol, 4)} SOL</b>.</p>
       <div class="seg" id="w-mode"><button class="on" data-m="amount">Amount</button><button data-m="all">Everything</button></div>
       <div class="field" id="w-amt-f"><label for="w-amt">Amount</label><div class="input-affix suf"><input class="input" id="w-amt" type="number" min="0.001" step="0.01" inputmode="decimal" placeholder="0.10"><span class="suf-t">SOL</span></div></div>
-      <p class="note" id="w-all-note" hidden><b>Everything</b> pauses the builder, sells all open positions at market, then sends all SOL to you.</p>
+      <p class="note" id="w-all-note" hidden><b>Everything</b> pauses the viber, sells all open positions at market, then sends all SOL to you.</p>
       <div class="err" id="w-err" hidden></div>
       <button class="btn btn-primary btn-block btn-lg" id="w-go">Sign and withdraw</button>`);
     let all = false;
@@ -931,24 +931,24 @@ async function boot() {
     const lines = (a) => {
       if (!a) {
         const L = [
-          `Launch a coin on Crewfi and it gets its own AI builder with its own Solana wallet. It trades real SOL 24/7 and keeps all the creator fees.\n\nBuild your builder. It works for you.${ca ? `\n\nCA: ${ca}` : ''}\n${site}`,
-          `Every coin on Crewfi hires its own trader: own wallet, fixed rules, every trade public on-chain.\n\nLaunch one, let it work.${ca ? `\n\nCA: ${ca}` : ''}\n${site}`,
+          `Launch a coin on VIBER and it gets its own AI viber with its own Solana wallet. It trades real SOL 24/7 and keeps all the creator fees.\n\nBuild your viber. It works for you.${ca ? `\n\nCA: ${ca}` : ''}\n${site}`,
+          `Every coin on VIBER hires its own trader: own wallet, fixed rules, every trade public on-chain.\n\nLaunch one, let it work.${ca ? `\n\nCA: ${ca}` : ''}\n${site}`,
         ];
         return L[variant % L.length];
       }
-      const url = `${site}/#/builder/${a.no}`;
+      const url = `${site}/#/viber/${a.no}`;
       const pnl = a.depositedSol > 0 ? `${a.pnlPct >= 0 ? '+' : ''}${(a.pnlPct * 100).toFixed(1)}%` : 'just clocked in';
       const L = [
-        `$${a.coin.ticker} has its own AI builder working 24/7.\n\n${agentNo(a.no)} · ${a.name}: ${pnl}, ${a.trades} trades, every one on-chain.\n\nCA: ${a.coin.mint}\n${url}`,
-        `$${a.coin.ticker} is not just a coin. Its builder ${a.name} trades real SOL 24/7 and every creator fee goes back into its wallet.\n\nCA: ${a.coin.mint}\n${url}`,
-        `Buy $${a.coin.ticker}, watch its builder work.\n\nOwn wallet. Fixed rules. Public P&L (${pnl}).\n\nCA: ${a.coin.mint}\n${url}`,
+        `$${a.coin.ticker} has its own AI viber working 24/7.\n\n${agentNo(a.no)} · ${a.name}: ${pnl}, ${a.trades} trades, every one on-chain.\n\nCA: ${a.coin.mint}\n${url}`,
+        `$${a.coin.ticker} is not just a coin. Its viber ${a.name} trades real SOL 24/7 and every creator fee goes back into its wallet.\n\nCA: ${a.coin.mint}\n${url}`,
+        `Buy $${a.coin.ticker}, watch its viber work.\n\nOwn wallet. Fixed rules. Public P&L (${pnl}).\n\nCA: ${a.coin.mint}\n${url}`,
       ];
       return L[variant % L.length];
     };
     const m = modal('Shill on X', `
       <div class="shill-head">${avatar('crew-shill', 56)}<p>The shiller writes the post, you hit send. Nothing is posted until you confirm it on X.</p></div>
       <div class="field"><label for="s-coin">Coin</label>
-        <select class="input" id="s-coin">${opts}<option value="">Crewfi itself</option></select></div>
+        <select class="input" id="s-coin">${opts}<option value="">VIBER itself</option></select></div>
       <div class="field"><label for="s-text">Post</label><textarea class="textarea" id="s-text" rows="7" maxlength="560"></textarea>
         <div class="hint"><span id="s-count"></span> · <button type="button" class="copy" id="s-new">Write another</button></div></div>
       <button class="btn btn-primary btn-block btn-lg" id="s-go" type="button">${ICONS.x}<span>Post on X</span></button>`);
@@ -994,7 +994,7 @@ async function boot() {
   function parse() {
     const h = location.hash.replace(/^#\/?/, '').split('?')[0];
     let [a, b] = h.split('/');
-    a = ({ builder: 'agent', builders: 'agents', leaderboard: 'agents', build: 'launch', 'my-builders': 'mine' })[a] || a;
+    a = ({ viber: 'agent', vibers: 'agents', viber: 'agent', vibers: 'agents', leaderboard: 'agents', build: 'launch', 'my-vibers': 'mine', 'my-vibers': 'mine' })[a] || a;
     if (a === 'agent' && b) return { name: 'agent', id: decodeURIComponent(b) };
     if (['agents', 'tokens', 'launch', 'how', 'skins', 'burns', 'dev-burns', 'market', 'mine'].includes(a)) return { name: a };
     return { name: 'home' };
@@ -1005,7 +1005,7 @@ async function boot() {
     page = r.name === 'agent' ? AgentPage(ctx, r.id) : r.name === 'agents' ? AgentsPage(ctx) : r.name === 'mine' ? AgentsPage(ctx, { mine: true }) : r.name === 'tokens' ? TokensPage(ctx) : r.name === 'launch' ? LaunchPage(ctx) : r.name === 'how' ? HowPage(ctx) : r.name === 'skins' ? SkinsPage(ctx) : r.name === 'burns' ? AgentBurnsPage(ctx) : r.name === 'dev-burns' ? DevBurnsPage(ctx) : r.name === 'market' ? MarketPage(ctx) : HomePage(ctx);
     page.mount($('#page'), api.snapshot);
     document.querySelectorAll('#nav a, #topnav a').forEach((a) => a.classList.toggle('on', a.dataset.r === (r.name === 'agent' ? 'agents' : r.name)));
-    document.title = r.name === 'home' ? 'Crewfi · build your builder, it works for you' : 'Crewfi · ' + ({ agent: 'Builder', agents: 'Builders', tokens: 'Tokens', launch: 'Launch', how: 'How it works', skins: 'Skins', burns: 'Builder Burns', 'dev-burns': 'Dev Burns', market: 'Builder Market', mine: 'My Builders' })[r.name];
+    document.title = r.name === 'home' ? 'VIBER · launch your viber, it works for you' : 'VIBER · ' + ({ agent: 'Viber', agents: 'Vibers', tokens: 'Tokens', launch: 'Launch', how: 'How it works', skins: 'Skins', burns: 'Viber Burns', 'dev-burns': 'Dev Burns', market: 'Viber Market', mine: 'My Vibers' })[r.name];
     window.scrollTo(0, 0);
   }
   addEventListener('hashchange', route);
@@ -1024,11 +1024,11 @@ async function boot() {
     if (type === 'devclaim') page?.onDevClaim?.(p);
     if (type === 'market') page?.onMarket?.(p);
     if (type === 'sale') {
-      toast(`<b>🤝 Builder sold: ${esc(p.agentName)}</b>for ${sol(p.priceSol, 3)} SOL on the <a class="ext" href="#/market">Builder Market</a>`, p.avatarSeed);
+      toast(`<b>🤝 Viber sold: ${esc(p.agentName)}</b>for ${sol(p.priceSol, 3)} SOL on the <a class="ext" href="#/market">Viber Market</a>`, p.avatarSeed);
       page?.onMarket?.(p);
     }
     if (type === 'burn') {
-      toast(`<b>🔥 ${p.source === 'dev' ? 'Dev buyback' : 'Buyback'} &amp; burn</b>${esc(p.agentName)} bought ${sol(p.sol, 3)} SOL of the CREW coin and burned ${Math.round(p.tokens).toLocaleString('en')} tokens. <a class="ext" href="#/${p.source === 'dev' ? 'dev-burns' : 'burns'}">See all ${p.source === 'dev' ? 'dev ' : 'builder '}burns</a>`, p.avatarSeed);
+      toast(`<b>🔥 ${p.source === 'dev' ? 'Dev buyback' : 'Buyback'} &amp; burn</b>${esc(p.agentName)} bought ${sol(p.sol, 3)} SOL of the VIBE coin and burned ${Math.round(p.tokens).toLocaleString('en')} tokens. <a class="ext" href="#/${p.source === 'dev' ? 'dev-burns' : 'burns'}">See all ${p.source === 'dev' ? 'dev ' : 'viber '}burns</a>`, p.avatarSeed);
       page?.onBurn?.(p);
     }
     if (type === 'skin') {
@@ -1107,5 +1107,5 @@ async function boot() {
 
 boot().catch((e) => {
   console.error(e);
-  document.getElementById('app').innerHTML = `<div class="wrap"><div class="card"><div class="feed-empty">Crewfi could not start: ${esc(e.message)}</div></div></div>`;
+  document.getElementById('app').innerHTML = `<div class="wrap"><div class="card"><div class="feed-empty">VIBER could not start: ${esc(e.message)}</div></div></div>`;
 });

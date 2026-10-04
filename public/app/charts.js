@@ -1,4 +1,4 @@
-// Tiny SVG charts: sparklines + the builder equity chart (with hover crosshair).
+// Tiny SVG charts: sparklines + the viber equity chart (with hover crosshair).
 import { sol, signedSol, pct, clock, tone } from './format.js';
 
 let gid = 0;

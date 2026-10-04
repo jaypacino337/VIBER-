@@ -1,4 +1,4 @@
-// The Crewfi phone: a black toy-brick smartphone (the back is a yellow studded brick plate)
+// The VIBER phone: a black toy-brick smartphone (the back is a yellow studded brick plate)
 // that you can turn any way you like. Its screen shows live "Just bonded" notifications:
 // pump.fun coins that finished the bonding curve.
 //

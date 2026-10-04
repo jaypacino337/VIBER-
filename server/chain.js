@@ -12,7 +12,7 @@ export const connection = new Connection(RPC_URL, 'confirmed');
 function masterKey() {
   if (MASTER_KEY) return createHash('sha256').update(MASTER_KEY).digest();
   if (LIVE) throw new Error('MASTER_KEY is required in live mode');
-  return createHash('sha256').update('crewfi-paper-mode-not-secret').digest();
+  return createHash('sha256').update('viber-paper-mode-not-secret').digest();
 }
 
 export function sealSecret(secretKey) {

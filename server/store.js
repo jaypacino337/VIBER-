@@ -1,11 +1,11 @@
 // Tiny durable store: one JSON file, written atomically, debounced.
-// Fine for hundreds of agents; swap for Postgres if Crewfi gets big.
+// Fine for hundreds of agents; swap for Postgres if VIBER gets big.
 import { mkdirSync, readFileSync, writeFileSync, renameSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { DATA_DIR, MODE } from './config.js';
 
 mkdirSync(DATA_DIR, { recursive: true });
-const FILE = join(DATA_DIR, `crewfi-${MODE}.json`);
+const FILE = join(DATA_DIR, `viber-${MODE}.json`);
 
 const empty = () => ({ seq: 0, agents: {}, coins: {}, launches: {}, feed: [], thoughts: [], customStrategies: {}, market: { listings: {}, sales: [] }, skinSales: [], usedSigs: {}, nonces: {}, stats: { feesClaimedSol: 0, rewardsPaidSol: 0 } });
 

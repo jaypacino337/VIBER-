@@ -1492,7 +1492,7 @@ h1 .lvl { font-size: 13px; vertical-align: 6px; margin-left: 6px; }
 .laptop-flat { width: 100%; height: auto; border-radius: 18px; border: 10px solid #1E1E22; cursor: pointer; }
 @media (max-width: 760px) { .laptop-stage { height: 420px; } }
 
-/* ═════════ custom strategies (builder with sliders, one per wallet) ═════════ */
+/* ═════════ custom strategies (viber with sliders, one per wallet) ═════════ */
 .strat-custom { --sc: #8A3FD1; }
 .cust-tag { display: inline-block; font: 700 9.5px/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 5px; margin-left: 6px; border-radius: 5px; background: #8A3FD1; color: #fff; vertical-align: 2px; font-style: normal; }
 .so-t b em.cust-tag { color: #fff; margin-left: 6px; }
@@ -2001,7 +2001,7 @@ body { padding-top: var(--top-h); padding-left: var(--side-w); }
 .ra-item .av { border-radius: 8px; background: var(--surface-3); }
 .ra-empty { padding: 12px 10px; font-size: 13px; color: var(--muted); }
 
-/* jobs: six builder cards */
+/* jobs: six viber cards */
 .jobs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
 .job { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: 1fr auto; gap: 4px 12px; align-items: center; min-height: 116px; padding: 14px 14px 12px; border: 0; border-radius: var(--r); background: var(--surface); box-shadow: inset 0 0 0 1px var(--card-bd), var(--shadow); text-align: left; cursor: pointer; color: var(--ink); transition: transform 0.12s ease, box-shadow 0.12s; }
 .job:hover { transform: translateY(-3px); box-shadow: inset 0 0 0 2px var(--yellow), var(--shadow); }
@@ -2016,7 +2016,7 @@ body { padding-top: var(--top-h); padding-left: var(--side-w); }
 .job-go { justify-self: end; align-self: end; color: var(--ink); }
 .job-go svg { width: 18px; height: 18px; }
 
-/* your builders · builder office · upgrade office */
+/* your vibers · viber office · upgrade office */
 .trio { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.6fr) minmax(0, 0.85fr); gap: 16px; align-items: stretch; }
 .trio .card-head .sub { margin-left: auto; font-weight: 700; color: var(--ink-2); }
 .yb-list { display: grid; gap: 6px; padding: 6px 12px 14px; }
@@ -2079,7 +2079,7 @@ body { padding-top: var(--top-h); padding-left: var(--side-w); }
 .up-card .btn .ic-up { width: 18px; height: 18px; }
 .up-note { font-size: 11.5px; color: var(--muted); }
 
-/* builders, right now: a dark log panel */
+/* vibers, right now: a dark log panel */
 .duo2 { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.75fr); gap: 16px; align-items: stretch; }
 .minds { --mbg: #0E0E0E; display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; max-height: 720px; border-radius: var(--r); background: var(--mbg); color: #EDEDE6; box-shadow: 0 0 0 1px #262626, var(--shadow); overflow: hidden; background-image: radial-gradient(circle at 12px 12px, rgba(255, 255, 255, 0.025) 0 3px, transparent 3.5px); background-size: 24px 24px; }
 .minds-head { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #262626; }
@@ -2374,7 +2374,7 @@ body { padding-top: var(--top-h); padding-left: var(--side-w); }
 @media (max-width: 1100px) { .sk-bottom { grid-template-columns: minmax(0, 1fr); } .sk-benefits { grid-template-columns: 100px minmax(0, 1fr); } .sk-benefits ul { grid-column: 1 / -1; flex-wrap: wrap; } }
 @media (max-width: 760px) { .sk-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .sk-hero { grid-template-columns: minmax(0, 1fr); } .sk-perks { grid-template-columns: minmax(0, 1fr); } .sk-search { margin-left: 0; min-width: 0; flex: 1; } .sk-tabs { overflow-x: auto; flex-wrap: nowrap; width: 100%; } .sk-tabs button { flex: none; } }
 
-/* ═════════ Build your builder ═════════ */
+/* ═════════ Launch your viber ═════════ */
 .bb { gap: 18px; }
 .bb-hero { grid-template-columns: minmax(320px, 1fr) minmax(0, 1fr); }
 .bb-hero .pg-hero-art img { max-height: 380px; }
@@ -2498,7 +2498,7 @@ body { padding-top: var(--top-h); padding-left: var(--side-w); }
 .sk-price span { line-height: 1.2; }
 @media (max-width: 1700px) { .sk-benefits { grid-template-columns: 120px minmax(0, 1fr); } .sk-benefits ul { grid-column: 2; flex-wrap: wrap; gap: 14px 22px; } }
 
-/* ═════════ Builder dashboard ═════════ */
+/* ═════════ Viber dashboard ═════════ */
 .ag { gap: 16px; }
 .ag-back { font-weight: 600; font-size: 13px; }
 .ag-hero { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 18px; min-height: 330px; padding: 30px 28px 22px; border-radius: var(--r); overflow: visible; background: var(--surface); box-shadow: inset 0 0 0 1px var(--card-bd), var(--shadow); isolation: isolate; }
@@ -2659,7 +2659,7 @@ body { padding-top: var(--top-h); padding-left: var(--side-w); }
 .brand-logo { width: 48px !important; height: 48px !important; object-fit: contain; }
 @media (max-width: 700px) { .x-link, .x-link .xb-hat-wrap { width: 44px !important; height: 44px !important; } .x-link .xb-hatsvg { width: 40px !important; height: 40px !important; } }
 
-/* ═════════ builder on X ═════════ */
+/* ═════════ viber on X ═════════ */
 .ag-x .card-head > .btn { margin-left: auto; }
 .ag-xlogo { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 8px; background: #000; color: #fff; }
 .ag-xlogo svg { width: 15px; height: 15px; }
@@ -2696,5 +2696,5 @@ body { padding-top: var(--top-h); padding-left: var(--side-w); }
 .ag-xp em { font-style: normal; }
 .ag-chip-x { background: #000 !important; color: #fff !important; }
 
-/* paper mode notice (Crewfi server running without real SOL) */
+/* paper mode notice (VIBER server running without real SOL) */
 .paper-banner { background: var(--yellow); color: var(--black); font-size: 13px; line-height: 1.4; text-align: center; padding: 8px 16px; border-bottom: 2px solid var(--black); }

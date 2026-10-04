@@ -121,7 +121,7 @@
    "id": "newpairs",
    "name": "Demolition (New Pairs)",
    "tagline": "Fresh pump.fun coins",
-   "goal": "Trades brand-new pump.fun coins in their first minutes, with tiny positions, quick profits and hard exits. Most new coins go to zero: this builder can lose all of its SOL.",
+   "goal": "Trades brand-new pump.fun coins in their first minutes, with tiny positions, quick profits and hard exits. Most new coins go to zero: this viber can lose all of its SOL.",
    "risk": "extreme",
    "maxTradeSol": 0.25,
    "sizePct": 0.04,
@@ -194,7 +194,7 @@
   },
   {
    "no": 6,
-   "name": "Master Builder",
+   "name": "Master Viber",
    "minProfitSol": 20,
    "color": "#151515",
    "rewardSol": 1
@@ -204,7 +204,7 @@
   {
    "id": "hardhat",
    "name": "Hard Hat Hero",
-   "tagline": "Classic builder look.",
+   "tagline": "Classic viber look.",
    "priceSol": 0.2,
    "rarity": "common",
    "maxSupply": 20,
@@ -248,7 +248,7 @@
   },
   {
    "id": "golden",
-   "name": "The Golden Builder",
+   "name": "The Golden Viber",
    "tagline": "Legendary status.",
    "priceSol": 5,
    "rarity": "legendary",

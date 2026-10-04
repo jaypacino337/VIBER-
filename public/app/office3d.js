@@ -1,9 +1,9 @@
-// Crewfi site office: a live, animated 3D brick diorama drawn with plain WebGL2 (no libraries).
+// VIBER site office: a live, animated 3D brick diorama drawn with plain WebGL2 (no libraries).
 // Everything is made of toy bricks with round studs on top. One look per career level
-// (createOffice(el, { level: 1..6 })); level 2 is the CREW Site Office everyone sees.
-// Four builders sit at their desks (Launcher, Content Creator, Trader, Researcher) and the
+// (createOffice(el, { level: 1..6 })); level 2 is the VIBE Site Office everyone sees.
+// Four vibers sit at their desks (Launcher, Content Creator, Trader, Researcher) and the
 // foreman walks the floor. Speech bubbles above their heads are real buttons; clicking a
-// builder does the same thing.
+// viber does the same thing.
 //
 //   const office = createOffice(el, { onAction(role) {} });   // role: launch | shill | trade | research | how
 //   office.setData({ trades, coins, tokens })   // live snapshot bits for screens + bubbles
@@ -221,7 +221,7 @@ function upload(gl, mesh) {
   return { vao, count: mesh.i.length, bufs: [vb, ib] };
 }
 
-// ─────────────── the builders (toy-figure style) ───────────────
+// ─────────────── the vibers (toy-figure style) ───────────────
 // spec: { skin, hair, style: 'short'|'side'|'messy'|'buzz'|'long'|'bun'|'curly', top, pants,
 //   kind: 'tee'|'vest'|'hoodie'|'overalls'|'shirt'|'sweater', vest, stripes, sleeves,
 //   cap (hard hat colour; alias: hat), headlamp, headphones (headset), glasses, beard,
@@ -407,9 +407,10 @@ const GLYPHS = {
   E: ['#####', '##...', '##...', '####.', '##...', '##...', '#####'],
   W: ['##...##', '##...##', '##...##', '##.#.##', '#######', '###.###', '##...##'],
   F: ['#####', '##...', '##...', '####.', '##...', '##...', '##...'],
+  V: ['##..##', '##..##', '##..##', '##..##', '.####.', '.####.', '..##..'],
 };
-const SIGN_WORD = 'CREWFI';
-const SIGN_HIGHLIGHT = 2; // the last N letters get the accent colour ("FI")
+const SIGN_WORD = 'VIBER';
+const SIGN_HIGHLIGHT = 1; // the last N letters get the accent colour ("R")
 
 // ─────────────── canvas textures ───────────────
 function canvasTex(gl, w, h) {
@@ -460,7 +461,7 @@ function drawChat(tx, t = 0) {
   ctx.fillStyle = '#17171A'; ctx.fillRect(0, 0, c.width, c.height);
   ctx.fillStyle = '#232327'; ctx.fillRect(0, 0, 46, c.height);
   ['#FFD21F', '#22C55E', '#5865F2', '#EF4444'].forEach((col, i) => { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(23, 22 + i * 36, 13, 0, Math.PI * 2); ctx.fill(); });
-  const msgs = [['#FFD21F', 'gm builders'], ['#22C55E', 'wen next launch?'], ['#5865F2', 'LFG'], ['#F2F2F0', 'welcome aboard!']];
+  const msgs = [['#FFD21F', 'gm vibers'], ['#22C55E', 'wen next launch?'], ['#5865F2', 'LFG'], ['#F2F2F0', 'welcome aboard!']];
   const k = Math.floor(t) % msgs.length;
   for (let i = 0; i < 4; i++) {
     const [col, txt] = msgs[(i + k) % msgs.length], y = 16 + i * 36;
@@ -475,7 +476,7 @@ function drawChat(tx, t = 0) {
 const GREENS = [0x3DBE4E, 0x2FA43F, 0x55D060];
 // names shown on the site (Home office switcher, level-up toasts, career ladder)
 export const OFFICE_NAMES = { 1: 'The Garage', 2: 'Site Office', 3: 'The Workshop', 4: 'Studio Loft', 5: 'Tower Floor', 6: 'The Skyscraper' };
-export const MAIN_OFFICE = 2; // the CREW Site Office everyone sees
+export const MAIN_OFFICE = 2; // the VIBE Site Office everyone sees
 const OFFICE_LEVELS = {
   // 1 · the garage: concrete, a roll-up door, folding tables, boxes, a bare bulb, bricks piled in the corner
   1: {
@@ -505,7 +506,7 @@ const OFFICE_LEVELS = {
       plant(9.55, 4.4, 0.8);
     },
   },
-  // 2 · the site office (everyone's default): white brick, yellow accents, crane, the big CREW sign
+  // 2 · the site office (everyone's default): white brick, yellow accents, crane, the big VIBE sign
   2: {
     windows: 'std', crane: true,
     c: { floor: 0xE9E9E6, floorSeam: 0.5, wall: 0xF3F3F1, wallR: 0xEDEDEA, accent: 0xFFD21F, cap: 0xFFD21F, rim: 0xFFD21F,
@@ -632,7 +633,7 @@ const OFFICE_LEVELS = {
 };
 
 // the crew on the main floor (robot.js presets 'crew-*' draw the same people in 2D)
-const CREW = {
+const VIBE = {
   launch: { skin: 0xF2C38F, hair: 0x3A2A1E, style: 'short', top: 0x151515, pants: 0x2A2A2A, kind: 'vest', vest: YEL, cap: YEL },
   shill: { skin: 0xC98E62, hair: 0x1E1814, style: 'short', top: 0xF4F4F2, pants: 0x151515, kind: 'hoodie', cap: BLK, headphones: true },
   trade: { skin: 0xF0C9A0, hair: 0x6E3B1F, style: 'side', top: 0x2F9E57, pants: 0x2A2A2A, kind: 'hoodie', cap: YEL, glasses: true },
@@ -939,12 +940,12 @@ export function createOffice(host, { onAction, level = MAIN_OFFICE, agent = null
     walls.box(RW - 0.015, y0, 0, RW, y1, RD, c, -BRK);
   }
 
-  // the CREW sign on top of the back wall: chunky bricks with studs
+  // the VIBE sign on top of the back wall: chunky bricks with studs
   {
     const word = SIGN_WORD;
     const widths = [...word].map((ch) => GLYPHS[ch][0].length);
     const total = widths.reduce((a, b) => a + b, 0) + word.length - 1;
-    const L = 0.175 * Math.min(1, 31 / total); // sized for the 31-column CREW sign; longer words shrink
+    const L = 0.175 * Math.min(1, 31 / total); // sized for the 31-column VIBE sign; longer words shrink
     const x0 = RW / 2 - (total * L) / 2, y0 = RH + 0.08 + 0.16, z0 = -0.24, z1 = -0.02;
     room.box(x0 - 0.22, RH + 0.08, -0.26, x0 + total * L + 0.22, y0, 0.02, K.signBase, 0);   // base beam
     room.studs(x0 - 0.22, -0.26, x0 + total * L + 0.22, 0.02, y0, K.signBase, 0.2);
@@ -1046,10 +1047,10 @@ export function createOffice(host, { onAction, level = MAIN_OFFICE, agent = null
   };
   }
 
-  // ── the CREW tower: a two-storey brick cutaway with a room per builder (the home page scene) ──
+  // ── the VIBE tower: a two-storey brick cutaway with a room per viber (the home page scene) ──
   function towerScene() { return buildTower(); }
 
-  // the CREW sign: white bricks with a black outline and sides, the last letter in yellow, studs on top
+  // the VIBE sign: white bricks with a black outline and sides, the last letter in yellow, studs on top
   function bigSign(cx, y0, zf, L, depth) {
     const word = SIGN_WORD;
     const widths = [...word].map((ch) => GLYPHS[ch][0].length);
@@ -1329,8 +1330,8 @@ export function createOffice(host, { onAction, level = MAIN_OFFICE, agent = null
     crew.solo = { role: 'solo', parts: soloParts, ...ST.launch, phase: 0 };
     crew.boss = { role: 'how', parts: soloParts, x: -99, y: 0, z: -99, yaw: 0, phase: 0 };
   } else {
-    for (const r of LAY.order) crew[r] = { role: r, parts: buildCharacter(gl, CREW[r]), ...ST[r] };
-    crew.boss = { role: 'how', parts: buildCharacter(gl, CREW.boss), x: LAY.foreman.path[0][0], y: LAY.foreman.y, z: LAY.foreman.path[0][1], yaw: 0.5, phase: 0 };
+    for (const r of LAY.order) crew[r] = { role: r, parts: buildCharacter(gl, VIBE[r]), ...ST[r] };
+    crew.boss = { role: 'how', parts: buildCharacter(gl, VIBE.boss), x: LAY.foreman.path[0][0], y: LAY.foreman.y, z: LAY.foreman.path[0][1], yaw: 0.5, phase: 0 };
   }
   const bossPath = LAY.foreman.path;
   const boss = crew.boss;
@@ -1433,7 +1434,7 @@ export function createOffice(host, { onAction, level = MAIN_OFFICE, agent = null
   const ro = new ResizeObserver(resize);
   ro.observe(host);
 
-  // pointer: gentle parallax + clicking the builders themselves
+  // pointer: gentle parallax + clicking the vibers themselves
   let anchors = {};
   const onMove = (e) => {
     const r = host.getBoundingClientRect();

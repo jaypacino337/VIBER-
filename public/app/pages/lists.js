@@ -2,7 +2,7 @@ import { levelBadge, avatar, statusPill, change, tokIcon, esc, sol, signedSol, p
 import { price, hours } from '../format.js';
 import { wallet } from '../wallet.js';
 
-// ── Builders leaderboard ──
+// ── Vibers leaderboard ──
 export function AgentsPage(app, { mine = false } = {}) {
   let sort = mine ? 'new' : 'roi', q = '', status = 'all', el, last = 0;
   const own = (agents) => (mine ? agents.filter((a) => wallet.address && a.creator === wallet.address) : agents);
@@ -14,8 +14,8 @@ export function AgentsPage(app, { mine = false } = {}) {
       .filter((a) => status === 'all' || a.status === status)
       .filter((a) => !qq || a.name.toLowerCase().includes(qq) || (a.coin?.ticker || '').toLowerCase().includes(qq) || String(a.no).includes(qq))
       .sort(SORTS[sort]);
-    if (!list.length) return `<tr><td colspan="12" class="muted" style="text-align:center;padding:36px">${mine && !wallet.address ? 'Connect your wallet to see the builders you launched.' : agents.length ? 'No builders match.' : mine ? 'You have no builders yet. <a class="ext" href="#/build">Build your first one</a>' : 'No builders yet. <a class="ext" href="#/build">Build the first one</a>'}</td></tr>`;
-    return list.map((a, i) => `<tr class="click" data-go="#/builder/${a.no}">
+    if (!list.length) return `<tr><td colspan="12" class="muted" style="text-align:center;padding:36px">${mine && !wallet.address ? 'Connect your wallet to see the vibers you launched.' : agents.length ? 'No vibers match.' : mine ? 'You have no vibers yet. <a class="ext" href="#/build">Build your first one</a>' : 'No vibers yet. <a class="ext" href="#/build">Build the first one</a>'}</td></tr>`;
+    return list.map((a, i) => `<tr class="click" data-go="#/viber/${a.no}">
       <td><span class="rank ${i < 3 ? 'rank-' + (i + 1) : ''}">${i + 1}</span></td>
       <td><span class="cell-agent">${avatar(a.avatarSeed, 36)}<span><span class="name">${esc(a.name)}</span><br><span class="agent-tag">${agentNo(a.no)}</span></span></span></td>
       <td>${a.coin ? `<span class="chip">$${esc(a.coin.ticker)}</span>` : ''}</td>
@@ -34,18 +34,18 @@ export function AgentsPage(app, { mine = false } = {}) {
   return {
     mount(root, snap) {
       root.innerHTML = `<div class="wrap">
-        <div class="page-head"><div><h1>${mine ? 'My Builders' : 'Leaderboard'}</h1><p>${mine ? 'Every builder your wallet launched (or bought). Click one to manage it: add SOL, change its strategy, pause, withdraw.' : 'Every builder launched on Crewfi, ranked. Each one trades real SOL from its own wallet, with the same rules.'}</p></div>
-          <div class="right"><a class="btn btn-primary" href="#/build">Launch coin + builder</a></div></div>
+        <div class="page-head"><div><h1>${mine ? 'My Vibers' : 'Leaderboard'}</h1><p>${mine ? 'Every viber your wallet launched (or bought). Click one to manage it: add SOL, change its strategy, pause, withdraw.' : 'Every viber launched on VIBER, ranked. Each one trades real SOL from its own wallet, with the same rules.'}</p></div>
+          <div class="right"><a class="btn btn-primary" href="#/build">Launch coin + viber</a></div></div>
         <section class="card">
           <div class="toolbar">
             <div class="seg" id="a-sort">
               <button class="${sort === 'roi' ? 'on' : ''}" data-s="roi">ROI</button><button data-s="pnl">P&amp;L</button><button data-s="equity">Portfolio</button><button data-s="trades">Trades</button><button class="${sort === 'new' ? 'on' : ''}" data-s="new">Newest</button>
             </div>
             <div class="seg" id="a-status"><button class="on" data-v="all">All</button><button data-v="ACTIVE">Active</button><button data-v="PAUSED">Paused</button></div>
-            <div class="right"><input class="search" id="a-q" type="search" placeholder="Search name, ticker, #" aria-label="Search builders"></div>
+            <div class="right"><input class="search" id="a-q" type="search" placeholder="Search name, ticker, #" aria-label="Search vibers"></div>
           </div>
           <div class="tbl-wrap"><table class="tbl">
-            <thead><tr><th>#</th><th>Builder</th><th>Coin</th><th>Level</th><th>Status</th><th class="r">Portfolio (SOL)</th><th class="r">P&amp;L (SOL)</th><th class="r">ROI</th><th class="r">Trades</th><th class="r">Win rate</th><th class="r">Last trade</th><th class="r">Equity</th></tr></thead>
+            <thead><tr><th>#</th><th>Viber</th><th>Coin</th><th>Level</th><th>Status</th><th class="r">Portfolio (SOL)</th><th class="r">P&amp;L (SOL)</th><th class="r">ROI</th><th class="r">Trades</th><th class="r">Win rate</th><th class="r">Last trade</th><th class="r">Equity</th></tr></thead>
             <tbody id="a-rows">${rows(own(snap.agents))}</tbody>
           </table></div>
         </section>
@@ -70,7 +70,7 @@ export function AgentsPage(app, { mine = false } = {}) {
   };
 }
 
-// ── Token board (same table style as the builders leaderboard, with token logos) ──
+// ── Token board (same table style as the vibers leaderboard, with token logos) ──
 export function TokensPage(app) {
   let sort = 'trending', q = '', filter = 'all', el, last = 0;
   const SORTS = {
@@ -110,18 +110,18 @@ export function TokensPage(app) {
     mount(root, snap) {
       const c = app.api.config;
       root.innerHTML = `<div class="wrap">
-        <div class="page-head"><div><h1>Token board</h1><p>Live Solana tokens from DexScreener that builders may trade: at least ${usd(c.market.minLiquidityUsd)} liquidity, ${usd(c.market.minVolume24hUsd)} 24h volume, ${usd(c.market.minMcapUsd)} market cap and ${c.market.minAgeHours}h old. Builders never trade CREW coins.</p></div>
+        <div class="page-head"><div><h1>Token board</h1><p>Live Solana tokens from DexScreener that vibers may trade: at least ${usd(c.market.minLiquidityUsd)} liquidity, ${usd(c.market.minVolume24hUsd)} 24h volume, ${usd(c.market.minMcapUsd)} market cap and ${c.market.minAgeHours}h old. Vibers never trade VIBE coins.</p></div>
           <div class="right"><span class="live">PRICES LIVE</span></div></div>
         <section class="card">
           <div class="toolbar">
             <div class="seg" id="t-sort">
-              <button class="on" data-s="trending">Trending</button><button data-s="volume">Volume</button><button data-s="mcap">Market cap</button><button data-s="liq">Liquidity</button><button data-s="held">Held by builders</button>
+              <button class="on" data-s="trending">Trending</button><button data-s="volume">Volume</button><button data-s="mcap">Market cap</button><button data-s="liq">Liquidity</button><button data-s="held">Held by vibers</button>
             </div>
             <div class="seg" id="t-filter"><button class="on" data-v="all">All</button><button data-v="eligible">Eligible</button><button data-v="held">Held</button></div>
             <div class="right"><input class="search" id="t-q" type="search" placeholder="Search ticker, name, mint" aria-label="Search tokens"></div>
           </div>
           <div class="tbl-wrap"><table class="tbl tbl-tokens">
-            <thead><tr><th>#</th><th>Token</th><th class="r">Price</th><th class="r">Mcap</th><th class="r">Liquidity</th><th class="r">Vol 24h</th><th class="r">5m</th><th class="r">1h</th><th class="r">24h</th><th class="r">Age</th><th class="r">Builders</th><th>Status</th><th class="r">1h chart</th></tr></thead>
+            <thead><tr><th>#</th><th>Token</th><th class="r">Price</th><th class="r">Mcap</th><th class="r">Liquidity</th><th class="r">Vol 24h</th><th class="r">5m</th><th class="r">1h</th><th class="r">24h</th><th class="r">Age</th><th class="r">Vibers</th><th>Status</th><th class="r">1h chart</th></tr></thead>
             <tbody id="t-rows">${rows(snap.tokens)}</tbody>
           </table></div>
           <p class="hint" style="padding:10px 18px 16px">Click a token to open it on DexScreener.</p>

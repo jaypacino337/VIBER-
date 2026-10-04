@@ -1,5 +1,5 @@
-// Builder dashboard: hero with the main action (+ every other action in a menu), stats,
-// the builder's own 3D office, its strategy, activity, portfolio chart, recent trades,
+// Viber dashboard: hero with the main action (+ every other action in a menu), stats,
+// the viber's own 3D office, its strategy, activity, portfolio chart, recent trades,
 // notes & decisions, then positions, full history and the coin / wallet / fee details.
 import { levelBar, strategyById, strategyRules, STRAT_ICONS, stratIcon, stratKey, sidePill, sourceChip, tokIcon, coinThumb, copyBtn, txLink, addrLink, esc, sol, signedSol, pct, tone, ago, agentNo, usd, short, age } from '../ui.js';
 import { price, clockSec, dur } from '../format.js';
@@ -64,7 +64,7 @@ export function AgentPage(app, id) {
     const st = d.rawStatus;
     const T = [];
     if (st === 'ACTIVE') {
-      T.push({ act: 'deposit', label: 'Add SOL', sub: 'fund the builder', bg: '#E4282E', icon: 'plus', creator: true });
+      T.push({ act: 'deposit', label: 'Add SOL', sub: 'fund the viber', bg: '#E4282E', icon: 'plus', creator: true });
       T.push(d.paused
         ? { act: 'resume', label: 'Resume', sub: 'start trading', bg: '#1E9C47', icon: 'play', creator: true }
         : { act: 'pause', label: 'Pause', sub: 'stop new trades', bg: '#E8A32E', icon: 'pause', creator: true, dark: true });
@@ -76,10 +76,10 @@ export function AgentPage(app, id) {
         const L = d.market;
         T.push(L && L.escrow
           ? (mine ? { act: 'market-list', label: 'For sale', sub: `${+L.price.toFixed(4)} SOL · edit`, bg: '#0F7F72', icon: 'tag', creator: true }
-            : { act: 'market-buy', label: 'Buy builder', sub: `${+L.price.toFixed(4)} SOL`, bg: '#0F7F72', icon: 'tag', creator: false })
+            : { act: 'market-buy', label: 'Buy viber', sub: `${+L.price.toFixed(4)} SOL`, bg: '#0F7F72', icon: 'tag', creator: false })
           : L ? { act: 'market-escrow', label: 'Listing', sub: 'send the NFT', bg: '#0F7F72', icon: 'tag', creator: true }
-          : d.nft?.asset ? { act: 'market-list', label: 'Sell builder', sub: 'on the market', bg: '#0F7F72', icon: 'tag', creator: true }
-          : { act: 'market-list', label: 'Sell builder', sub: 'make it an NFT first', bg: '#0F7F72', icon: 'tag', creator: true, off: true });
+          : d.nft?.asset ? { act: 'market-list', label: 'Sell viber', sub: 'on the market', bg: '#0F7F72', icon: 'tag', creator: true }
+          : { act: 'market-list', label: 'Sell viber', sub: 'make it an NFT first', bg: '#0F7F72', icon: 'tag', creator: true, off: true });
       }
       if (d.x?.enabled) T.push(d.x.connected
         ? { act: 'x-card', label: '@' + d.x.handle, sub: 'posting on X', bg: '#000000', icon: 'x', creator: false }
@@ -98,7 +98,7 @@ export function AgentPage(app, id) {
   const act = (t) => {
     if (!t) return;
     if (t.act === 'connect') return app.openConnect();
-    if (t.off && t.act === 'market-list') return app.toast(`<b>Make it an NFT first</b>Only NFT builders can be sold. Use <b>Make it an NFT</b> on this page (free).`);
+    if (t.off && t.act === 'market-list') return app.toast(`<b>Make it an NFT first</b>Only NFT vibers can be sold. Use <b>Make it an NFT</b> on this page (free).`);
     if (t.off) return;
     if (t.act === 'shill') return app.shill(d.id);
     if (t.act === 'market-buy') return app.marketBuy({ ...d, price: d.market.price, seller: d.market.seller }, () => fetchDetail(true));
@@ -121,7 +121,7 @@ export function AgentPage(app, id) {
     return `<div class="ag-menu" role="menu">${T.map((t) => `<button type="button" role="menuitem" class="ag-mi${t.locked || t.off ? ' dim' : ''}" data-tile="${esc(t.act)}"><span class="ag-mi-ic" style="--tc:${esc(t.bg)}">${IC[t.locked ? 'lock' : t.icon] || ''}</span><span><b>${esc(t.label)}</b><small>${esc(t.locked ? 'creator only' : t.sub || '')}</small></span></button>`).join('')}</div>`;
   };
 
-  // ── the builder's own office: it sits alone at its desk, in its skin (kept across re-renders) ──
+  // ── the viber's own office: it sits alone at its desk, in its skin (kept across re-renders) ──
   let officeView = null, officeMenu = false;
   const hx = (c) => parseInt(String(c || '#888888').replace('#', ''), 16);
   const specFor = (seed) => {
@@ -140,7 +140,7 @@ export function AgentPage(app, id) {
   const officeHead = () => {
     const n = d.office || d.level?.no || 1, max = d.level?.no || 1;
     const L = officeLevels();
-    return `<h2>Builder Office</h2><span class="sub">${esc(OFFICE_NAMES[n] || '')} · where ${esc(d.name)} works 24/7</span>
+    return `<h2>Viber Office</h2><span class="sub">${esc(OFFICE_NAMES[n] || '')} · where ${esc(d.name)} works 24/7</span>
       <div class="right office-pick-inline">
         ${cfg.skins?.enabled ? `<button type="button" class="btn btn-sm" id="ag-skin-btn">${IC.gear}<span>Customize</span></button>` : ''}
         <button type="button" class="btn btn-sm" id="ag-office-btn" aria-expanded="${officeMenu}" ${isCreator() && max > 1 ? '' : 'disabled title="Unlocks with the first promotion (creator only)"'}>${IC.office}<span>Change Office</span></button>
@@ -192,13 +192,13 @@ export function AgentPage(app, id) {
     let body = '';
     if (s === 'AWAITING_FUNDS') {
       body = `<h2 class="pix">Waiting for SOL</h2>
-        <p>Send <b>${sol(d.requiredSol, 4)} SOL</b> to the builder wallet above to launch <b>$${esc(d.coin.ticker)}</b>. Received so far: ${sol(d.balanceSol, 4)} SOL.</p>
+        <p>Send <b>${sol(d.requiredSol, 4)} SOL</b> to the viber wallet above to launch <b>$${esc(d.coin.ticker)}</b>. Received so far: ${sol(d.balanceSol, 4)} SOL.</p>
         ${isCreator() ? `<div><button class="btn btn-primary" data-act="fund-launch">Send ${sol(Math.max(0, d.requiredSol - d.balanceSol), 4)} SOL</button></div>` : ''}
         <p class="note">Unfunded launches expire 30 minutes after they were started.</p>`;
     } else if (s === 'LAUNCHING') {
-      body = `<h2 class="pix">Launching on pump.fun…</h2><p>Funds received. The builder is creating <b>$${esc(d.coin.ticker)}</b> from its own wallet. This usually takes under a minute.</p>${d.error ? `<p class="blocked">${esc(d.error)} (retrying)</p>` : ''}`;
+      body = `<h2 class="pix">Launching on pump.fun…</h2><p>Funds received. The viber is creating <b>$${esc(d.coin.ticker)}</b> from its own wallet. This usually takes under a minute.</p>${d.error ? `<p class="blocked">${esc(d.error)} (retrying)</p>` : ''}`;
     } else if (s === 'LAUNCH_FAILED') {
-      body = `<h2 class="pix">Launch failed</h2><p class="blocked">${esc(d.error || 'Unknown error')}</p><p>The SOL is still in the builder wallet (${sol(d.balanceSol, 4)} SOL). The creator can retry or withdraw it.</p>`;
+      body = `<h2 class="pix">Launch failed</h2><p class="blocked">${esc(d.error || 'Unknown error')}</p><p>The SOL is still in the viber wallet (${sol(d.balanceSol, 4)} SOL). The creator can retry or withdraw it.</p>`;
     }
     return `<section class="card"><div class="card-body" style="display:grid;gap:12px">${body}</div></section>`;
   };
@@ -213,7 +213,7 @@ export function AgentPage(app, id) {
     return `<section class="ag-hero">
       <div class="ag-hero-art" aria-hidden="true"></div>
       <div class="ag-hero-in">
-        <div class="ag-no">${d.no ? 'BUILDER #' + String(d.no).padStart(3, '0') : 'NEW BUILDER'}${d.coin?.createdAt ? ` · launched ${age(d.coin.createdAt)} ago` : ''}</div>
+        <div class="ag-no">${d.no ? 'VIBER #' + String(d.no).padStart(3, '0') : 'NEW VIBER'}${d.coin?.createdAt ? ` · launched ${age(d.coin.createdAt)} ago` : ''}</div>
         <h1>${esc(d.name)}</h1>
         <div class="ag-chips">
           ${d.level ? `<span class="ag-chip lv">${IC.gear}${esc(d.level.name)}</span>` : ''}
@@ -224,7 +224,7 @@ export function AgentPage(app, id) {
         </div>
         <span class="ag-status ${st[0]}">${d.paused ? IC.pause : st[0] === 'work' ? IC.play : ''}${esc(st[1])}</span>
         ${d.rawStatus === 'ACTIVE' ? `<div class="ag-lvbar">${levelBar(d.level)}</div>` : ''}
-        <div class="ag-walletbar"><span class="ag-wl">Builder wallet</span><code class="ag-addr">${esc(d.wallet)}</code><button type="button" class="ag-copy" data-copy="${esc(d.wallet)}" title="Copy">${IC.copy}</button><a class="btn ag-scan" href="https://solscan.io/account/${esc(d.wallet)}" target="_blank" rel="noopener"><span>View on Solscan</span>${IC.ext}</a></div>
+        <div class="ag-walletbar"><span class="ag-wl">Viber wallet</span><code class="ag-addr">${esc(d.wallet)}</code><button type="button" class="ag-copy" data-copy="${esc(d.wallet)}" title="Copy">${IC.copy}</button><a class="btn ag-scan" href="https://solscan.io/account/${esc(d.wallet)}" target="_blank" rel="noopener"><span>View on Solscan</span>${IC.ext}</a></div>
       </div>
       <div class="ag-actions">
         ${p ? `<div class="ag-main"><button type="button" class="btn btn-primary btn-lg ag-go" data-tile="${esc(p.act)}">${IC[p.icon] || ''}<span>${esc(p.label)}</span></button>${T.length > 1 ? `<button type="button" class="btn btn-primary btn-lg ag-chev" data-menu aria-label="More actions">${IC.chev}</button>` : ''}</div>` : ''}
@@ -233,15 +233,15 @@ export function AgentPage(app, id) {
         ${d.rawStatus === 'ACTIVE' && !d.paused ? `<span class="ag-next" data-countdown="${d.nextDecisionAt}"></span>` : ''}
       </div>
     </section>
-    ${T.length ? `<nav class="ag-quick" aria-label="Builder actions">${T.map((t) => `<button type="button" class="ag-qb${t.locked || t.off ? ' dim' : ''}" data-tile="${esc(t.act)}" title="${esc(t.locked ? 'Creator only' : t.sub || '')}"><span class="ag-mi-ic" style="--tc:${esc(t.bg)}">${IC[t.locked ? 'lock' : t.icon] || ''}</span><span><b>${esc(t.label)}</b><small>${esc(t.locked ? 'creator only' : t.sub || '')}</small></span></button>`).join('')}</nav>` : ''}`;
+    ${T.length ? `<nav class="ag-quick" aria-label="Viber actions">${T.map((t) => `<button type="button" class="ag-qb${t.locked || t.off ? ' dim' : ''}" data-tile="${esc(t.act)}" title="${esc(t.locked ? 'Creator only' : t.sub || '')}"><span class="ag-mi-ic" style="--tc:${esc(t.bg)}">${IC[t.locked ? 'lock' : t.icon] || ''}</span><span><b>${esc(t.label)}</b><small>${esc(t.locked ? 'creator only' : t.sub || '')}</small></span></button>`).join('')}</nav>` : ''}`;
   };
 
   const statsHTML = () => `
-    <div class="ag-stat"><span class="ag-sic">${IC.wallet}</span><div><small>SOL BALANCE</small><b>${sol(d.balanceSol, 4)} <i>SOL</i></b><span>free SOL in the builder wallet</span></div></div>
+    <div class="ag-stat"><span class="ag-sic">${IC.wallet}</span><div><small>SOL BALANCE</small><b>${sol(d.balanceSol, 4)} <i>SOL</i></b><span>free SOL in the viber wallet</span></div></div>
     <div class="ag-stat"><span class="ag-sic">${IC.bars}</span><div><small>PORTFOLIO VALUE</small><b>${sol(d.equitySol, 4)} <i>SOL</i></b><span>${usd(d.equitySol * (app.api.snapshot.stats.solUsd || 0))} incl. positions</span></div></div>
     <div class="ag-stat"><span class="ag-sic">${IC.up}</span><div><small>TOTAL P&amp;L</small><b class="${tone(d.pnlSol)}">${signedSol(d.pnlSol, 4)} <i>SOL</i></b><span><em class="${tone(d.pnlSol)}">${pct(d.pnlPct, 1)}</em> on ${sol(d.depositedSol, 3)} SOL deposited</span></div></div>
     <div class="ag-stat"><span class="ag-sic">${IC.swap}</span><div><small>TOTAL TRADES</small><b>${d.trades}</b><span>${d.closedTrades} closed · ${d.winRate == null ? 'no win rate yet' : Math.round(d.winRate * 100) + '% wins'}</span></div></div>
-    <div class="ag-stat"><span class="ag-sic coin">${IC.coin}</span><div><small>CREATOR FEES KEPT</small><b>${sol(d.feesKeptSol, 4)} <i>SOL</i></b><span>${d.feesToCreatorSol > 0 ? `${sol(d.feesToCreatorSol, 4)} SOL sent to creator` : 'all fees stay with the builder'}</span></div></div>`;
+    <div class="ag-stat"><span class="ag-sic coin">${IC.coin}</span><div><small>CREATOR FEES KEPT</small><b>${sol(d.feesKeptSol, 4)} <i>SOL</i></b><span>${d.feesToCreatorSol > 0 ? `${sol(d.feesToCreatorSol, 4)} SOL sent to creator` : 'all fees stay with the viber'}</span></div></div>`;
 
   const stratCardHTML = () => {
     const st = strat();
@@ -260,13 +260,13 @@ export function AgentPage(app, id) {
     for (const x of (d.deposits || []).slice(0, 6)) A.push({ ts: x.ts, k: 'dep', ic: IC.wallet, text: `Added ${sol(x.amount, 3)} SOL` });
     for (const x of (d.withdrawals || []).slice(0, 6)) A.push({ ts: x.ts, k: 'wd', ic: IC.down, text: `Withdrew ${sol(x.amount, 3)} SOL` });
     for (const x of (d.feeClaims || []).slice(0, 6)) A.push({ ts: x.ts, k: 'fee', ic: IC.coin, text: `Claimed ${sol(x.claimedSol, 3)} SOL creator fees` });
-    if (d.paused) A.push({ ts: Date.now(), k: 'pause', ic: IC.pause, text: 'Builder paused' });
+    if (d.paused) A.push({ ts: Date.now(), k: 'pause', ic: IC.pause, text: 'Viber paused' });
     return A.sort((a, b) => b.ts - a.ts);
   };
   const activityHTML = () => {
     const A = activity().slice(0, 5);
     return `<header class="card-head"><h2>Activity</h2><button type="button" class="btn btn-sm" data-goto="ag-dec-card"><span>View all</span>${IC.arrow}</button></header>
-      ${A.length ? `<ul class="ag-act">${A.map((x) => `<li class="k-${x.k}"><span class="ag-aic">${x.ic}</span><span class="ag-at">${esc(x.text)}</span><time data-ago="${x.ts}">${ago(x.ts)}</time></li>`).join('')}</ul>` : '<p class="ag-empty">Nothing yet. Activity shows up here as soon as the builder starts working.</p>'}`;
+      ${A.length ? `<ul class="ag-act">${A.map((x) => `<li class="k-${x.k}"><span class="ag-aic">${x.ic}</span><span class="ag-at">${esc(x.text)}</span><time data-ago="${x.ts}">${ago(x.ts)}</time></li>`).join('')}</ul>` : '<p class="ag-empty">Nothing yet. Activity shows up here as soon as the viber starts working.</p>'}`;
   };
 
   const recentHTML = () => {
@@ -286,16 +286,16 @@ export function AgentPage(app, id) {
       ${N.length ? N.map((x) => `<div class="ag-note${x.blocked ? ' is-blocked' : ''}"><span class="ag-bulb">${IC.bulb}</span><div><p>${esc(x.reason)}</p>${x.blocked ? `<small class="ag-blk">${esc(x.blocked)}</small>` : ''}<time data-ago="${x.ts}">${ago(x.ts)}</time></div></div>`).join('') : '<p class="ag-empty">The first decision is coming up…</p>'}`;
   };
 
-  // ── X account: the builder posts its big trades, promotions and a daily report ──
-  const X_KINDS = [['trades', 'Big trades', 'Wins and losses over ±15%, with the reason'], ['promos', 'Promotions', 'New level and new office'], ['recap', 'Daily shift report', 'Once a day, only if it traded'], ['images', 'AI pictures', 'A picture of your builder, max 1 a day']];
+  // ── X account: the viber posts its big trades, promotions and a daily report ──
+  const X_KINDS = [['trades', 'Big trades', 'Wins and losses over ±15%, with the reason'], ['promos', 'Promotions', 'New level and new office'], ['recap', 'Daily shift report', 'Once a day, only if it traded'], ['images', 'AI pictures', 'A picture of your viber, max 1 a day']];
   const xHTML = () => {
     const x = d.x || {};
     const mine = isCreator();
-    const head = `<header class="card-head"><h2><span class="ag-xlogo">${IC.x}</span>Builder on X</h2>${x.connected ? `<a class="btn btn-sm" href="https://x.com/${esc(x.handle)}" target="_blank" rel="noopener"><span>@${esc(x.handle)}</span>${IC.ext}</a>` : ''}</header>`;
+    const head = `<header class="card-head"><h2><span class="ag-xlogo">${IC.x}</span>Viber on X</h2>${x.connected ? `<a class="btn btn-sm" href="https://x.com/${esc(x.handle)}" target="_blank" rel="noopener"><span>@${esc(x.handle)}</span>${IC.ext}</a>` : ''}</header>`;
     if (!x.enabled) return head + `<p class="ag-empty">${mine ? 'X posting is not switched on for this site yet.' : 'Not connected.'}</p>`;
     if (!x.connected) return head + `<div class="ag-xbody"><p class="ag-xlead">Connect an X account and ${esc(d.name)} posts what matters, never spam:</p>
       <ul class="ag-xlist">${X_KINDS.filter(([k]) => k !== 'images' || x.images).map(([, t, s]) => `<li>${IC.check}<span><b>${t}</b><small>${s}</small></span></li>`).join('')}</ul>
-      <p class="ag-xnote">At most one post every 90 minutes and a few a day. You choose what it posts and can disconnect any time. Tip: use a separate X account for your builder and mark it as <b>Automated</b> in X settings.</p>
+      <p class="ag-xnote">At most one post every 90 minutes and a few a day. You choose what it posts and can disconnect any time. Tip: use a separate X account for your viber and mark it as <b>Automated</b> in X settings.</p>
       ${mine ? `<button type="button" class="btn btn-primary ag-xgo" data-x="connect">${IC.x}<span>Connect X account</span></button>` : '<p class="ag-empty">Only the creator can connect an X account.</p>'}</div>`;
     const next = x.nextPostAt > Date.now() ? `next post possible ${ago(2 * Date.now() - x.nextPostAt).replace(' ago', '')} from now` : 'ready to post';
     return head + `<div class="ag-xbody">
@@ -310,11 +310,11 @@ export function AgentPage(app, id) {
   const chartHead = () => `<header class="card-head"><h2><span class="ag-hic">${IC.bars}</span>Portfolio Value</h2><div class="ag-ranges">${Object.keys(RANGES).map((k) => `<button type="button" data-range="${k}" class="${k === range ? 'on' : ''}">${k}</button>`).join('')}</div></header>`;
 
   const positionsHTML = () => {
-    if (!d.positions.length) return `<div class="feed-empty">No open positions. The builder is holding SOL.</div>`;
+    if (!d.positions.length) return `<div class="feed-empty">No open positions. The viber is holding SOL.</div>`;
     return `<div class="tbl-wrap"><table class="tbl">
       <thead><tr><th>Token</th><th class="r">Cost</th><th class="r">Value</th><th class="r">Entry</th><th class="r">Now</th><th class="r">P&amp;L</th><th>Stop loss → take profit</th><th class="r">Held</th></tr></thead>
       <tbody>${d.positions.map((p) => `<tr>
-        <td><a class="tokname" href="${esc(p.url || 'https://solscan.io/token/' + p.mint)}" target="_blank" rel="noopener">${tokIcon(p.symbol, p.icon)}$${esc(p.symbol)}</a>${p.recovered ? ' <span class="pill" title="Found on-chain after a restart; cost basis = value when found">RECOVERED</span>' : ''}${p.sellFails ? ` <span class="pill pill-low" title="The sell did not go through yet. The builder keeps retrying.">SELL RETRY ×${p.sellFails > 99 ? '99+' : p.sellFails}</span>` : ''}</td>
+        <td><a class="tokname" href="${esc(p.url || 'https://solscan.io/token/' + p.mint)}" target="_blank" rel="noopener">${tokIcon(p.symbol, p.icon)}$${esc(p.symbol)}</a>${p.recovered ? ' <span class="pill" title="Found on-chain after a restart; cost basis = value when found">RECOVERED</span>' : ''}${p.sellFails ? ` <span class="pill pill-low" title="The sell did not go through yet. The viber keeps retrying.">SELL RETRY ×${p.sellFails > 99 ? '99+' : p.sellFails}</span>` : ''}</td>
         <td class="r">${sol(p.costSol, 4)} SOL</td>
         <td class="r b">${sol(p.valueSol, 4)} SOL</td>
         <td class="r muted">${price(p.entryPriceSol * (app.api.snapshot.stats.solUsd || 0))}</td>
@@ -337,7 +337,7 @@ export function AgentPage(app, id) {
         <td class="r b">${sol(t.sol, 4)} SOL</td>
         <td class="r muted">${price(t.priceUsd)}</td>
         <td class="r">${t.side === 'SELL' ? `<b class="${tone(t.pnlPct)}">${pct(t.pnlPct)}</b><br><span class="${tone(t.pnlSol)}" style="font-size:12px">${signedSol(t.pnlSol, 4)} SOL</span>` : '<span class="muted">–</span>'}</td>
-        <td>${sourceChip(t.source) || '<span class="chip">Builder</span>'}</td>
+        <td>${sourceChip(t.source) || '<span class="chip">Viber</span>'}</td>
         <td>${txLink(t.sig)}</td>
       </tr>`).join('')}</tbody></table></div>
       ${d.history.length > 25 ? `<button class="card-foot" style="width:100%;border:0;border-top:1px solid var(--line);background:transparent;cursor:pointer;text-align:left" id="ag-more">${showAll ? 'Show fewer' : 'Show all ' + d.history.length + ' recent trades'}</button>` : ''}`;
@@ -368,14 +368,14 @@ export function AgentPage(app, id) {
         ${c.website ? `<dt>Website</dt><dd><a class="ext" href="${esc(link(c.website))}" target="_blank" rel="noopener">${esc(c.website.replace(/^https?:\/\//, ''))}</a></dd>` : ''}
       </dl>
       ${c.mint ? `<a class="btn btn-sm" href="https://pump.fun/coin/${esc(c.mint)}" target="_blank" rel="noopener">View on pump.fun ↗</a>` : ''}
-      <p class="note">The builder wallet is this coin's creator on pump.fun. Builders never trade CREW coins.</p>
+      <p class="note">The viber wallet is this coin's creator on pump.fun. Vibers never trade VIBE coins.</p>
     </section>`;
   };
 
   const walletHTML = () => `<section class="card coin-card">
       <div class="agent-tag">WALLETS</div>
       <dl class="kv">
-        <dt>Builder wallet</dt><dd>${addrLink(d.wallet, short(d.wallet, 6))}</dd>
+        <dt>Viber wallet</dt><dd>${addrLink(d.wallet, short(d.wallet, 6))}</dd>
         <dt>Keys</dt><dd>${esc(d.custody || '')}</dd>
         <dt>Creator wallet</dt><dd>${addrLink(d.creator, short(d.creator, 6))}</dd>
         <dt>Net deposited</dt><dd>${sol(d.depositedSol, 4)} SOL</dd>
@@ -389,9 +389,9 @@ export function AgentPage(app, id) {
     </section>`;
 
   const feesHTML = () => `<section class="card coin-card">
-      <div class="agent-tag">CREATOR FEES · ${cfg.fees.creatorSharePct > 0 ? `${Math.round(cfg.fees.creatorSharePct * 100)}% CREATOR / ` : ''}${cfg.flywheel?.enabled ? `${Math.round(cfg.flywheel.pct * 100)}% BURN / ${Math.round((1 - cfg.flywheel.pct - (cfg.fees.creatorSharePct || 0)) * 100)}% BUILDER` : cfg.fees.creatorSharePct > 0 ? `${Math.round((1 - cfg.fees.creatorSharePct) * 100)}% BUILDER` : '100% BUILDER'}</div>
+      <div class="agent-tag">CREATOR FEES · ${cfg.fees.creatorSharePct > 0 ? `${Math.round(cfg.fees.creatorSharePct * 100)}% CREATOR / ` : ''}${cfg.flywheel?.enabled ? `${Math.round(cfg.flywheel.pct * 100)}% BURN / ${Math.round((1 - cfg.flywheel.pct - (cfg.fees.creatorSharePct || 0)) * 100)}% VIBER` : cfg.fees.creatorSharePct > 0 ? `${Math.round((1 - cfg.fees.creatorSharePct) * 100)}% VIBER` : '100% VIBER'}</div>
       <dl class="kv">
-        <dt>Kept by builder</dt><dd>${sol(d.feesKeptSol, 4)} SOL</dd>
+        <dt>Kept by viber</dt><dd>${sol(d.feesKeptSol, 4)} SOL</dd>
         ${d.feesToCreatorSol > 0 || cfg.fees.creatorSharePct > 0 ? `<dt>Sent to creator</dt><dd>${sol(d.feesToCreatorSol, 4)} SOL</dd>` : ''}
         ${d.nextFeeClaimAt ? `<dt>Next claim</dt><dd data-countdown-plain="${d.nextFeeClaimAt}"></dd>` : ''}
       </dl>
@@ -413,18 +413,18 @@ export function AgentPage(app, id) {
       ${isCreator() && d.rawStatus === 'ACTIVE' ? `<button class="btn btn-sm" type="button" data-act="strategy">${stratIcon(strat())}<span>Change strategy</span></button>` : ''}
     </section>`;
 
-  // ── builder market: for sale banner / sell card / owner history ──
-  // ── builder NFT (whoever holds it owns the builder) + selling on the Crewfi market (NFT builders only) ──
+  // ── viber market: for sale banner / sell card / owner history ──
+  // ── viber NFT (whoever holds it owns the viber) + selling on the VIBER market (NFT vibers only) ──
   const nftHTML = () => {
     if (!cfg.agentNft?.enabled || d.rawStatus !== 'ACTIVE') return '';
     const mine = isCreator();
     if (d.nft?.asset) return `<section class="card mk-agent nft-card"><div class="mk-agent-row"><span class="mk-badge nft">🎟 NFT</span>
-        <span class="mk-agent-sub"><b>This builder is an NFT.</b> Whoever holds the NFT owns the builder: its wallet, its coin and its future creator fees.${mine ? ' Sell it here with <b>Sell this builder</b>.' : ''}</span>
+        <span class="mk-agent-sub"><b>This viber is an NFT.</b> Whoever holds the NFT owns the viber: its wallet, its coin and its future creator fees.${mine ? ' Sell it here with <b>Sell this viber</b>.' : ''}</span>
         <span class="right nft-links"><a class="ext" href="https://solscan.io/token/${esc(d.nft.asset)}" target="_blank" rel="noopener">NFT on Solscan ↗</a></span></div></section>`;
     if (d.nftJob && d.nftJob.status !== 'failed') return `<section class="card mk-agent nft-card"><div class="mk-agent-row"><span class="mk-badge nft">🎟 NFT</span><span class="mk-agent-sub"><b>Making the NFT…</b> It lands in the owner wallet in about a minute.${mine && d.nftJob.error ? `<br><small class="muted">Still trying: ${esc(d.nftJob.error)}</small>` : ''}</span></div></section>`;
     if (!mine) return '';
     return `<section class="card mk-agent nft-card"><div class="mk-agent-row"><span class="mk-badge nft">🎟 NFT</span>
-        <span class="mk-agent-sub"><b>Turn this builder into an NFT</b> to be able to sell it. Whoever holds the NFT owns the builder. Free: Crewfi pays the mint.${d.nftJob?.status === 'failed' ? ' <span class="err-t">The last try failed, you can try again.</span>' : ''}</span>
+        <span class="mk-agent-sub"><b>Turn this viber into an NFT</b> to be able to sell it. Whoever holds the NFT owns the viber. Free: VIBER pays the mint.${d.nftJob?.status === 'failed' ? ' <span class="err-t">The last try failed, you can try again.</span>' : ''}</span>
         <span class="right"><button class="btn btn-sm" type="button" data-act="nft-mint">🎟 Make it an NFT</button></span></div></section>`;
   };
 
@@ -433,19 +433,19 @@ export function AgentPage(app, id) {
     const L = d.market, mine = isCreator(), fee = cfg.market.feePct ?? 0.05;
     const hist = (d.sales || []).length ? `<div class="mk-hist"><span class="agent-tag">OWNERS</span>${d.sales.map((s) => `<span>Sold for <b>${sol(s.priceSol, 3)} SOL</b> <span class="muted" data-ago="${s.ts}">${ago(s.ts)}</span> ${txLink(s.paySig, 'tx')}</span>`).join('')}</div>` : '';
     if (L && L.escrow) return `<section class="card mk-agent on-sale">
-        <div class="mk-agent-row"><span class="mk-badge">FOR SALE</span><span class="mk-price"><small>Price</small><span>${+L.price.toFixed(4)} <em>SOL</em></span>${L.priceTokens ? `<small class="mk-tok">≈ ${Math.round(L.priceTokens).toLocaleString('en')} CREW</small>` : ''}</span>
-        <span class="muted mk-agent-sub">Listed <span data-ago="${L.listedAt}">${ago(L.listedAt)}</span> by ${esc(short(L.seller, 4))}${mine ? ` · you get the CREW worth ${sol(L.price * (1 - fee), 4)} SOL` : ''}</span>
-        <span class="right">${mine ? '<button class="btn btn-sm" type="button" data-act="market-list">Change price</button><button class="btn btn-sm" type="button" data-act="market-delist">Remove from market</button>' : '<button class="btn btn-primary" type="button" data-mkbuy="1">Buy this builder</button>'}</span></div>
+        <div class="mk-agent-row"><span class="mk-badge">FOR SALE</span><span class="mk-price"><small>Price</small><span>${+L.price.toFixed(4)} <em>SOL</em></span>${L.priceTokens ? `<small class="mk-tok">≈ ${Math.round(L.priceTokens).toLocaleString('en')} VIBE</small>` : ''}</span>
+        <span class="muted mk-agent-sub">Listed <span data-ago="${L.listedAt}">${ago(L.listedAt)}</span> by ${esc(short(L.seller, 4))}${mine ? ` · you get the VIBE worth ${sol(L.price * (1 - fee), 4)} SOL` : ''}</span>
+        <span class="right">${mine ? '<button class="btn btn-sm" type="button" data-act="market-list">Change price</button><button class="btn btn-sm" type="button" data-act="market-delist">Remove from market</button>' : '<button class="btn btn-primary" type="button" data-mkbuy="1">Buy this viber</button>'}</span></div>
         ${mine ? '<p class="note">The NFT is in the market wallet and withdrawals are locked while it is for sale. Remove it any time: the NFT comes back to you.</p>' : ''}${hist}</section>`;
     if (!mine) return hist ? `<section class="card mk-agent">${hist}</section>` : '';
     if (L) return `<section class="card mk-agent sell-card">
-        <div class="mk-agent-row"><span class="mk-badge sell">LISTING</span><span class="mk-agent-sub"><b>Waiting for the NFT.</b> ${+L.price.toFixed(4)} SOL: it goes on sale as soon as the builder NFT is in the market wallet. If you did not send it, send it now.</span>
+        <div class="mk-agent-row"><span class="mk-badge sell">LISTING</span><span class="mk-agent-sub"><b>Waiting for the NFT.</b> ${+L.price.toFixed(4)} SOL: it goes on sale as soon as the viber NFT is in the market wallet. If you did not send it, send it now.</span>
         <span class="right"><button class="btn btn-primary btn-sm" type="button" data-act="market-escrow">Send the NFT</button><button class="btn btn-sm" type="button" data-act="market-delist">Cancel</button></span></div>${hist}</section>`;
     const ready = !!d.nft?.asset;
     const minting = d.nftJob && d.nftJob.status !== 'failed';
     return `<section class="card mk-agent sell-card${ready ? '' : ' off'}">
-        <div class="mk-agent-row"><span class="mk-badge sell">SELL</span><span class="mk-agent-sub">${ready ? `<b>Sell this builder on the Builder Market.</b> You set the price in SOL, the buyer pays in CREW. You get the CREW minus ${Math.round(fee * 100)}%.` : minting ? '<b>Selling unlocks when the NFT is ready.</b> The builder NFT is being made (about a minute).' : '<b>Only NFT builders can be sold.</b> Make it an NFT first (free, below), then this button works.'}</span>
-        <span class="right"><button class="btn ${ready ? 'btn-primary' : ''}" type="button" ${ready ? 'data-act="market-list"' : 'disabled title="Make it an NFT first"'}>🤝 Sell this builder</button></span></div>${hist}</section>`;
+        <div class="mk-agent-row"><span class="mk-badge sell">SELL</span><span class="mk-agent-sub">${ready ? `<b>Sell this viber on the Viber Market.</b> You set the price in SOL, the buyer pays in VIBE. You get the VIBE minus ${Math.round(fee * 100)}%.` : minting ? '<b>Selling unlocks when the NFT is ready.</b> The viber NFT is being made (about a minute).' : '<b>Only NFT vibers can be sold.</b> Make it an NFT first (free, below), then this button works.'}</span>
+        <span class="right"><button class="btn ${ready ? 'btn-primary' : ''}" type="button" ${ready ? 'data-act="market-list"' : 'disabled title="Make it an NFT first"'}>🤝 Sell this viber</button></span></div>${hist}</section>`;
   };
 
 
@@ -467,14 +467,14 @@ export function AgentPage(app, id) {
       <section class="card"><header class="card-head"><h2>Current positions</h2><span class="sub" id="ag-pos-n">${d.positions.length} of ${strat().maxOpen}</span></header><div id="ag-pos">${positionsHTML()}</div></section>
       <div class="two">
         <section class="card" id="ag-trades-card"><header class="card-head"><h2>Trade history</h2><span class="sub">on-chain, newest first</span></header><div id="ag-trades">${tradesHTML()}</div></section>
-        <section class="card" id="ag-dec-card"><header class="card-head"><h2>Decision log</h2><span class="sub">what the builder did and why</span></header><div id="ag-dec">${decisionsHTML()}</div></section>
+        <section class="card" id="ag-dec-card"><header class="card-head"><h2>Decision log</h2><span class="sub">what the viber did and why</span></header><div id="ag-dec">${decisionsHTML()}</div></section>
       </div>
       <div class="three" id="ag-cards">${coinHTML()}${walletHTML()}${feesHTML()}</div>`
       : `<div id="ag-pending">${pendingHTML()}</div>
       <section class="card ag-office-card"><header class="card-head" id="ag-office-head">${officeHead()}</header><div class="ag-office-stage office" id="ag-office"></div></section>
       <div class="three" id="ag-cards">${coinHTML()}${walletHTML()}</div>`;
     el.innerHTML = `<div class="wrap ag">
-      <a href="#/builders" class="muted ag-back">← All builders</a>
+      <a href="#/vibers" class="muted ag-back">← All vibers</a>
       <div id="ag-hero">${heroHTML()}</div>
       <div id="ag-market">${marketHTML()}${nftHTML()}</div>
       ${main}
@@ -552,7 +552,7 @@ export function AgentPage(app, id) {
         }
       }
       const cp = e.target.closest('[data-copy]');
-      if (cp) { try { await navigator.clipboard.writeText(cp.dataset.copy); app.toast('<b>Copied</b>Builder wallet address'); } catch {} return; }
+      if (cp) { try { await navigator.clipboard.writeText(cp.dataset.copy); app.toast('<b>Copied</b>Viber wallet address'); } catch {} return; }
       const a = e.target.closest('[data-act]');
       if (a) return app.agentAction(a.dataset.act, d, () => fetchDetail(true));
       if (e.target.closest('[data-mkbuy]')) return app.marketBuy({ ...d, price: d.market.price, seller: d.market.seller }, () => fetchDetail(true));
@@ -575,7 +575,7 @@ export function AgentPage(app, id) {
     try {
       const next = await app.api.getAgent(id);
       if (!el) return;
-      if (!next) { el.innerHTML = `<div class="wrap"><div class="card"><div class="feed-empty">Builder ${esc(id)} not found. <a class="ext" href="#/builders">See all builders</a></div></div></div>`; return; }
+      if (!next) { el.innerHTML = `<div class="wrap"><div class="card"><div class="feed-empty">Viber ${esc(id)} not found. <a class="ext" href="#/vibers">See all vibers</a></div></div></div>`; return; }
       const first = !d;
       d = next;
       if (first) renderAll(); else renderLive();
@@ -597,10 +597,10 @@ export function AgentPage(app, id) {
       el = root;
       const xq = (location.hash.split('?')[1] || '').match(/x=(\w+)/)?.[1];
       if (xq) {
-        app.toast(xq === 'connected' ? '<b>X connected</b>Your builder posts a hello in a minute, then only what matters.' : xq === 'cancelled' ? '<b>X login cancelled</b>Nothing was connected.' : '<b>X could not be connected</b>Please try again. If it keeps failing, the site operator should check the X app settings.');
+        app.toast(xq === 'connected' ? '<b>X connected</b>Your viber posts a hello in a minute, then only what matters.' : xq === 'cancelled' ? '<b>X login cancelled</b>Nothing was connected.' : '<b>X could not be connected</b>Please try again. If it keeps failing, the site operator should check the X app settings.');
         history.replaceState(null, '', location.hash.split('?')[0]);
       }
-      el.innerHTML = `<div class="wrap"><div class="card"><div class="feed-empty">Loading builder…</div></div></div>`;
+      el.innerHTML = `<div class="wrap"><div class="card"><div class="feed-empty">Loading viber…</div></div></div>`;
       fetchDetail(true);
     },
     update() { fetchDetail(false); },
