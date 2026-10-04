@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Crewfi</title>
+  <meta name="description" content="Build your AI builder and let it work for you. Launch a coin on pump.fun and your builder gets its own Solana wallet: it trades real SOL 24/7, explains every move and every trade is on-chain.">
+  <meta name="theme-color" content="#FFFFFF">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="modulepreload" href="app/office3d.js">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Crewfi">
+  <meta property="og:description" content="Build your builder. It works for you 24/7: its own Solana wallet, real SOL trades, every move explained.">
+  <meta property="og:image" content="/brand/og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="/brand/og.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Rubik+Mono+One&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <script>try{var t=localStorage.getItem('build_theme');if(t){document.documentElement.setAttribute('data-theme',t);document.querySelector('meta[name="theme-color"]').setAttribute('content',t==='dark'?'#121212':'#FFFFFF')}}catch(e){}</script>
+</head>
+<body>
+  <div id="app"></div>
+  <script src="https://unpkg.com/@solana/web3.js@1.98.0/lib/index.iife.min.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.0/lib/index.iife.min.js';document.head.appendChild(s)"></script>
+  <script type="module">
+    // @solana/web3.js expects a global Buffer in the browser
+    try { if (!window.Buffer) { const m = await import('https://cdn.jsdelivr.net/npm/buffer@6.0.3/+esm'); window.Buffer = m.Buffer || (m.default && m.default.Buffer); } } catch (e) {}
+  </script>
+  <script type="module" src="app/main.js"></script>
+</body>
+</html>

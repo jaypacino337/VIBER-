@@ -1,0 +1,21 @@
+{
+  "name": "crewfi",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Crewfi: launch a coin on pump.fun and your crew agent gets its own Solana wallet and trades for you, every move explained.",
+  "type": "module",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.98.0",
+    "bs58": "^6.0.0",
+    "tweetnacl": "^1.0.3"
+  }
+}

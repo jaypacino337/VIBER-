@@ -1,0 +1,309 @@
+{
+ "strategies": [
+  {
+   "id": "classic",
+   "name": "Blueprint",
+   "tagline": "Balanced all-rounder",
+   "goal": "The standard plan: momentum and dip entries, locks in gains when the trend fades.",
+   "risk": null,
+   "maxTradeSol": null,
+   "sizePct": 0.1,
+   "maxOpen": 3,
+   "takeProfitPct": 0.4,
+   "stopLossPct": -0.2,
+   "trail": null,
+   "maxHoldMin": null,
+   "cooldownMin": 0,
+   "minLiquidityUsd": 30000,
+   "entry": {},
+   "safety": null
+  },
+  {
+   "id": "scalper",
+   "name": "Riveter",
+   "tagline": "Fast momentum",
+   "goal": "Many quick, short trades on tokens with active momentum. In fast, out fast.",
+   "risk": null,
+   "maxTradeSol": null,
+   "sizePct": 0.1,
+   "maxOpen": 2,
+   "takeProfitPct": 0.06,
+   "stopLossPct": -0.03,
+   "trail": {
+    "at": 0.04,
+    "by": 0.02
+   },
+   "maxHoldMin": 10,
+   "cooldownMin": 10,
+   "minLiquidityUsd": 30000,
+   "entry": {
+    "minVol5mUsd": 15000,
+    "minChange5m": 0.03
+   },
+   "safety": null
+  },
+  {
+   "id": "trend",
+   "name": "Highrise",
+   "tagline": "Momentum rider",
+   "goal": "Climbs with stronger moves and holds them longer, floor by floor.",
+   "risk": null,
+   "maxTradeSol": null,
+   "sizePct": 0.15,
+   "maxOpen": 2,
+   "takeProfitPct": 0.15,
+   "stopLossPct": -0.06,
+   "trail": {
+    "at": 0.1,
+    "by": 0.05
+   },
+   "maxHoldMin": 60,
+   "cooldownMin": 0,
+   "minLiquidityUsd": 50000,
+   "entry": {
+    "minVol1hUsd": 100000
+   },
+   "safety": null
+  },
+  {
+   "id": "dip",
+   "name": "Excavator",
+   "tagline": "Dig the dips",
+   "goal": "Digs into pullbacks after a run instead of chasing green candles.",
+   "risk": null,
+   "maxTradeSol": null,
+   "sizePct": 0.12,
+   "maxOpen": 2,
+   "takeProfitPct": 0.1,
+   "stopLossPct": -0.05,
+   "trail": {
+    "at": 0.07,
+    "by": 0.03
+   },
+   "maxHoldMin": 30,
+   "cooldownMin": 0,
+   "minLiquidityUsd": 40000,
+   "entry": {
+    "minRun1h": 0.1,
+    "pullbackMin": 0.07,
+    "pullbackMax": 0.15,
+    "bounceFromLow": 0.02
+   },
+   "safety": null
+  },
+  {
+   "id": "sniper",
+   "name": "Surveyor",
+   "tagline": "Measures twice",
+   "goal": "Measures every setup twice: trades less often and only enters the strongest ones.",
+   "risk": null,
+   "maxTradeSol": null,
+   "sizePct": 0.2,
+   "maxOpen": 1,
+   "takeProfitPct": 0.12,
+   "stopLossPct": -0.05,
+   "trail": {
+    "at": 0.08,
+    "by": 0.04
+   },
+   "maxHoldMin": 45,
+   "cooldownMin": 20,
+   "minLiquidityUsd": 50000,
+   "entry": {
+    "minVol5mUsd": 25000,
+    "minChange5m": 0.03,
+    "maxChange5m": 0.12,
+    "maxSpike5m": 0.2
+   },
+   "safety": null
+  },
+  {
+   "id": "newpairs",
+   "name": "Demolition (New Pairs)",
+   "tagline": "Fresh pump.fun coins",
+   "goal": "Trades brand-new pump.fun coins in their first minutes, with tiny positions, quick profits and hard exits. Most new coins go to zero: this builder can lose all of its SOL.",
+   "risk": "extreme",
+   "maxTradeSol": 0.25,
+   "sizePct": 0.04,
+   "maxOpen": 2,
+   "takeProfitPct": 0.35,
+   "stopLossPct": -0.15,
+   "trail": {
+    "at": 0.2,
+    "by": 0.1
+   },
+   "maxHoldMin": 8,
+   "cooldownMin": 60,
+   "minLiquidityUsd": 30000,
+   "entry": {},
+   "safety": {
+    "minAgeSec": 60,
+    "maxAgeSec": 900,
+    "minMcapSol": 35,
+    "maxMcapSol": 350,
+    "minVolSol": 8,
+    "minBuys": 25,
+    "minUniqueBuyers": 15,
+    "minBuySellRatio": 1.3,
+    "minChange60s": 0.05,
+    "maxSpike60s": 0.8,
+    "maxDevPct": 0.05,
+    "maxEarlyBuyers": 6,
+    "maxUnseenPct": 0.12,
+    "maxTopHolderPct": 0.15,
+    "maxTop10Pct": 0.4,
+    "maxAgentsPerCoin": 3
+   }
+  }
+ ],
+ "levels": [
+  {
+   "no": 1,
+   "name": "Apprentice",
+   "minProfitSol": 0,
+   "color": "#8E9199",
+   "rewardSol": 0
+  },
+  {
+   "no": 2,
+   "name": "Bricklayer",
+   "minProfitSol": 0.1,
+   "color": "#2F6FE0",
+   "rewardSol": 0.005
+  },
+  {
+   "no": 3,
+   "name": "Carpenter",
+   "minProfitSol": 0.5,
+   "color": "#16A34A",
+   "rewardSol": 0.025
+  },
+  {
+   "no": 4,
+   "name": "Foreman",
+   "minProfitSol": 1.5,
+   "color": "#8B5CF6",
+   "rewardSol": 0.075
+  },
+  {
+   "no": 5,
+   "name": "Architect",
+   "minProfitSol": 4,
+   "color": "#F2B705",
+   "rewardSol": 0.2
+  },
+  {
+   "no": 6,
+   "name": "Master Builder",
+   "minProfitSol": 20,
+   "color": "#151515",
+   "rewardSol": 1
+  }
+ ],
+ "skins": [
+  {
+   "id": "hardhat",
+   "name": "Hard Hat Hero",
+   "tagline": "Classic builder look.",
+   "priceSol": 0.2,
+   "rarity": "common",
+   "maxSupply": 20,
+   "maxPerWallet": null
+  },
+  {
+   "id": "nightshift",
+   "name": "Night Shift",
+   "tagline": "Works day and night.",
+   "priceSol": 0.2,
+   "rarity": "common",
+   "maxSupply": 20,
+   "maxPerWallet": null
+  },
+  {
+   "id": "welder",
+   "name": "The Welder",
+   "tagline": "Built different.",
+   "priceSol": 0.2,
+   "rarity": "rare",
+   "maxSupply": 20,
+   "maxPerWallet": null
+  },
+  {
+   "id": "architect",
+   "name": "Blueprint Architect",
+   "tagline": "Plans the future.",
+   "priceSol": 0.2,
+   "rarity": "epic",
+   "maxSupply": 20,
+   "maxPerWallet": null
+  },
+  {
+   "id": "drill",
+   "name": "Diamond Drill",
+   "tagline": "Shiny and efficient.",
+   "priceSol": 2.5,
+   "rarity": "epic",
+   "maxSupply": 10,
+   "maxPerWallet": null
+  },
+  {
+   "id": "golden",
+   "name": "The Golden Builder",
+   "tagline": "Legendary status.",
+   "priceSol": 5,
+   "rarity": "legendary",
+   "maxSupply": 5,
+   "maxPerWallet": 1
+  }
+ ],
+ "trading": {
+  "tradeSizePct": 0.1,
+  "maxOpenPositions": 3,
+  "stopLossPct": -0.2,
+  "takeProfitPct": 0.4,
+  "minSolReserve": 0.03,
+  "minTradeSol": 0.02,
+  "maxTradeSol": null,
+  "slippagePct": 15,
+  "exitSlippagePct": 30,
+  "priorityFeeSol": 0.0002,
+  "exitPriorityFeeSol": 0.001,
+  "maxExitPriorityFeeSol": 0.004,
+  "sellGasSol": 0.006,
+  "unbuildableHours": 6,
+  "ruggedAfterFails": 3,
+  "ruggedPnlPct": -0.95
+ },
+ "filters": {
+  "minLiquidityUsd": 30000,
+  "minVolume24hUsd": 50000,
+  "minMcapUsd": 50000,
+  "minAgeHours": 1
+ },
+ "launch": {
+  "minStartingCapital": 0.2,
+  "maxStartingCapital": null,
+  "capitalPresets": [
+   0.5,
+   1,
+   2.5,
+   5
+  ],
+  "defaultStartingCapital": 0.5,
+  "launchReserveSol": 0.05,
+  "devBuySol": 0.0001,
+  "fundingTimeoutMs": 1800000
+ },
+ "brain": {
+  "decisionEveryMs": [
+   20000,
+   40000
+  ],
+  "maxTokensShown": 15
+ },
+ "fees": {
+  "claimEveryMs": 1800000,
+  "minClaimSol": 0.005,
+  "creatorSharePct": 0
+ }
+}
