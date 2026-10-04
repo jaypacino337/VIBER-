@@ -14,7 +14,7 @@ export const MODE = str('MODE', 'paper') === 'live' ? 'live' : 'paper';
 export const LIVE = MODE === 'live';
 
 export const PORT = num('PORT', 3000);
-export const DATA_DIR = str('DATA_DIR', 'data');
+export const DATA_DIR = str('DATA_DIR', str('RAILWAY_VOLUME_MOUNT_PATH', 'data'));
 export const RPC_URL = str('RPC_URL', 'https://api.mainnet-beta.solana.com');
 // 32-byte hex key that encrypts every agent's wallet secret at rest. Required in live mode.
 export const MASTER_KEY = str('MASTER_KEY');
@@ -25,7 +25,7 @@ export const PUMPPORTAL_URL = str('PUMPPORTAL_URL', 'https://pumpportal.fun/api/
 
 export const SITE = {
   name: 'VIBER',
-  url: str('SITE_URL', 'http://localhost:' + num('PORT', 3000)),
+  url: str('SITE_URL', env.RAILWAY_PUBLIC_DOMAIN ? 'https://' + env.RAILWAY_PUBLIC_DOMAIN : 'http://localhost:' + num('PORT', 3000)),
   xUrl: str('X_URL'),
   // Your platform token (paid for skins / market). Null until you launch it.
   tokenMint: str('TOKEN_MINT'),

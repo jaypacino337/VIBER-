@@ -298,6 +298,7 @@ const server = createServer(async (req, res) => {
     req.on('close', () => clients.delete(res));
     return;
   }
+  if (url.pathname === '/healthz') return send(res, 200, { ok: true, mode: MODE });
   if (!url.pathname.startsWith('/api/')) return serveStatic(req, res, url.pathname);
   const r = routes.find((x) => x.method === req.method && x.re.test(url.pathname));
   if (!r) return send(res, 404, { error: 'Not found' });
