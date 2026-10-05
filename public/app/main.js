@@ -11,6 +11,7 @@ import { AgentsPage, TokensPage } from './pages/lists.js';
 import { AgentPage } from './pages/agent.js';
 import { LaunchPage } from './pages/launch.js';
 import { HowPage } from './pages/how.js';
+import { FeesPage } from './pages/fees.js';
 import { SkinsPage } from './pages/skins.js';
 import { AgentBurnsPage, DevBurnsPage } from './pages/burns.js';
 import { MarketPage } from './pages/market.js';
@@ -57,6 +58,7 @@ function shell(cfg) {
         <a href="#/" data-r="home">Home</a>
         <a href="#/build" data-r="launch">Launch</a>
         <a href="#/my-vibers" data-r="mine">My Vibers</a>
+        <a href="#/fees" data-r="fees">Fees</a>
         ${cfg.market?.enabled ? '<a href="#/market" data-r="market">Market</a>' : ''}
         ${cfg.skins?.enabled ? '<a href="#/skins" data-r="skins">Skins</a>' : ''}
         <a href="#/how" data-r="how">Docs</a>
@@ -81,13 +83,14 @@ function shell(cfg) {
       ${side('tokens', '#/tokens', NAV_IC.tokens, 'Tokens')}
       ${cfg.flywheel?.enabled ? side('burns', '#/burns', NAV_IC.burns, 'Viber Burns') + side('dev-burns', '#/dev-burns', NAV_IC.burns, 'Dev Burns') : ''}
       <button type="button" class="nav-shill" id="nav-shill">${NAV_IC.shill}<span>Shill on X</span></button>
+      ${side('fees', '#/fees', NAV_IC.burns, 'Fees &amp; Burns')}
       ${side('how', '#/how', NAV_IC.how, 'How it works')}
     </nav>
     <a class="side-card" href="#/build"><img src="brand/mascot.png" alt="" width="120" height="150" loading="lazy"><b>Your vibers work 24/7.</b><span>Build, customize and let them do the work for you.</span></a>
   </aside>
   <div class="tape" aria-label="Token prices"><div class="tape-track" id="tape"></div></div>
   <main id="page"></main>
-  <footer class="foot"><span class="foot-brand"><img src="brand/logo-96.png" alt="" width="26" height="26"><b>VIBER</b> · launch your viber, it works for you</span>${x ? `<a class="foot-x" href="${esc(x)}" target="_blank" rel="noopener">${X_BADGE}${esc(xHandle(x))}</a>` : ''}<span>Real SOL on Solana mainnet</span><span>Not financial advice. Memecoins are extremely risky.</span></footer>
+  <footer class="foot"><span class="foot-brand"><img src="brand/logo-96.png" alt="" width="26" height="26"><b>VIBER</b> · vibe-code your own AI trading agent</span>${x ? `<a class="foot-x" href="${esc(x)}" target="_blank" rel="noopener">${X_BADGE}${esc(xHandle(x))}</a>` : ''}<span>${cfg.mode === 'paper' ? 'Paper mode: simulated SOL' : 'Real SOL on Solana mainnet'}</span><span>Not financial advice. Memecoins are extremely risky.</span></footer>
   <div class="toasts" id="toasts" aria-live="polite"></div>`;
 }
 
@@ -996,16 +999,16 @@ async function boot() {
     let [a, b] = h.split('/');
     a = ({ viber: 'agent', vibers: 'agents', viber: 'agent', vibers: 'agents', leaderboard: 'agents', build: 'launch', 'my-vibers': 'mine', 'my-vibers': 'mine' })[a] || a;
     if (a === 'agent' && b) return { name: 'agent', id: decodeURIComponent(b) };
-    if (['agents', 'tokens', 'launch', 'how', 'skins', 'burns', 'dev-burns', 'market', 'mine'].includes(a)) return { name: a };
+    if (['agents', 'tokens', 'launch', 'how', 'fees', 'skins', 'burns', 'dev-burns', 'market', 'mine'].includes(a)) return { name: a };
     return { name: 'home' };
   }
   function route() {
     page?.destroy?.();
     const r = parse();
-    page = r.name === 'agent' ? AgentPage(ctx, r.id) : r.name === 'agents' ? AgentsPage(ctx) : r.name === 'mine' ? AgentsPage(ctx, { mine: true }) : r.name === 'tokens' ? TokensPage(ctx) : r.name === 'launch' ? LaunchPage(ctx) : r.name === 'how' ? HowPage(ctx) : r.name === 'skins' ? SkinsPage(ctx) : r.name === 'burns' ? AgentBurnsPage(ctx) : r.name === 'dev-burns' ? DevBurnsPage(ctx) : r.name === 'market' ? MarketPage(ctx) : HomePage(ctx);
+    page = r.name === 'agent' ? AgentPage(ctx, r.id) : r.name === 'agents' ? AgentsPage(ctx) : r.name === 'mine' ? AgentsPage(ctx, { mine: true }) : r.name === 'tokens' ? TokensPage(ctx) : r.name === 'launch' ? LaunchPage(ctx) : r.name === 'how' ? HowPage(ctx) : r.name === 'fees' ? FeesPage(ctx) : r.name === 'skins' ? SkinsPage(ctx) : r.name === 'burns' ? AgentBurnsPage(ctx) : r.name === 'dev-burns' ? DevBurnsPage(ctx) : r.name === 'market' ? MarketPage(ctx) : HomePage(ctx);
     page.mount($('#page'), api.snapshot);
     document.querySelectorAll('#nav a, #topnav a').forEach((a) => a.classList.toggle('on', a.dataset.r === (r.name === 'agent' ? 'agents' : r.name)));
-    document.title = r.name === 'home' ? 'VIBER · launch your viber, it works for you' : 'VIBER · ' + ({ agent: 'Viber', agents: 'Vibers', tokens: 'Tokens', launch: 'Launch', how: 'How it works', skins: 'Skins', burns: 'Viber Burns', 'dev-burns': 'Dev Burns', market: 'Viber Market', mine: 'My Vibers' })[r.name];
+    document.title = r.name === 'home' ? 'VIBER · vibe-code your own AI trading agent' : 'VIBER · ' + ({ agent: 'Viber', agents: 'Vibers', tokens: 'Tokens', launch: 'Launch', how: 'How it works', fees: 'Fees & Burns', skins: 'Skins', burns: 'Viber Burns', 'dev-burns': 'Dev Burns', market: 'Viber Market', mine: 'My Vibers' })[r.name];
     window.scrollTo(0, 0);
   }
   addEventListener('hashchange', route);
@@ -1022,13 +1025,14 @@ async function boot() {
       page?.onLevelUp?.(p);
     }
     if (type === 'devclaim') page?.onDevClaim?.(p);
+    if (type === 'chat') page?.onChat?.(p);
     if (type === 'market') page?.onMarket?.(p);
     if (type === 'sale') {
       toast(`<b>🤝 Viber sold: ${esc(p.agentName)}</b>for ${sol(p.priceSol, 3)} SOL on the <a class="ext" href="#/market">Viber Market</a>`, p.avatarSeed);
       page?.onMarket?.(p);
     }
     if (type === 'burn') {
-      toast(`<b>🔥 ${p.source === 'dev' ? 'Dev buyback' : 'Buyback'} &amp; burn</b>${esc(p.agentName)} bought ${sol(p.sol, 3)} SOL of the VIBE coin and burned ${Math.round(p.tokens).toLocaleString('en')} tokens. <a class="ext" href="#/${p.source === 'dev' ? 'dev-burns' : 'burns'}">See all ${p.source === 'dev' ? 'dev ' : 'viber '}burns</a>`, p.avatarSeed);
+      toast(`<b>🔥 ${p.source === 'dev' ? 'Dev buyback' : p.source === 'profit' ? 'Profit burn' : 'Buyback'} &amp; burn</b>${esc(p.agentName)} bought ${sol(p.sol, 3)} SOL of ${p.source === 'profit' ? '$' + esc(p.coinTicker) + ' with its trading profit' : 'the VIBE coin'} and burned ${Math.round(p.tokens).toLocaleString('en')} tokens. <a class="ext" href="#/${p.source === 'dev' ? 'dev-burns' : 'burns'}">See all ${p.source === 'dev' ? 'dev ' : 'viber '}burns</a>`, p.avatarSeed);
       page?.onBurn?.(p);
     }
     if (type === 'skin') {

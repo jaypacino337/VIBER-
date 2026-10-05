@@ -4,7 +4,7 @@ import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { join, extname, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { PORT, CONFIG, SITE, LIVE, MODE, DATA_DIR } from './config.js';
+import { PORT, CONFIG, SITE, LIVE, MODE, DATA_DIR, FEES, AI } from './config.js';
 import { db, save, flush } from './store.js';
 import * as E from './engine.js';
 import * as chain from './chain.js';
@@ -13,6 +13,8 @@ import { checkAction, HttpError } from './auth.js';
 import { RISK_ACK, isExtreme } from '../public/shared/risk-ack.js';
 import { sanitize, cleanName, riskReasons, settingsLine, CUSTOM_RISK_ACK, CUSTOM_PREFIX, defaultsFor, CUSTOM_BASES } from '../public/shared/custom-strategy.js';
 import { readPrompt } from './prompt.js';
+import { chat as agentChat } from './ai.js';
+import { randomBytes, createHash } from 'node:crypto';
 
 const PUBLIC = fileURLToPath(new URL('../public/', import.meta.url));
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.svg': 'image/svg+xml', '.json': 'application/json', '.ico': 'image/x-icon', '.webp': 'image/webp' };
@@ -34,16 +36,18 @@ function publicConfig() {
     rewards: { enabled: false, payTo: 'creator', wallet: null, balanceSol: 0, paidSol: 0, pending: 0, recent: [] },
     defaultStrategy: CONFIG.defaultStrategy,
     strategies,
-    customStrategies: Object.values(db.customStrategies).map(E.publicCustom),
+    customStrategies: [...Object.values(db.customStrategies), ...Object.values(db.agents).filter((x) => x.trained).map((x) => x.trained)].map(E.publicCustom),
     customEnabled: true,
-    promptAi: false,
+    promptAi: AI.enabled,
     skins: {
       enabled: skinsOn,
       payTo: SITE.treasury,
       payWith: { symbol: SITE.tokenSymbol, mint: SITE.tokenMint, tokenPriceSol: market.getToken(SITE.tokenMint || '')?.priceSol || 0, burn: false, burnPct: 0 },
       items: CONFIG.skinItems.map((s) => ({ ...s, stock: s.maxSupply ? stockOf(s) : null, nft: null })),
     },
-    flywheel: { enabled: false },
+    flywheel: { enabled: true, pct: FEES.agent.burnVibe, minBuySol: FEES.minFlushSol, mint: SITE.tokenMint },
+    vibeFees: FEES,
+    ai: { enabled: AI.enabled, model: AI.model },
     // The tokens page reads its filter labels from here (see API_CONTRACT §6.2), so they are mirrored.
     market: { enabled: false, payTo: SITE.treasury, payWith: SITE.tokenSymbol, mint: SITE.tokenMint, tokenPriceSol: 0, feePct: 0.05, minPriceSol: 0.05, maxPriceSol: 1000, maxWalletSol: 0.01, listed: 0, sold: 0, volumeSol: 0, ...CONFIG.filters },
     agentNft: { enabled: false, collection: null, minted: 0, royaltyBps: 500 },
@@ -70,18 +74,10 @@ function snapshot(full = true) {
     thoughts: db.thoughts,
     thinking: E.thinkingCount(),
   };
-  if (full) Object.assign(s, { feed: db.feed.slice(0, 60), flywheel: burnsView().flywheelSnap, bonded: market.getBonded(), config: publicConfig() });
+  if (full) Object.assign(s, { feed: db.feed.slice(0, 60), flywheel: E.burnsData('agent'), bonded: market.getBonded(), config: publicConfig() });
   return s;
 }
 
-function burnsView() {
-  const z = { totalSol: 0, totalTokens: 0, count: 0, queuedSol: 0 };
-  const agentsZ = { ...z, skinTokens: 0, skinBurns: 0 };
-  return {
-    flywheelSnap: { enabled: false, mint: null, pct: 0, ...z, recent: [], agents: agentsZ, dev: { enabled: false } },
-    api: { enabled: false, mint: null, pct: 0, ...z, recent: [], agents: agentsZ, dev: { enabled: false, burns: 0, claims: [] }, burns: [] },
-  };
-}
 
 // ------------------------------------------------------------------ SSE
 const clients = new Set();
@@ -241,7 +237,56 @@ route('POST', '/api/agents/:id/skin', ({ id }, b) => {
   return { ok: true };
 });
 
-route('GET', '/api/burns', () => burnsView().api);
+// ------------------------------------------------------------------ vibe chat
+// Creator sessions: one wallet signature unlocks training for 12 hours.
+const sessions = new Map(); // token -> { agentId, wallet, exp }
+const rate = new Map(); // ip:agent -> [timestamps]
+const busy = new Set(); // agents with an AI reply in flight
+const clientIp = (req) => String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+function limited(key, max, windowMs) {
+  const now = Date.now();
+  const list = (rate.get(key) || []).filter((t) => now - t < windowMs);
+  if (list.length >= max) return true;
+  list.push(now);
+  rate.set(key, list);
+  return false;
+}
+const chatView = (m) => ({ id: m.id, ts: m.ts, role: m.role, who: m.who, creator: m.creator, text: m.text, applied: m.applied || [] });
+
+route('GET', '/api/agents/:id/chat', ({ id }) => {
+  const a = agentOr404(id);
+  return { messages: a.chat.slice(-40).map(chatView), ai: AI.enabled && a.aiCreditsSol > 0, aiEnabled: AI.enabled, aiCreditsSol: a.aiCreditsSol, vibe: a.vibe };
+});
+route('POST', '/api/agents/:id/chat/session', ({ id }, b) => {
+  const a = agentOr404(id);
+  creatorAction(a, b, 'chat-session');
+  const token = randomBytes(24).toString('base64url');
+  const exp = Date.now() + 12 * 3600_000;
+  sessions.set(token, { agentId: a.id, wallet: a.creator, exp });
+  return { token, exp };
+});
+route('POST', '/api/agents/:id/chat', async ({ id }, b, _q, req) => {
+  const a = agentOr404(id);
+  const text = String(b.text || '').replace(/[\u0000-\u001f]/g, ' ').trim();
+  if (!text) off('Say something first.');
+  if (text.length > 500) off('Keep it under 500 characters.');
+  const sess = b.token && sessions.get(b.token);
+  const isCreator = Boolean(sess && sess.agentId === a.id && sess.wallet === a.creator && sess.exp > Date.now());
+  const ip = clientIp(req);
+  if (limited(`${ip}:${a.id}`, isCreator ? 40 : 8, 10 * 60_000)) throw new HttpError(429, isCreator ? 'Slow down a little: try again in a few minutes.' : 'You have chatted a lot with this viber. Try again in a few minutes.');
+  if (busy.has(a.id)) throw new HttpError(429, `${a.name} is still answering someone. Try again in a moment.`);
+  busy.add(a.id);
+  try {
+    const who = isCreator ? 'creator' : 'guest-' + createHash('sha256').update(ip).digest('hex').slice(0, 4);
+    const r = await agentChat(a, E.detailView(a), { text, who, isCreator });
+    E.emit('chat', { agentId: a.id, messages: [chatView(r.message), chatView(r.reply)] });
+    return { message: chatView(r.message), reply: chatView(r.reply), applied: r.applied, ai: r.ai, aiCreditsSol: a.aiCreditsSol };
+  } finally {
+    busy.delete(a.id);
+  }
+});
+
+route('GET', '/api/burns', (_p, _b, q) => E.burnsData(q.get('who')));
 
 // custom strategies: one per wallet
 route('GET', '/api/custom-strategy/:owner', ({ owner }) => ({ strategy: E.publicCustom(db.customStrategies[decodeURIComponent(owner)]) }));
@@ -304,7 +349,7 @@ const server = createServer(async (req, res) => {
   if (!r) return send(res, 404, { error: 'Not found' });
   try {
     const body = req.method === 'POST' ? await readBody(req) : {};
-    const out = await r.fn(url.pathname.match(r.re).groups || {}, body, url.searchParams);
+    const out = await r.fn(url.pathname.match(r.re).groups || {}, body, url.searchParams, req);
     send(res, 200, out ?? { ok: true });
   } catch (e) {
     const status = e.status || 400;

@@ -69,7 +69,7 @@ export function LaunchPage(app) {
   const want = { hat: null, outfit: null, gear: null };
   let pages = [findSeeds(want, PAGE)], pageNo = 0;
   const f = {
-    image: null, name: '', ticker: '', description: '', twitter: '', website: '', telegram: '', agentName: '',
+    image: null, name: '', ticker: '', description: '', twitter: '', website: '', telegram: '', agentName: '', vibe: '',
     capital: cfg.launch.defaultStartingCapital, botSeed: pages[0][2], skin: null,
     strategy: (() => { const w = new URLSearchParams(location.hash.split('?')[1] || '').get('s'); return w && (cfg.strategies || []).some((x) => x.id === w && x.risk !== 'extreme') ? w : cfg.defaultStrategy || 'classic'; })(),
   };
@@ -145,6 +145,7 @@ export function LaunchPage(app) {
             <p class="bb-note" id="bb-note">${appearanceNote()}</p>
             <div class="row2">
               ${field('l-agent', 'Viber name', `<input class="input" id="l-agent" maxlength="24" placeholder="e.g. Viber OG" autocomplete="off">`)}
+              ${field('l-vibe', 'Its vibe (optional)', `<textarea class="input" id="l-vibe" maxlength="400" rows="2" placeholder="Who is it? e.g. a calm surfer who buys dips and explains every trade like a beach report"></textarea>`)}
               <div class="field"><label>Coin logo</label><div class="bb-logo-row"><span class="av av-42" id="l-logo">${logoHTML()}</span><span class="hint">Logo: <span id="l-logo-src">your viber</span> <button type="button" class="copy" id="l-logo-reset" hidden>Use my viber</button></span></div></div>
             </div>
           </section>
@@ -301,6 +302,7 @@ export function LaunchPage(app) {
         creator: wallet.address,
         coin: { name: f.name.trim(), ticker: f.ticker, description: f.description.trim(), twitter: f.twitter.trim(), website: f.website.trim(), telegram: f.telegram.trim() },
         agentName: f.agentName.trim(),
+        vibe: f.vibe.trim(),
         startingCapital: capital,
         image: f.image || robotPNG(f.botSeed),
         avatarSeed: f.botSeed,
@@ -384,6 +386,7 @@ export function LaunchPage(app) {
       bindText('#l-web', 'website');
       bindText('#l-tg', 'telegram');
       bindText('#l-agent', 'agentName');
+      bindText('#l-vibe', 'vibe');
       q('#l-desc').addEventListener('input', (e) => { q('#l-desc-n').textContent = e.target.value.length + '/280'; });
       q('#l-ticker').addEventListener('blur', (e) => { e.target.value = f.ticker; });
       q('#l-cap').addEventListener('input', (e) => {

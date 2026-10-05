@@ -58,6 +58,10 @@ export async function createApi() {
     xSettings: (id, p) => post(`/api/agents/${id}/x/settings`, p),
     xDisconnect: (id, p) => post(`/api/agents/${id}/x/disconnect`, p),
     xPost: (id, p) => post(`/api/agents/${id}/x/post`, p),
+    // vibe chat: anyone can talk to a viber; its creator signs once to train it
+    getChat: (id) => json(`/api/agents/${encodeURIComponent(id)}/chat`),
+    chat: (id, p) => post(`/api/agents/${id}/chat`, p),
+    chatSession: (id, p) => post(`/api/agents/${id}/chat/session`, p),
   };
 
   // live stream; background tabs close it after a minute and reopen it when shown again
@@ -80,7 +84,7 @@ export async function createApi() {
       api.snapshot.bonded = [b, ...(api.snapshot.bonded || []).filter((x) => x.mint !== b.mint)].slice(0, 12);
       h.emit('bonded', b);
     });
-    for (const type of ['launch', 'fund', 'fees', 'levelup', 'reward', 'skin', 'burn', 'devclaim', 'market', 'sale']) es.addEventListener(type, (ev) => h.emit('event', type, JSON.parse(ev.data)));
+    for (const type of ['launch', 'fund', 'fees', 'levelup', 'reward', 'skin', 'burn', 'devclaim', 'market', 'sale', 'chat']) es.addEventListener(type, (ev) => h.emit('event', type, JSON.parse(ev.data)));
   }
   connect();
   document.addEventListener('visibilitychange', () => {

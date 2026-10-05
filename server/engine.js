@@ -4,7 +4,7 @@
 // against live market prices so the whole product can be tried for free.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { CONFIG, LIVE, DATA_DIR, SITE } from './config.js';
+import { CONFIG, LIVE, DATA_DIR, SITE, FEES, DEV_WALLET_SECRET } from './config.js';
 import { db, save, claimSig, rid } from './store.js';
 import * as market from './market.js';
 import * as chain from './chain.js';
@@ -31,21 +31,45 @@ function priceSol(mint, pos) {
   const t = market.getToken(mint);
   return t?.priceSol || pos?.lastPriceSol || pos?.entryPriceSol || 0;
 }
+// SOL the agent still holds but already owes out: creator royalty, buybacks, AI credits.
+const owedSol = (a) => a.pendingRoyaltySol + a.pendingOwnBurnSol + a.pendingVibeBurnSol + a.pendingAiSol;
+const freeSol = (a) => Math.max(0, a.balanceSol - owedSol(a));
 function equityOf(a) {
-  let e = a.balanceSol;
+  let e = freeSol(a);
   for (const [m, p] of Object.entries(a.positions)) e += p.tokens * priceSol(m, p);
   return e;
 }
+// Trading performance: profit paid out as royalty or burned still counts as profit made.
 function pnlOf(a) {
-  return equityOf(a) + a.withdrawnSol - a.depositedSol;
+  return equityOf(a) + a.withdrawnSol + a.royaltiesPaidSol + a.pendingRoyaltySol + a.ownBurnSol + a.pendingOwnBurnSol - a.depositedSol;
 }
 function displayStatus(a) {
   if (a.rawStatus !== 'ACTIVE') return a.rawStatus;
   if (a.paused) return 'PAUSED';
-  if (!Object.keys(a.positions).length && a.balanceSol < T.minTradeSol + T.minSolReserve + T.sellGasSol) return 'LOW BALANCE';
+  if (!Object.keys(a.positions).length && freeSol(a) < T.minTradeSol + T.minSolReserve + T.sellGasSol) return 'LOW BALANCE';
   return 'ACTIVE';
 }
+
+/** Fill in fields added after an agent was created, so old data keeps working. */
+export function ensure(a) {
+  const d = {
+    pendingRoyaltySol: 0, pendingOwnBurnSol: 0, pendingVibeBurnSol: 0, pendingAiSol: 0,
+    royaltiesPaidSol: 0, royalties: [], ownBurnSol: 0, ownBurnTokens: 0, vibeBurnSol: 0, vibeBurnTokens: 0,
+    aiCreditsSol: FEES.starterCreditsSol, aiSpentSol: 0, feesClaimedSol: 0,
+    vibe: '', trained: null, chat: [],
+  };
+  for (const [k, v] of Object.entries(d)) if (a[k] === undefined) a[k] = Array.isArray(v) ? [] : v;
+  return a;
+}
+db.burns ||= [];
+db.devClaims ||= [];
+db.stats.aiPoolSol ||= 0;
+db.stats.vibeBurnSol ||= 0;
+db.stats.vibeBurnTokens ||= 0;
+for (const a of Object.values(db.agents)) ensure(a);
+
 function customFor(a) {
+  if (a.trained && a.strategy === a.trained.id) return toRuntime(a.trained);
   if (!a.strategy?.startsWith('custom-')) return null;
   const c = db.customStrategies[a.creator];
   return c && c.id === a.strategy ? toRuntime(c) : null;
@@ -78,7 +102,8 @@ export function listView(a) {
     trades: a.trades, openPositions: Object.keys(a.positions).length,
     winRate: a.closedTrades ? a.wins / a.closedTrades : null,
     status: displayStatus(a), paused: a.paused,
-    feesKeptSol: a.feesKeptSol, feesToCreatorSol: 0, flywheelSol: 0, flywheelTokens: 0,
+    feesKeptSol: a.feesKeptSol, feesToCreatorSol: 0, flywheelSol: a.vibeBurnSol, flywheelTokens: a.vibeBurnTokens,
+    aiCreditsSol: a.aiCreditsSol, royaltiesPaidSol: a.royaltiesPaidSol, ownBurnTokens: a.ownBurnTokens,
     createdAt: a.createdAt, lastTradeAt: a.lastTradeAt,
     spark: a.equity.slice(-45).map((x) => x[1]),
   };
@@ -107,8 +132,17 @@ export function detailView(a) {
     equity: a.equity,
     nextDecisionAt: a.nextDecisionAt, nextFeeClaimAt: LIVE ? a.nextFeeClaimAt : null,
     custody: LIVE ? 'server vault (AES-256-GCM encrypted)' : 'paper mode: simulated wallet, no real SOL',
-    customStrategy: customFor(a) ? publicCustom(db.customStrategies[a.creator]) : null,
-    rewards: [], flywheel: null, nftJob: null, market: null, sales: [], owners: [],
+    customStrategy: a.trained && a.strategy === a.trained.id ? publicCustom(a.trained) : customFor(a) ? publicCustom(db.customStrategies[a.creator]) : null,
+    vibe: a.vibe,
+    economy: {
+      freeSol: freeSol(a),
+      aiCreditsSol: a.aiCreditsSol, aiSpentSol: a.aiSpentSol, feesClaimedSol: a.feesClaimedSol,
+      royaltiesPaidSol: a.royaltiesPaidSol, pendingRoyaltySol: a.pendingRoyaltySol, royalties: a.royalties.slice(0, 10),
+      ownBurnSol: a.ownBurnSol, ownBurnTokens: a.ownBurnTokens, pendingOwnBurnSol: a.pendingOwnBurnSol,
+      vibeBurnSol: a.vibeBurnSol, vibeBurnTokens: a.vibeBurnTokens, pendingVibeBurnSol: a.pendingVibeBurnSol,
+      burns: db.burns.filter((b) => b.agentId === a.id).slice(0, 10),
+    },
+    rewards: [], flywheel: { sol: a.vibeBurnSol, tokens: a.vibeBurnTokens, pendingSol: a.pendingVibeBurnSol, burns: db.burns.filter((b) => b.agentId === a.id && b.source === 'agent').slice(0, 5) }, nftJob: null, market: null, sales: [], owners: [],
     x: { connected: false, enabled: false, images: false },
   };
 }
@@ -194,6 +228,8 @@ export async function prepareLaunch(b) {
     realizedPnlSol: 0, closedTrades: 0, wins: 0, trades: 0, bestProfitSol: 0, levelNo: 1, feesKeptSol: 0,
     lastTradeAt: 0, lastBuyAt: 0, createdAt: now(), nextDecisionAt: 0, nextFeeClaimAt: 0, blockedMints: {},
   };
+  ensure(db.agents[id]);
+  db.agents[id].vibe = String(b.vibe || '').trim().slice(0, 400);
   save();
   return { agentId: id, no, wallet: w.address, requiredSol: required };
 }
@@ -341,6 +377,11 @@ async function sell(a, mint, reason, source) {
     a.balanceSol += solOut;
   }
   const pnlSol = solOut - p.costSol;
+  if (pnlSol > 0) {
+    // every winning trade: 15% creator royalty, 85% buys back + burns the agent's own coin
+    a.pendingRoyaltySol += pnlSol * FEES.profit.creator;
+    a.pendingOwnBurnSol += pnlSol * FEES.profit.burnOwn;
+  }
   delete a.positions[mint];
   a.realizedPnlSol += pnlSol;
   a.closedTrades++;
@@ -411,7 +452,8 @@ export async function withdraw(a, { all, amountSol }) {
     }
   }
   const fee = LIVE ? 0.000005 : 0;
-  const max = Math.max(0, a.balanceSol - fee);
+  // royalties and buybacks the agent already owes stay put; only free SOL can leave
+  const max = Math.max(0, freeSol(a) - fee);
   const amount = all ? max : Number(amountSol);
   if (!(amount > 0)) throw new Error('Nothing to withdraw.');
   if (amount > max + 1e-9) throw new Error(`Only ${max.toFixed(4)} SOL is free to withdraw.`);
@@ -441,8 +483,8 @@ async function tick() {
       if (now() < a.nextDecisionAt) continue;
       const [lo, hi] = CONFIG.brain.decisionEveryMs;
       a.nextDecisionAt = now() + lo + Math.random() * (hi - lo);
-      a.equitySol = equityOf(a);
-      const acts = decide(a, market.allTokens(), market.getToken, customFor(a));
+      const view = { ...a, balanceSol: freeSol(a), equitySol: equityOf(a) };
+      const acts = decide(view, market.allTokens(), market.getToken, customFor(a));
       for (const x of acts) {
         try {
           if (x.type === 'SELL') {
@@ -462,10 +504,126 @@ async function tick() {
       }
       recordEquity(a);
     }
+    for (const a of agents()) if (a.rawStatus === 'ACTIVE') await flushPayouts(a).catch((e) => console.warn('[payouts]', a.id, e.message));
     save();
   } finally {
     ticking = false;
   }
+}
+
+// ------------------------------------------------------------------ payouts & burns
+const paperCoinPriceSol = (a) => (a.coin.mcapUsd || 4000) / (market.getSolUsd() || 150) / 1e9; // pump.fun supply is 1B
+
+function recordBurn(a, row) {
+  const b = { id: rid('bn'), ts: now(), agentId: a?.id || null, agentNo: a?.no || null, agentName: a?.name || 'VIBER', avatarSeed: a?.avatarSeed || null, coinTicker: row.coinTicker, ...row };
+  db.burns.unshift(b);
+  db.burns.length = Math.min(db.burns.length, 500);
+  emit('burn', b);
+  return b;
+}
+
+/** Pay out what an agent owes once each bucket is big enough to be worth the gas. */
+async function flushPayouts(a) {
+  const min = FEES.minFlushSol;
+  if (a.pendingRoyaltySol >= min) {
+    const sol = a.pendingRoyaltySol;
+    const sig = LIVE ? await chain.sendSol(a.sealed, a.creator, sol) : chain.fakeSig();
+    a.pendingRoyaltySol = 0;
+    a.royaltiesPaidSol += sol;
+    if (!LIVE) a.balanceSol -= sol;
+    a.royalties.unshift({ ts: now(), sol, to: a.creator, sig });
+    think(a, { action: 'HOLD', reason: `Paid my creator a ${sol.toFixed(4)} SOL royalty (15% of my trading profit).`, note: true });
+  }
+  if (a.pendingOwnBurnSol >= min && a.coin.mint) {
+    const sol = a.pendingOwnBurnSol;
+    let r;
+    if (LIVE && !a.coin.mint.startsWith('paper')) r = await chain.buyAndBurn(a.sealed, { mint: a.coin.mint, sol });
+    else { r = { sol, tokens: sol / paperCoinPriceSol(a), buySig: chain.fakeSig(), burnSig: chain.fakeSig() }; a.balanceSol -= sol; }
+    a.pendingOwnBurnSol = 0;
+    a.ownBurnSol += r.sol;
+    a.ownBurnTokens += r.tokens;
+    recordBurn(a, { source: 'profit', coinTicker: a.coin.ticker, mint: a.coin.mint, sol: r.sol, tokens: r.tokens, buySig: r.buySig, burnSig: r.burnSig });
+    think(a, { action: 'HOLD', reason: `Bought back and burned ${Math.round(r.tokens).toLocaleString('en')} $${a.coin.ticker} with ${r.sol.toFixed(4)} SOL of profit. 🔥`, note: true });
+  }
+  if (a.pendingVibeBurnSol >= min && SITE.tokenMint) {
+    const sol = a.pendingVibeBurnSol;
+    let r;
+    if (LIVE) r = await chain.buyAndBurn(a.sealed, { mint: SITE.tokenMint, sol });
+    else {
+      const px = market.getToken(SITE.tokenMint)?.priceSol;
+      if (!px) return; // stays queued until $VIBE has a price
+      r = { sol, tokens: sol / px, buySig: chain.fakeSig(), burnSig: chain.fakeSig() };
+      a.balanceSol -= sol;
+    }
+    a.pendingVibeBurnSol = 0;
+    a.vibeBurnSol += r.sol;
+    a.vibeBurnTokens += r.tokens;
+    db.stats.vibeBurnSol += r.sol;
+    db.stats.vibeBurnTokens += r.tokens;
+    recordBurn(a, { source: 'agent', coinTicker: SITE.tokenSymbol, mint: SITE.tokenMint, sol: r.sol, tokens: r.tokens, buySig: r.buySig, burnSig: r.burnSig });
+  }
+  if (a.pendingAiSol >= min && LIVE && SITE.treasury) {
+    // the AI share pays the operator's model bill; the credits were granted when the fee came in
+    const sol = a.pendingAiSol;
+    await chain.sendSol(a.sealed, SITE.treasury, sol);
+    a.pendingAiSol = 0;
+  }
+}
+
+/** Split one creator-fee claim of an agent's coin (see FEES.agent). */
+function splitAgentFees(a, sol) {
+  const F = FEES.agent;
+  a.feesClaimedSol += sol;
+  a.feesKeptSol += sol * F.bankroll;
+  a.pendingVibeBurnSol += sol * F.burnVibe;
+  a.pendingAiSol += sol * F.aiCredits;
+  a.aiCreditsSol += sol * F.aiCredits;
+}
+
+/** $VIBE's own creator fees, claimed by the platform dev wallet: 50% burns $VIBE, 50% funds AI credits. */
+let devSealed = null;
+async function claimPlatformFees() {
+  if (!LIVE || !DEV_WALLET_SECRET) return;
+  devSealed ||= chain.sealBase58(DEV_WALLET_SECRET);
+  try {
+    const r = await chain.claimCreatorFees(devSealed);
+    if (r.sol < CONFIG.fees.minClaimSol) return;
+    const claim = { ts: now(), claimedSol: r.sol, sig: r.sig, buybackSol: 0, aiSol: r.sol * FEES.vibe.aiCredits };
+    db.stats.aiPoolSol += claim.aiSol;
+    if (SITE.tokenMint) {
+      const b = await chain.buyAndBurn(devSealed, { mint: SITE.tokenMint, sol: r.sol * FEES.vibe.burnVibe });
+      claim.buybackSol = b.sol;
+      db.stats.vibeBurnSol += b.sol;
+      db.stats.vibeBurnTokens += b.tokens;
+      recordBurn(null, { source: 'dev', coinTicker: SITE.tokenSymbol, mint: SITE.tokenMint, sol: b.sol, tokens: b.tokens, buySig: b.buySig, burnSig: b.burnSig });
+    }
+    db.devClaims.unshift(claim);
+    db.devClaims.length = Math.min(db.devClaims.length, 100);
+    emit('devclaim', {});
+    save();
+  } catch (e) {
+    console.warn('[dev fees]', e.message);
+  }
+}
+
+/** Data for the burns pages. */
+export function burnsData(who) {
+  const rows = db.burns.filter((b) => (who === 'dev' ? b.source === 'dev' : b.source !== 'dev'));
+  const sum = (list, k) => list.reduce((s, x) => s + (x[k] || 0), 0);
+  const agentRows = db.burns.filter((b) => b.source === 'agent');
+  const devRows = db.burns.filter((b) => b.source === 'dev');
+  const pendingVibe = agents().reduce((s, a) => s + a.pendingVibeBurnSol, 0);
+  return {
+    enabled: true, mint: SITE.tokenMint, pct: FEES.agent.burnVibe,
+    totalSol: db.stats.vibeBurnSol, totalTokens: db.stats.vibeBurnTokens, count: agentRows.length + devRows.length, queuedSol: pendingVibe, recent: rows.slice(0, 10),
+    agents: { totalSol: sum(agentRows, 'sol'), totalTokens: sum(agentRows, 'tokens'), count: agentRows.length, queuedSol: pendingVibe, skinTokens: 0, skinBurns: 0 },
+    dev: {
+      enabled: Boolean(LIVE && DEV_WALLET_SECRET), pct: FEES.vibe.burnVibe, wallet: null, pendingSol: 0,
+      buybackSol: sum(devRows, 'sol'), burnedTokens: sum(devRows, 'tokens'), burns: devRows.length,
+      claimedSol: sum(db.devClaims, 'claimedSol'), claims: db.devClaims.slice(0, 20), inProgress: false, minBuySol: FEES.minFlushSol, maxBuySol: null, lastError: null,
+    },
+    burns: rows.slice(0, 100),
+  };
 }
 
 async function claimFees() {
@@ -477,11 +635,10 @@ async function claimFees() {
       const r = await chain.claimCreatorFees(a.sealed);
       if (r.sol >= CONFIG.fees.minClaimSol) {
         a.balanceSol += r.sol;
-        a.feesKeptSol += r.sol;
-        a.depositedSol += 0; // fees count as profit, not capital
+        splitAgentFees(a, r.sol); // 70% bankroll · 20% buys + burns $VIBE · 10% AI credits
         db.stats.feesClaimedSol += r.sol;
         a.feeClaims.unshift({ ts: now(), claimedSol: r.sol, sig: r.sig, toCreatorSol: 0, shareSig: null });
-        think(a, { action: 'HOLD', reason: `Claimed ${r.sol.toFixed(4)} SOL of creator fees from $${a.coin.ticker}. Back to work.`, note: true });
+        think(a, { action: 'HOLD', reason: `Claimed ${r.sol.toFixed(4)} SOL of creator fees from $${a.coin.ticker}: ${(r.sol * FEES.agent.bankroll).toFixed(4)} to trade with, ${(r.sol * FEES.agent.burnVibe).toFixed(4)} to burn $VIBE, ${(r.sol * FEES.agent.aiCredits).toFixed(4)} to my AI credits.`, note: true });
         emit('fees', { agentId: a.id, sol: r.sol });
       }
     } catch (e) {
@@ -522,8 +679,12 @@ export function start() {
   tick();
   setInterval(tick, 10_000);
   setInterval(claimFees, 60_000);
+  setInterval(claimPlatformFees, CONFIG.fees.claimEveryMs);
   setInterval(refreshCoins, 60_000);
 }
 
 export const notFound = () => Object.assign(new Error('Agent not found'), { status: 404 });
 export { RISK_ACK };
+
+// exposed for unit tests only
+export const _test = { sell, flushPayouts, splitAgentFees, freeSol, pnlOf, equityOf };

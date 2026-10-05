@@ -8,6 +8,7 @@ import { wallet, signAction, actionMessage } from '../wallet.js';
 import { createOffice, OFFICE_NAMES } from '../office3d.js';
 import { SKIN_MODELS } from '../skins3d.js';
 import { robotParts } from '../robot.js';
+import { mountChat } from '../chat.js';
 const fmtTok = (n) => (n >= 1e6 ? (n / 1e6).toFixed(2) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : Math.round(n).toLocaleString('en'));
 const sv = (d, w = 2.2) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const IC = {
@@ -123,6 +124,7 @@ export function AgentPage(app, id) {
 
   // ── the viber's own office: it sits alone at its desk, in its skin (kept across re-renders) ──
   let officeView = null, officeMenu = false;
+  let chatView = null;
   const hx = (c) => parseInt(String(c || '#888888').replace('#', ''), 16);
   const specFor = (seed) => {
     const p = robotParts(seed);
@@ -388,21 +390,27 @@ export function AgentPage(app, id) {
       <p class="note">The trading logic never sees a private key. It proposes BUY / SELL / HOLD; the server checks the rules, simulates the transaction and only then signs.</p>
     </section>`;
 
-  const feesHTML = () => `<section class="card coin-card">
-      <div class="agent-tag">CREATOR FEES · ${cfg.fees.creatorSharePct > 0 ? `${Math.round(cfg.fees.creatorSharePct * 100)}% CREATOR / ` : ''}${cfg.flywheel?.enabled ? `${Math.round(cfg.flywheel.pct * 100)}% BURN / ${Math.round((1 - cfg.flywheel.pct - (cfg.fees.creatorSharePct || 0)) * 100)}% VIBER` : cfg.fees.creatorSharePct > 0 ? `${Math.round((1 - cfg.fees.creatorSharePct) * 100)}% VIBER` : '100% VIBER'}</div>
+  const feesHTML = () => {
+    const E = d.economy || {}, F = cfg.vibeFees || {};
+    const pc = (x) => Math.round((x || 0) * 100) + '%';
+    const queued = (x) => (x > 0 ? ` <span class="muted" style="font-weight:600">· ${sol(x, 4)} queued</span>` : '');
+    return `<section class="card coin-card">
+      <div class="agent-tag">COIN FEES · ${pc(F.agent?.bankroll)} BANKROLL / ${pc(F.agent?.burnVibe)} BURN $VIBE / ${pc(F.agent?.aiCredits)} AI CREDITS</div>
       <dl class="kv">
-        <dt>Kept by viber</dt><dd>${sol(d.feesKeptSol, 4)} SOL</dd>
-        ${d.feesToCreatorSol > 0 || cfg.fees.creatorSharePct > 0 ? `<dt>Sent to creator</dt><dd>${sol(d.feesToCreatorSol, 4)} SOL</dd>` : ''}
+        <dt>Claimed so far</dt><dd>${sol(E.feesClaimedSol || 0, 4)} SOL</dd>
+        <dt>To bankroll</dt><dd>${sol(d.feesKeptSol, 4)} SOL</dd>
+        <dt>$VIBE burned</dt><dd>${sol(E.vibeBurnSol || 0, 4)} SOL · 🔥 ${fmtTok(E.vibeBurnTokens || 0)}${queued(E.pendingVibeBurnSol)}</dd>
+        <dt>AI credits</dt><dd>⚡ ${sol(E.aiCreditsSol || 0, 4)} SOL <span class="muted" style="font-weight:600">· ${sol(E.aiSpentSol || 0, 4)} used</span></dd>
         ${d.nextFeeClaimAt ? `<dt>Next claim</dt><dd data-countdown-plain="${d.nextFeeClaimAt}"></dd>` : ''}
       </dl>
-      <div class="agent-tag" style="margin-top:4px">CLAIMS</div>
-      <dl class="kv">${d.feeClaims.map((x) => `<dt data-ago="${x.ts}">${ago(x.ts)}</dt><dd>${sol(x.claimedSol, 4)} SOL ${txLink(x.sig, 'tx')}${x.toCreatorSol > 0 ? `<br><span class="muted" style="font-weight:500">${sol(x.toCreatorSol, 4)} to creator ${x.shareSig ? txLink(x.shareSig, 'tx') : ''}</span>` : ''}</dd>`).join('') || '<dt class="muted">No claims yet</dt><dd></dd>'}</dl>
-      ${cfg.flywheel?.enabled && d.flywheel ? `<div class="agent-tag" style="margin-top:4px">🔥 BUYBACK &amp; BURN · <a class="ext" href="#/burns">all burns</a></div>
+      <div class="agent-tag" style="margin-top:4px">PROFIT · ${pc(F.profit?.creator)} CREATOR ROYALTY / ${pc(F.profit?.burnOwn)} BURNS $${esc(d.coin.ticker || '')}</div>
       <dl class="kv">
-        <dt>Burned so far</dt><dd>${sol(d.flywheel.sol, 4)} SOL · ${fmtTok(d.flywheel.tokens)} tokens</dd>
-        ${d.flywheel.pendingSol > 0 ? `<dt>Collecting</dt><dd>${sol(d.flywheel.pendingSol, 4)} / ${cfg.flywheel.minBuySol} SOL</dd>` : ''}
-        ${d.flywheel.burns.slice(0, 5).map((b) => `<dt data-ago="${b.ts}">${ago(b.ts)}</dt><dd>${sol(b.sol, 4)} SOL → 🔥 ${fmtTok(b.tokens)} ${txLink(b.burnSig, 'burn')}</dd>`).join('')}
-      </dl>` : ''}
+        <dt>Royalties paid</dt><dd>${sol(E.royaltiesPaidSol || 0, 4)} SOL${queued(E.pendingRoyaltySol)}</dd>
+        <dt>$${esc(d.coin.ticker || '')} burned</dt><dd>🔥 ${fmtTok(E.ownBurnTokens || 0)} · ${sol(E.ownBurnSol || 0, 4)} SOL${queued(E.pendingOwnBurnSol)}</dd>
+        ${(E.burns || []).slice(0, 4).map((b) => `<dt data-ago="${b.ts}">${ago(b.ts)}</dt><dd>${sol(b.sol, 4)} SOL → 🔥 ${fmtTok(b.tokens)} $${esc(b.coinTicker || '')} ${txLink(b.burnSig, 'burn')}</dd>`).join('')}
+      </dl>
+      <div class="agent-tag" style="margin-top:4px">CLAIMS</div>
+      <dl class="kv">${d.feeClaims.map((x) => `<dt data-ago="${x.ts}">${ago(x.ts)}</dt><dd>${sol(x.claimedSol, 4)} SOL ${txLink(x.sig, 'tx')}</dd>`).join('') || '<dt class="muted">No claims yet</dt><dd></dd>'}</dl>
       ${(d.rewards || []).length ? `<div class="agent-tag" style="margin-top:4px">PROMOTION REWARDS</div>
       <dl class="kv">${d.rewards.map((r) => `<dt>${esc(r.level)}</dt><dd>${sol(r.amountSol, 3)} SOL ${r.status === 'paid' ? txLink(r.sig, 'paid ✓') : `<span class="muted" style="font-weight:600">${r.status === 'waiting_funds' ? 'queued' : 'sending…'}</span>`}</dd>`).join('')}</dl>` : ''}
       <div class="agent-tag" style="margin-top:4px">STRATEGY · ${esc(strat().name.toUpperCase())}${strat().custom ? ' <span class="cust-tag">custom</span>' : ''}</div>
@@ -412,6 +420,7 @@ export function AgentPage(app, id) {
       </dl>
       ${isCreator() && d.rawStatus === 'ACTIVE' ? `<button class="btn btn-sm" type="button" data-act="strategy">${stratIcon(strat())}<span>Change strategy</span></button>` : ''}
     </section>`;
+  };
 
   // ── viber market: for sale banner / sell card / owner history ──
   // ── viber NFT (whoever holds it owns the viber) + selling on the VIBER market (NFT vibers only) ──
@@ -453,6 +462,7 @@ export function AgentPage(app, id) {
     mode = d.rawStatus === 'ACTIVE' ? 'active' : 'pending';
     const main = mode === 'active' ? `
       <div class="ag-stats" id="ag-stats">${statsHTML()}</div>
+      <section class="card vibe-chat" id="ag-chat"></section>
       <div class="ag-row1">
         <section class="card ag-office-card"><header class="card-head" id="ag-office-head">${officeHead()}</header><div class="ag-office-stage office" id="ag-office"></div></section>
         <section class="card ag-strat" id="ag-strat">${stratCardHTML()}</section>
@@ -481,6 +491,9 @@ export function AgentPage(app, id) {
     </div>`;
     if (officeView) { officeView.v.destroy(); officeView = null; }
     mountOffice();
+    chatView?.destroy(); chatView = null;
+    const chatEl = el.querySelector('#ag-chat');
+    if (chatEl) chatView = mountChat(app, chatEl, d);
     if (mode === 'active') {
       const box = el.querySelector('#ag-chart');
       box.addEventListener('pointerenter', () => (hovering = true));
@@ -493,6 +506,7 @@ export function AgentPage(app, id) {
   function renderLive() {
     const nextMode = d.rawStatus === 'ACTIVE' ? 'active' : 'pending';
     if (nextMode !== mode) return renderAll();
+    chatView?.update(d);
     el.querySelector('#ag-hero').innerHTML = heroHTML();
     el.querySelector('#ag-market').innerHTML = marketHTML() + nftHTML();
     mountOffice();
@@ -604,9 +618,10 @@ export function AgentPage(app, id) {
       fetchDetail(true);
     },
     update() { fetchDetail(false); },
+    onChat(p) { chatView?.onChat(p); },
     onTrade(t) { if (d && t.agentNo === d.no) { officeView?.v.celebrate('trade'); setTimeout(() => fetchDetail(true), 50); } },
     onWallet() { if (d) renderAll(); },
     onMarket(p) { if (d && (!p?.agentId || p.agentId === d.id)) fetchDetail(true); },
-    destroy() { clearInterval(tick); officeView?.v.destroy(); officeView = null; el = null; },
+    destroy() { clearInterval(tick); chatView?.destroy(); officeView?.v.destroy(); officeView = null; el = null; },
   };
 }

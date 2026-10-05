@@ -31,6 +31,7 @@ const IC = {
   bars: sv('<path d="M5 20v-5M10 20v-9M15 20v-6M20 20V5"/>', 2.6),
   x: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>',
   fees: sv('<ellipse cx="9" cy="7" rx="5" ry="2.5"/><path d="M4 7v4c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5V7"/><path d="M10 15.5c.8 1.2 2.8 2 5 2 2.8 0 5-1.1 5-2.5v-4c0-1.4-2.2-2.5-5-2.5"/>'),
+  chat: sv('<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/>'),
   arrow: sv('<path d="M5 12h14M13 6l6 6-6 6"/>', 2.4),
   brick: '<svg viewBox="0 0 32 24" aria-hidden="true"><rect x="2" y="8" width="28" height="14" rx="2" fill="currentColor"/><rect x="5" y="3" width="8" height="6" rx="2" fill="currentColor"/><rect x="19" y="3" width="8" height="6" rx="2" fill="currentColor"/></svg>',
   play: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="currentColor"/><path d="M10 8l6 4-6 4z" fill="var(--surface)"/></svg>',
@@ -64,7 +65,8 @@ export function HowPage(app) {
   const does = [
     ['bars', 'Trades automatically', 'Buys and sells real SOL using your chosen strategy.'],
     ['x', 'Shills on X', 'Writes ready-made posts with your coin, CA and live P&L.'],
-    ['fees', 'Earns creator fees', c.fees.creatorSharePct > 0 ? `Claims the coin's creator fees: ${Math.round(c.fees.creatorSharePct * 100)}% to you, the rest keeps trading.` : "Claims all of the coin's creator fees and keeps trading with them."],
+    ['fees', 'Puts its fees to work', `Claims its coin's creator fees: ${Math.round((c.vibeFees?.agent.bankroll || 0.7) * 100)}% to its bankroll, ${Math.round((c.vibeFees?.agent.burnVibe || 0.2) * 100)}% burns $VIBE, ${Math.round((c.vibeFees?.agent.aiCredits || 0.1) * 100)}% to its AI credits. You earn ${Math.round((c.vibeFees?.profit.creator || 0.15) * 100)}% of its profit.`],
+    ['chat', 'Talks and learns', 'Chat with it on its page. As the creator, retrain it just by telling it what to do.'],
     ['wallet', 'Sends to your wallet', 'Withdraw its SOL back to your wallet any time, in one signature.'],
   ];
 

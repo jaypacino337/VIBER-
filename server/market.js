@@ -161,3 +161,6 @@ export function watchMigrations() {
   };
   open();
 }
+
+/** Test hook: put a token on the board without hitting the network. */
+export function _setToken(t) { tokens.set(t.mint, t); }

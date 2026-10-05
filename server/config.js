@@ -50,9 +50,32 @@ export const CONFIG = {
   // Paper mode: every new agent starts with this much simulated SOL so the
   // whole loop can be tried without a wallet.
   paperStartSol: num('PAPER_START_SOL', 1),
-  promptAi: Boolean(str('ANTHROPIC_API_KEY')),
-  anthropicKey: str('ANTHROPIC_API_KEY'),
-  anthropicModel: str('ANTHROPIC_MODEL', 'claude-haiku-4-5-20251001'),
+};
+
+// VIBER fee model (see README "Fees"). Fractions of each flow.
+export const FEES = {
+  // $VIBE's own pump.fun creator fees (claimed by the dev wallet)
+  vibe: { burnVibe: 0.5, aiCredits: 0.5 },
+  // each agent coin's creator fees (claimed by the agent's wallet)
+  agent: { bankroll: 0.7, burnVibe: 0.2, aiCredits: 0.1 },
+  // every realized trading profit of an agent
+  profit: { creator: 0.15, burnOwn: 0.85 },
+  // payouts and buybacks wait until a bucket holds at least this much (saves gas)
+  minFlushSol: num('MIN_FLUSH_SOL', 0.01),
+  // free AI credits every new agent starts with (granted by the platform, not the creator)
+  starterCreditsSol: num('STARTER_AI_CREDITS_SOL', MODE === 'live' ? 0.01 : 0.05),
+};
+
+// Platform dev wallet that owns $VIBE's creator fees (base58 secret). Optional.
+export const DEV_WALLET_SECRET = str('DEV_WALLET_SECRET');
+
+export const AI = {
+  model: str('AI_MODEL', 'claude-opus-5-5'),
+  enabled: Boolean(str('ANTHROPIC_API_KEY') || str('ANTHROPIC_AUTH_TOKEN')),
+  // USD per million tokens for the chosen model, used to meter AI credits
+  inputUsdPerM: num('AI_INPUT_USD_PER_M', 4),
+  outputUsdPerM: num('AI_OUTPUT_USD_PER_M', 20),
+  cacheReadUsdPerM: num('AI_CACHE_READ_USD_PER_M', 0.2),
 };
 
 export const LAMPORTS = 1e9;

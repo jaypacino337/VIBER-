@@ -14,8 +14,9 @@ const num = (re, text) => { const m = text.match(re); return m ? Number(m[1]) : 
 
 export function readPrompt(text) {
   const understood = [], notes = [], risks = [];
-  let base = 'classic';
-  for (const [id, re, say] of STYLES) if (re.test(text)) { base = id; understood.push(say); break; }
+  let base = 'classic', styleFound = false;
+  const changed = {};
+  for (const [id, re, say] of STYLES) if (re.test(text)) { base = id; styleFound = true; understood.push(say); break; }
   if (base === 'classic') understood.push(text ? 'No clear style word found, so it starts from the balanced Blueprint plan.' : 'Empty description: starting from the balanced Blueprint plan.');
   const st = CONFIG.strategies.find((s) => s.id === base);
   const params = defaultsFor(base, { ...st, ...st.entry });
@@ -24,13 +25,13 @@ export function readPrompt(text) {
   const size = num(/(\d+(?:\.\d+)?)\s*%\s*(?:of|per)\s*(?:the\s*)?(?:sol|balance|bankroll|trade)/i, text);
   const open = num(/(\d+)\s*(?:open\s*)?positions?/i, text);
   const hold = num(/(?:hold|max hold)[^0-9]{0,12}(\d+)\s*(?:min|minutes)/i, text);
-  if (sl != null) { params.stopLossPct = -sl / 100; understood.push(`Stop loss at −${sl}%.`); }
-  if (tp != null) { params.takeProfitPct = tp / 100; understood.push(`Take profit at +${tp}%.`); }
-  if (size != null) { params.sizePct = size / 100; understood.push(`Uses ${size}% of its SOL per trade.`); }
-  if (open != null) { params.maxOpen = open; understood.push(`Up to ${open} open positions.`); }
-  if (hold != null) { params.maxHoldMin = hold; understood.push(`Closes trades after ${hold} minutes.`); }
-  if (/\b(safe|conservative|low risk)\b/i.test(text)) { params.sizePct = Math.min(params.sizePct, 0.08); params.stopLossPct = Math.max(params.stopLossPct, -0.1); understood.push('Kept sizes small and the stop tight (you asked for low risk).'); }
-  if (/\b(degen|aggressive|high risk|yolo)\b/i.test(text)) { params.sizePct = Math.max(params.sizePct, 0.2); risks.push('Aggressive sizing: losses add up fast.'); }
+  if (sl != null) { params.stopLossPct = changed.stopLossPct = -sl / 100; understood.push(`Stop loss at −${sl}%.`); }
+  if (tp != null) { params.takeProfitPct = changed.takeProfitPct = tp / 100; understood.push(`Take profit at +${tp}%.`); }
+  if (size != null) { params.sizePct = changed.sizePct = size / 100; understood.push(`Uses ${size}% of its SOL per trade.`); }
+  if (open != null) { params.maxOpen = changed.maxOpen = open; understood.push(`Up to ${open} open positions.`); }
+  if (hold != null) { params.maxHoldMin = changed.maxHoldMin = hold; understood.push(`Closes trades after ${hold} minutes.`); }
+  if (/\b(safe|conservative|low risk)\b/i.test(text)) { changed.sizePct = params.sizePct = Math.min(params.sizePct, 0.08); changed.stopLossPct = params.stopLossPct = Math.max(params.stopLossPct, -0.1); understood.push('Kept sizes small and the stop tight (you asked for low risk).'); }
+  if (/\b(degen|aggressive|high risk|yolo)\b/i.test(text)) { changed.sizePct = params.sizePct = Math.max(params.sizePct, 0.2); risks.push('Aggressive sizing: losses add up fast.'); }
   notes.push('Every number can still be changed with the sliders before you save.');
-  return { base, params, name: base === 'classic' ? 'My Blueprint' : 'My ' + CONFIG.strategies.find((s) => s.id === base).name, understood, notes, risks };
+  return { base, params, changed, styleFound, name: base === 'classic' ? 'My Blueprint' : 'My ' + CONFIG.strategies.find((s) => s.id === base).name, understood, notes, risks };
 }

@@ -3,6 +3,7 @@
 import { createCipheriv, createDecipheriv, randomBytes, createHash } from 'node:crypto';
 import { Connection, Keypair, PublicKey, VersionedTransaction, SystemProgram, TransactionMessage, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import bs58 from 'bs58';
+import { createBurnCheckedInstruction } from '@solana/spl-token';
 import nacl from 'tweetnacl';
 import { RPC_URL, MASTER_KEY, PUMPPORTAL_URL, LIVE } from './config.js';
 
@@ -203,6 +204,39 @@ export async function claimCreatorFees(sealed) {
   const sig = await sendAndConfirm(tx);
   const after = await connection.getBalance(kp.publicKey);
   return { sig, sol: Math.max(0, (after - before) / LAMPORTS_PER_SOL) };
+}
+
+/**
+ * Buy `sol` worth of `mint` from the wallet, then burn exactly the tokens that
+ * arrived. Used for $VIBE buybacks and each agent's own-token profit burns.
+ */
+export async function buyAndBurn(sealed, { mint, sol, slippagePct = 15, priorityFeeSol = 0.0005 }) {
+  const kp = openSecret(sealed);
+  const owner = kp.publicKey;
+  const buy = await swap(sealed, { side: 'BUY', mint, amount: sol, slippagePct, priorityFeeSol });
+  if (!(buy.tokenDelta > 0)) throw new Error('Buyback confirmed but no tokens arrived.');
+  const accts = await connection.getParsedTokenAccountsByOwner(owner, { mint: new PublicKey(mint) });
+  const acct = accts.value.sort((a, b) => Number(b.account.data.parsed.info.tokenAmount.amount) - Number(a.account.data.parsed.info.tokenAmount.amount))[0];
+  if (!acct) throw new Error('Token account not found for burn.');
+  const info = acct.account.data.parsed.info.tokenAmount;
+  const decimals = info.decimals;
+  const raw = BigInt(Math.floor(buy.tokenDelta * 10 ** decimals));
+  const burnRaw = raw > BigInt(info.amount) ? BigInt(info.amount) : raw;
+  const { blockhash } = await connection.getLatestBlockhash();
+  const msg = new TransactionMessage({
+    payerKey: owner,
+    recentBlockhash: blockhash,
+    instructions: [createBurnCheckedInstruction(acct.pubkey, new PublicKey(mint), owner, burnRaw, decimals, [], acct.account.owner)],
+  }).compileToV0Message();
+  const tx = new VersionedTransaction(msg);
+  tx.sign([kp]);
+  const burnSig = await sendAndConfirm(tx);
+  return { buySig: buy.sig, burnSig, sol: Math.max(sol, -buy.solDelta), tokens: Number(burnRaw) / 10 ** decimals };
+}
+
+/** Load a wallet from a base58 secret (the platform dev wallet), sealed like agent wallets. */
+export function sealBase58(secret) {
+  return sealSecret(bs58.decode(secret));
 }
 
 export const solscan = (sig) => `https://solscan.io/tx/${sig}`;

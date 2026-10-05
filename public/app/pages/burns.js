@@ -24,7 +24,7 @@ const burnRows = (list, { loading, err, empty, dev }) => {
   if (!list.length) return `<tr><td colspan="${cols}" class="muted" style="text-align:center;padding:36px">${empty}</td></tr>`;
   return list.map((b) => `<tr${dev ? '' : ` class="click" data-go="#/viber/${b.agentNo}"`}>
     <td class="muted" data-ago="${b.ts}" title="${esc(new Date(b.ts).toLocaleString())}">${ago(b.ts)}</td>
-    ${dev ? '' : `<td><span class="cell-agent">${avatar(b.avatarSeed, 32)}<span><span class="name">${esc(b.agentName)}${b.source === 'skin' ? ' <em class="burn-skin-tag">SKIN</em>' : ''}</span><br><span class="agent-tag">${agentNo(b.agentNo)}${b.source === 'skin' ? ' · paid for a skin' : b.coinTicker ? ' · $' + esc(b.coinTicker) : ''}</span></span></span></td>`}
+    ${dev ? '' : `<td><span class="cell-agent">${avatar(b.avatarSeed, 32)}<span><span class="name">${esc(b.agentName)}${b.source === 'skin' ? ' <em class="burn-skin-tag">SKIN</em>' : ''}</span><br><span class="agent-tag">${agentNo(b.agentNo)}${b.source === 'skin' ? ' · paid for a skin' : b.source === 'profit' ? ' · profit burn of $' + esc(b.coinTicker) : b.coinTicker ? ' · $' + esc(b.coinTicker) : ''}</span></span></span></td>`}
     <td class="r b">${b.source === 'skin' ? `<span class="muted">${esc(b.skinName || 'skin')} skin</span>` : sol(b.sol, 4) + ' SOL'}</td>
     <td class="r b burn-amt">🔥 ${fmtTok(b.tokens)}</td>
     <td class="r">${b.buySig ? txLink(b.buySig, 'buy') : '<span class="muted">–</span>'}</td>
@@ -111,7 +111,7 @@ export function DevBurnsPage(app) {
       const F = cfg.flywheel || {};
       root.innerHTML = `<div class="wrap">
         <div class="page-head"><div><h1>Dev Burns</h1>
-          <p>The server claims the <b>VIBER dev wallet's</b> pump.fun creator fees by itself. <b>10% of every claim</b> buys the VIBE coin and burns exactly the tokens it bought. Every claim, buy and burn links to Solscan.</p></div>
+          <p>The server claims the <b>VIBER dev wallet's</b> pump.fun creator fees by itself. <b>50% of every claim</b> buys the VIBE coin and burns exactly the tokens it bought; the other 50% funds the vibers' AI credits. Every claim, buy and burn links to Solscan.</p></div>
           <div class="right"><a class="btn" href="#/burns">🔥 Viber Burns →</a></div></div>
         <p class="muted" id="dv-off" hidden>The dev buyback is not switched on yet.</p>
         <p class="burn-warn" id="dv-err" hidden></p>

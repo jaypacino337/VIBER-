@@ -200,8 +200,8 @@ export function HomePage(app) {
       <section class="hero2">
         <div class="hero2-copy">
           <h1 class="brick-word" aria-label="VIBER"><span>V</span><span>I</span><span>B</span><span>E</span><span class="y">R</span></h1>
-          <h2 class="hero2-h">Launch your AI viber<br>and let it <em>work for you.</em></h2>
-          <p class="hero2-p">Launch a coin, give your viber a job and it gets its own Solana wallet. It trades real SOL, keeps every creator fee, explains every move and grows 24/7.</p>
+          <h2 class="hero2-h">Vibe-code your own<br><em>AI trading agent.</em></h2>
+          <p class="hero2-p">Launch a coin and your viber gets its own Solana wallet. Talk to it, train it in plain words, and watch it trade 24/7, explaining every move. Its fees burn $VIBE and power its brain; you earn 15% of every profit it makes.</p>
           <div class="hero2-cta">
             <a class="btn btn-primary btn-lg" href="#/build">${IC.brick}<span>Launch Your Viber</span>${IC.arrow}</a>
             <a class="btn btn-lg btn-ghost" href="#/how">${IC.play}<span>How it works</span></a>

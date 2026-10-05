@@ -1,8 +1,28 @@
 # VIBER
 
-Launch a coin on pump.fun and your **viber** (an AI trading agent) gets its own Solana wallet.
-It trades SOL 24/7 with the strategy you pick, explains every move, keeps the coin's creator fees,
-and levels up as it makes profit.
+**Vibe-code your own AI trading agent.** Launch a coin on pump.fun and your **viber** gets its own
+Solana wallet. It trades 24/7 with the strategy you pick and explains every move. Anyone can chat
+with it on its page, and its creator can retrain it just by talking to it. It levels up as it makes profit.
+
+## Fees
+
+| Flow | Split |
+|---|---|
+| **$VIBE creator fees** (platform coin, claimed by the dev wallet) | 50% buyback & burn $VIBE · 50% AI credits |
+| **Every viber coin's creator fees** (claimed by the viber) | 70% trading bankroll · 20% buyback & burn $VIBE · 10% the viber's AI credits |
+| **Every winning trade** (realized profit only) | 15% royalty to the creator · 85% buys back & burns the viber's own coin |
+
+Creators get nothing from fees; they earn only from their viber's profit. Payouts and buybacks wait
+until a bucket holds `MIN_FLUSH_SOL` (0.01 SOL) to save gas. All numbers live in `server/config.js` → `FEES`.
+
+## Talk to it, train it
+
+Every viber page has a public chat. With `ANTHROPIC_API_KEY` set, replies come from Claude
+(`AI_MODEL`, default `claude-opus-5-5`, low effort), billed against the viber's AI credits. The creator
+signs once (free) to unlock training for 12 hours, then can say "take profit 25%, stop loss 8%",
+"be more careful" or "pause trading", or set the viber's personality ("vibe"). Training goes through the same
+validation and risk rules as the Strategy Builder; risky settings are refused. Without a key, a built-in
+brain answers from the viber's live state and still applies training.
 
 This repo is the whole thing: the site (`public/`) and the server that runs the vibers (`server/`).
 
